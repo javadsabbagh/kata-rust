@@ -1,2 +1,2 @@
 # kata-rust
-Doing daily kata in rust.
+Daily kata done in rust, till I get fluent in this language!
