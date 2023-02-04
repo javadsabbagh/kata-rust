@@ -1,0 +1,18 @@
+[package]
+name = "kata-rust"
+edition = "2021"
+publish = false
+version = "0.1.0"
+license = "MIT"
+
+[[bin]]
+name = "filtermap"
+path = "src/filter-map/main.rs"
+
+[[bin]]
+name = "hashmap"
+path = "src/hashmap/main.rs"
+
+[[bin]]
+name = "btreemap"
+path = "src/btreemap/main.rs"
