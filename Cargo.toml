@@ -16,3 +16,7 @@ path = "src/hashmap/main.rs"
 [[bin]]
 name = "btreemap"
 path = "src/btreemap/main.rs"
+
+[[bin]]
+name = "display"
+path = "src/display/main.rs"
