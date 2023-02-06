@@ -20,3 +20,7 @@ path = "src/btreemap/main.rs"
 [[bin]]
 name = "display"
 path = "src/display/main.rs"
+
+[[bin]]
+name = "slice-types"
+path = "src/slice-types/main.rs"
