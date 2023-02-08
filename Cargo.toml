@@ -24,3 +24,15 @@ path = "src/display/main.rs"
 [[bin]]
 name = "slice-types"
 path = "src/slice-types/main.rs"
+
+[[bin]]
+name = "socket"
+path = "src/socket/main.rs"
+
+[[bin]]
+name = "inspect"
+path = "src/inspect/main.rs"
+
+[[bin]]
+name = "debug-macro"
+path = "src/debug-macro/main.rs"
