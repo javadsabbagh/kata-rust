@@ -36,3 +36,7 @@ path = "src/inspect/main.rs"
 [[bin]]
 name = "debug-macro"
 path = "src/debug-macro/main.rs"
+
+[[bin]]
+name = "env-variables"
+path = "src/env-variables/main.rs"
