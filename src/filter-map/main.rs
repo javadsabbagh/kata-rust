@@ -1,5 +1,5 @@
-use std::{vec};
 use std::collections::{HashMap, HashSet};
+use std::vec;
 
 struct Company {
     name: String,

@@ -40,3 +40,7 @@ path = "src/debug-macro/main.rs"
 [[bin]]
 name = "env-variables"
 path = "src/env-variables/main.rs"
+
+[[bin]]
+name = "enums"
+path = "src/enums/main.rs"
