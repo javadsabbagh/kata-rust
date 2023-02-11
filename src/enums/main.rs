@@ -6,7 +6,7 @@ enum Coin {
     Nickle = 5,
     Dime = 10,
     Quarter = 25,
-    //Anothr_ITEM // it would be 26 if no value was implicitly set
+    //Another_Item // it would be 26 if no value was implicitly set
 }
 
 trait Money {
