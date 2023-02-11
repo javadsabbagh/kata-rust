@@ -1,5 +1,3 @@
-
-
 // Enum by value
 
 #[derive(Debug)]
@@ -11,13 +9,13 @@ enum Coin {
     //Anothr_ITEM // it would be 26 if no value was implicitly set
 }
 
-
-
 // Enum by variable
 
-
 #[derive(Debug)]
-struct VM {}
+struct VM {
+    name: String,
+    ip: String,
+}
 
 #[derive(Debug)]
 struct Container {}
@@ -25,18 +23,23 @@ struct Container {}
 #[derive(Debug)]
 enum NodeType {
     KVM(VM),
-    Docker(Container)
+    Docker(Container),
 }
 
 fn main() {
     use Coin::*;
 
     let coin = Penny;
-    println!("{:?}", coin);   // Note: unless Debug directive is not set it gives an error that Debug trait is not implemented for Coin enum
-
+    println!("{:?}", coin); // Note: unless Debug directive is not set it gives an error that Debug trait is not implemented for Coin enum
 
     use NodeType::*;
-    let node = KVM(VM{});
+    let node = KVM(VM {
+        name: "Ubuntu 22.04 LTS Server".to_string(),
+        ip: String::from("10.0.0.5")    
+    });  
+    
+    // Note: three ways to convert string literal into String object: "abc".as_string(), String::from("abc"), and format!("{}", "abc") macro 
+
 
     println!("{:?}", node); // Note: when a type implements Debug trait, all other integrating parts also must impl Debug.
 }
