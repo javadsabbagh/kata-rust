@@ -52,3 +52,7 @@ path = "src/sets/main.rs"
 [[bin]]
 name = "iterator"
 path = "src/iterator/main.rs"
+
+[[bin]]
+name = "date-time"
+path = "src/date-time~/main.rs"
