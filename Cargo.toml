@@ -44,3 +44,11 @@ path = "src/env-variables/main.rs"
 [[bin]]
 name = "enums"
 path = "src/enums/main.rs"
+
+[[bin]]
+name = "sets"
+path = "src/sets/main.rs"
+
+[[bin]]
+name = "iterator"
+path = "src/iterator/main.rs"
