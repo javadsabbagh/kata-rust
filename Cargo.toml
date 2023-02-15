@@ -60,3 +60,11 @@ path = "src/date-time/main.rs"
 [[bin]]
 name = "strings"
 path = "src/strings/main.rs"
+
+[[bin]]
+name = "serde"
+path = "src/serde/main.rs"
+
+[[bin]]
+name = "reqwest"
+path = "src/reqwest/main.rs"
