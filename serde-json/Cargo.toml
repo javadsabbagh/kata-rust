@@ -13,4 +13,4 @@ serde_json = "1.0.93"
 
 [[bin]]
 name = "filtermap"
-path = "src/serde-json/main.rs"
+path = "src/main.rs"
