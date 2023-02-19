@@ -10,7 +10,7 @@ struct ServerInfo {
 enum Location {
     US = 1,
     Canada = 2,
-    Europe = 3
+    Europe = 3,
 }
 
 fn main() {
