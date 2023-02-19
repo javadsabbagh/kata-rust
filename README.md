@@ -10,3 +10,7 @@ Following is a list of these projects:
 ### rust-lang
 ### project-management
 ### serde-json
+
+
+> Note: this project is for educational goals and is still in the very beginning.
+> I put more and more examples here and update documents accordingly.
