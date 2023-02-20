@@ -1,0 +1,13 @@
+[package]
+name = "http-client"
+edition = "2021"
+publish = false
+version = "0.1.0"
+license = "MIT"
+
+[dependencies]
+reqwest="0.11.13"
+
+[[bin]]
+name = "http-client"
+path = "src/main.rs"
