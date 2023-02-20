@@ -26,10 +26,10 @@ impl Company {
 
 fn main() {
     let company_vec = vec![
-        Company::new("Abc", "Adam"),
+        Company::new("ABC", "Adam"),
         Company::new("Barzin Pardaz", "Javad"),
         Company::new("Another sample", ""),
-        Company::new("Alphabet", "Sandra"),
+        Company::new("Google", "Sandra"),
     ];
 
     print!("{:?}", Company::get_ceo(&company_vec[0]));

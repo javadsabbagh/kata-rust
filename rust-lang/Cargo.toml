@@ -5,7 +5,6 @@ publish = false
 version = "0.1.0"
 license = "MIT"
 
-
 [[bin]]
 name = "filtermap"
 path = "src/filter-map/main.rs"
@@ -63,5 +62,5 @@ name = "strings"
 path = "src/strings/main.rs"
 
 [[bin]]
-name = "reqwest"
-path = "src/reqwest/main.rs"
+name = "std-output"
+path = "src/std-output/main.rs"
