@@ -62,5 +62,9 @@ name = "strings"
 path = "src/strings/main.rs"
 
 [[bin]]
-name = "std-output"
-path = "src/std-output/main.rs"
+name = "stdout"
+path = "src/stdout/main.rs"
+
+[[bin]]
+name = "stdin"
+path = "src/stdin/main.rs"
