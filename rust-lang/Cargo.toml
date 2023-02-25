@@ -73,3 +73,7 @@ path = "src/stdin/main.rs"
 name = "declarative-macros"
 path = "src/declarative-macros/main.rs"
 
+[[bin]]
+name = "procedural-macros"
+path = "src/procedural-macros/main.rs"
+
