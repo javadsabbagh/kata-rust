@@ -68,3 +68,8 @@ path = "src/stdout/main.rs"
 [[bin]]
 name = "stdin"
 path = "src/stdin/main.rs"
+
+[[bin]]
+name = "declarative-macros"
+path = "src/declarative-macros/main.rs"
+
