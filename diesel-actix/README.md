@@ -45,3 +45,8 @@ Here is a brief:
 > user: -U yugabyte
 > -e, --echo-queries
 > -d dbname, --dbname=dbname
+
+
+## Sample databases
+There are several (five in this case sample datasets, ready to install and use);
+[https://docs.yugabyte.com/preview/sample-data/]()
