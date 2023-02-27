@@ -4,7 +4,7 @@
 Yugabytedb is a Postgres compliant RDBMS with distributed sql nature. In this tutorial I'm going to use 
 yugabytedb instead of postgres. 
 
-## Running DB Server on docker
+## 1. Running DB Server on docker
 ```bash
 docker run -d --name yugabyte \
           -p7000:7000 -p9000:9000 -p5433:5433 -p9042:9042 \
@@ -15,7 +15,7 @@ docker run -d --name yugabyte \
 
 This runs yugabytedb with persistent docker volume for storing data.
 
-## Running ysqlsh client
+## 2. Running ysqlsh client
 
 Using docker:
 ```bash
@@ -39,14 +39,15 @@ for more info:
 [https://docs.yugabyte.com/preview/admin/ysqlsh/]()
 
 Here is a brief:
+host: -h 127.0.0.1
+port: -p 5433
+user: -U yugabyte
+-e, --echo-queries
+-d dbname, --dbname=dbname
 
-> host: -h 127.0.0.1
-> port: -p 5433
-> user: -U yugabyte
-> -e, --echo-queries
-> -d dbname, --dbname=dbname
 
-
-## Sample databases
+## 3. Sample databases
 There are several (five in this case sample datasets, ready to install and use);
 [https://docs.yugabyte.com/preview/sample-data/]()
+
+Of course, diesel is really good at creating database and tables based on your entity models.
