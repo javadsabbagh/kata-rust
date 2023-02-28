@@ -1,0 +1,18 @@
+
+syntax = "proto3";
+
+package vms;
+
+service Operations {
+  rpc startup(StartRequest) returns (StartResponse);
+}
+
+
+message StartRequest {
+  string ipAddress = 1;
+  uint32 timeout = 2;
+}
+
+message StartResponse {
+  bool successful = 1;
+}

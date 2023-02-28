@@ -2,7 +2,7 @@
 # will have compiled files and executables
 #/serde-json/target/
 #/rust-lang/target/
-/*/target/
+/**/target/
 
 
 # Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
