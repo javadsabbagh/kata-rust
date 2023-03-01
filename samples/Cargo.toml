@@ -1,0 +1,20 @@
+[workspace]
+members = [
+    "actix-examples",
+    "actix-sqlx",
+    "async-tokio",
+    "bearer-token",
+    "benchmark",
+    "clap-examples",
+    "diesel-actix",
+    "grpc-tonic",
+    "http-client",
+    "markdown-renderer",
+    "password-hashing",
+    "rayon-examples",
+    "serde-json",
+    "testing",
+    "warp-examples",
+    "web-crawler",
+    "xml-format"
+]
