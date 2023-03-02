@@ -2,3 +2,7 @@
 name = "tcp-network"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "tcp-server"
+path = "src/tcp_server.rs"
