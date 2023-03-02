@@ -16,5 +16,6 @@ members = [
     "testing",
     "warp-examples",
     "web-crawler",
-    "xml-format"
+    "xml-format",
+    "tcp-network"
 ]
