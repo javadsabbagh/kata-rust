@@ -17,5 +17,6 @@ members = [
     "warp-examples",
     "web-crawler",
     "xml-format",
-    "tcp-network"
+    "tcp-network",
+    "udp-network"
 ]
