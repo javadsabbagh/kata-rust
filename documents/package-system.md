@@ -5,7 +5,6 @@ There are two kinds of packages in Rust:
  - Library
  - Application
 
-
 ### Library
 Each crate can have at most one library, but several binary applications.
 
@@ -29,3 +28,14 @@ path = "src/app-path/app-name.rs"
 ```
 
 There can be several of [[bin]] sections in project config file.
+
+
+
+### Terminology
+- create: A crate is in source or binary (artifact) form.
+- package: Is a container of project crates
+- library: A library crate with no executable programs. Used for code sharing in binary format.
+- application: Binary and executable program.
+- module: Used for organizing code into different namespaces, guarantees scope and privacy of code.
+
+Confusion with programming languages, e.g. Java
