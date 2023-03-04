@@ -77,3 +77,7 @@ path = "src/declarative-macros/main.rs"
 name = "procedural-macros"
 path = "src/procedural-macros/main.rs"
 
+[[bin]]
+name = "module-system"
+path = "src/module-system/main.rs"
+
