@@ -29,13 +29,15 @@ path = "src/app-path/app-name.rs"
 
 There can be several of [[bin]] sections in project config file.
 
-
-
 ### Terminology
-- create: A crate is in source or binary (artifact) form.
-- package: Is a container of project crates
+- package: Is a container of project crates which contains project config file needed to building and running.
+- crate: A crate is in source or binary (artifact) form. Source crate contains source files of a project.
 - library: A library crate with no executable programs. Used for code sharing in binary format.
 - application: Binary and executable program.
 - module: Used for organizing code into different namespaces, guarantees scope and privacy of code.
 
-Confusion with programming languages, e.g. Java
+Confusion other with programming languages, e.g. Java:
+- Package: Similar to **maven artifact** in source or binary form. In java pom.xml is similar to Cargo.toml file.
+- Crate: Comparing to Java, a crate is equivalent to **maven modules**, in source java files or compiled binary, i.e. JAR files. 
+- Library/Application: In java there is no difference between library and executable source/binary files.
+- Modules: In java they are called **packages** with strict directory name conventions!
