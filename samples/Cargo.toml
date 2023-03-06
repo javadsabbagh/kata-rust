@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "actix-examples",
+    "actix-example",
     "actix-sqlx",
     "async-tokio",
     "bearer-token",
