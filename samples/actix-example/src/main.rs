@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{App, get, HttpResponse, HttpServer, Responder, web};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -18,14 +18,17 @@ struct ServerInfo {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ResourceInfo {
-    cpu: u8,    /* number of cpu cores */
-    memory: u16, /* memory size in megabytes */
-    disk: u64  /* disk size in megabytes */
+    /* number of cpu cores */
+    cpu: u8,
+    /* memory size in megabytes */
+    memory: u16,
+    /* disk size in megabytes */
+    disk: u64,
 }
 
 #[get("/get-all")]
-async fn get_all() -> ServerList {
-    ServerList {
+async fn get_all() -> impl Responder {
+    let list = ServerList {
         serverInfos: vec![ServerInfo {
             id: String::from("a7957610-bc59-11ed-8f6c-88a4c2e3226d"),
             ip: String::from("185.121.123.90"),
@@ -35,7 +38,9 @@ async fn get_all() -> ServerList {
                 disk: 100_000_u64,
             },
         }],
-    }
+    };
+
+    web::Json(list)
 }
 
 #[actix_web::main]
