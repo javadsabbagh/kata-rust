@@ -3,20 +3,22 @@
 use actix_web::{App, get, HttpResponse, HttpServer, Responder, web};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize)]
 struct ServerList {
-    serverInfos: Vec<ServerInfo>,
+    servers: Vec<ServerInfo>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct ServerInfo {
     id: String,
     /* UUID of the server, TODO use UUID*/
     ip: String,
-    resourceInfo: ResourceInfo,
+    /* Note:Rust fields are snake_case by convention, however json convention in naming fields is camelCase! */
+    resource_info: ResourceInfo,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize)]
 struct ResourceInfo {
     /* number of cpu cores */
     cpu: u8,
@@ -29,10 +31,10 @@ struct ResourceInfo {
 #[get("/get-all")]
 async fn get_all() -> impl Responder {
     let list = ServerList {
-        serverInfos: vec![ServerInfo {
+        servers: vec![ServerInfo {
             id: String::from("a7957610-bc59-11ed-8f6c-88a4c2e3226d"),
             ip: String::from("185.121.123.90"),
-            resourceInfo: ResourceInfo {
+            resource_info: ResourceInfo {
                 cpu: 4_u8,
                 memory: 3_000_u16,
                 disk: 100_000_u64,
