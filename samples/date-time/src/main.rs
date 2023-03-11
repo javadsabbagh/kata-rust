@@ -1,4 +1,6 @@
 
+use chrono::DateTime;
+use chrono::TimeZone;
 use chrono::Utc;
 use chrono::Local;
 use chrono::Duration;
@@ -15,5 +17,18 @@ fn main() {
     println!("Future time is: {}", future_time);
 
     // formatting
-    println!("Current time is: {}", local_time.format("%y-%m-%d"));
+    println!("Current time is: {}", local_time.format("%y-%m-%d %H-%M-%S"));
+
+    // parsing
+    // 1- directly from string: it returns Result<DateTime, Err>
+    println!("Unix epoch time is: {:?}", "1970-01-01T00:00:00Z".parse::<DateTime<Utc>>());
+    println!("Unix epoch time in local time is: {:?}", "1970-01-01T00:00:00Z".parse::<DateTime<Local>>());
+    //println!("Unix epoch time in local time is: {:?}", "1970-01-01T00:00:00Z".parse::<DateTime<Local>>());  // Err(ParseError(NotEnough))
+
+
+    // 2- By calling associate function or method
+    dbg!(DateTime::parse_from_str("1970/01/01", "%y/%m/%d"));
+
+    // dbg!(Utc.from_utc_datetime("1970-01-01"));
+
 }
