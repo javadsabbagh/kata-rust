@@ -10,5 +10,6 @@ fn main() {
     println!("UTC time is: {}", utc_time);
     println!("Local time is: {}", local_time);
 
-    Duration::minutes(1);
+    let future_time = local_time + Duration::minutes(10);
+    println!("Future time is: {}", future_time);
 }
