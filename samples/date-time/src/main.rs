@@ -29,6 +29,6 @@ fn main() {
     // 2- By calling associate function or method
     dbg!(DateTime::parse_from_str("1970/01/01", "%y/%m/%d"));
 
-    // dbg!(Utc.from_utc_datetime("1970-01-01"));
+    //dbg!(Utc.from_utc_datetime("1970-01-01"));
 
 }
