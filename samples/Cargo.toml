@@ -20,5 +20,6 @@ members = [
     "xml-format",
     "tcp-network",
     "udp-network",
-    "date-time"
+    "date-time",
+    "regex-example"
 ]
