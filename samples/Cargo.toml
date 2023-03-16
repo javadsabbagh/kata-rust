@@ -21,5 +21,6 @@ members = [
     "tcp-network",
     "udp-network",
     "date-time",
-    "regex-example"
+    "regex-example",
+    "process-example"
 ]
