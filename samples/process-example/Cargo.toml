@@ -3,7 +3,8 @@ name = "process-example"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "run-command"
-path = "src/bin/run_command.rs"
+### No need to define process here if program is located in src/bin.
+#[[bin]]
+#name = "run-command"
+#path = "src/bin/run_command.rs"
 
