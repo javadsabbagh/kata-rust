@@ -3,6 +3,8 @@ name = "log-example"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+# This is a facade to logging, much like log4j in Java world
+log = "0.4.17"
+# This is real implementation of logging
+env_logger = "0.10.0"
