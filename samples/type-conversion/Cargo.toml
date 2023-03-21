@@ -5,3 +5,7 @@ edition = "2021"
 authors = ["Javad Sabbagh javad.sabbaq@gmail.com"]
 
 [dependencies]
+
+
+[[bin]]
+path = "src/bin/from_into.rs"
