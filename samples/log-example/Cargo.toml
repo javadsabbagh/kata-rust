@@ -7,6 +7,6 @@ edition = "2021"
 # This is a facade to logging, much like log4j in Java world
 log = "0.4.17"
 # This is real implementation of logging
-#env_logger = "0.10.0"
+env_logger = "0.10.0"
 # Another implementation of logging based on Log4j
 log4rs = "1.2.0"
