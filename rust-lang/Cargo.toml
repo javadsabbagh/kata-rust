@@ -5,6 +5,9 @@ publish = false
 version = "0.1.0"
 license = "MIT"
 
+authors = ["Javad Sabbagh <javad.sabbaq@gmail.com>"]
+
+
 [[bin]]
 name = "filtermap"
 path = "src/filter-map/main.rs"
@@ -81,3 +84,6 @@ path = "src/procedural-macros/main.rs"
 name = "module-system"
 path = "src/module-system/main.rs"
 
+[[bin]]
+name = "from-into-example"
+path = "src/from-into/main.rs"
