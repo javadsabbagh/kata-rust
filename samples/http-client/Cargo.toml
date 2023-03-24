@@ -1,13 +1,26 @@
+
 [package]
 name = "http-client"
 edition = "2021"
 publish = false
 version = "0.1.0"
 license = "MIT"
+authors = ["Javad Sabbagh <javad.sabbaq@gmail.com>"]
+
 
 [dependencies]
-reqwest="0.11.13"
+# For JSON serialization/deserialization we need to enable `json` feature.
+#reqwest= {version = "0.11.15", default-features = false, features = ["json", "rustls-tls"]}
+# For blocking feature, its feature must be enabled explicitly!
+reqwest = { version = "0.11", features = ["blocking", "json"] }
+
+# Note: reqwest is non-blocking by default and need tokio (or equivalent) as asynchronous engine for running in non-blocking environment.
+tokio = { version = "1", features = ["full"] }
 
 [[bin]]
-name = "http-client"
-path = "src/main.rs"
+name = "simple-blocking"
+path = "src/bin/simple_blocking.rs"
+
+[[bin]]
+name = "simple-non-blocking"
+path = "src/bin/simple_non_blocking.rs"
