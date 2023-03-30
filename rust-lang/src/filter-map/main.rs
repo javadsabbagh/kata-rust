@@ -28,8 +28,7 @@ fn main() {
     let company_vec = vec![
         Company::new("ABC", "Adam"),
         Company::new("Barzin Pardaz", "Javad"),
-        Company::new("Another sample", ""),
-        Company::new("Google", "Sandra"),
+        Company::new("Another sample", "Anybody"),
     ];
 
     print!("{:?}", Company::get_ceo(&company_vec[0]));
