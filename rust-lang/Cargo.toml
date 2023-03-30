@@ -87,3 +87,7 @@ path = "src/module-system/main.rs"
 [[bin]]
 name = "from-into-example"
 path = "src/from-into/main.rs"
+
+[[bin]]
+name = "dynamic-dispatch"
+path = "src/dynamic-dispatch/main.rs"
