@@ -11,10 +11,10 @@ authors = ["Javad Sabbagh <javad.sabbaq@gmail.com>"]
 [dependencies]
 # For JSON serialization/deserialization we need to enable `json` feature.
 #reqwest= {version = "0.11.15", default-features = false, features = ["json", "rustls-tls"]}
-# For blocking feature, its feature must be enabled explicitly!
+# For blocking feature, this feature must be enabled explicitly!
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 
-# Note: reqwest is non-blocking by default and need tokio (or equivalent) as asynchronous engine for running in non-blocking environment.
+# Note: reqwest is non-blocking by default and needs tokio (or equivalent) as asynchronous engine for running in a non-blocking environment.
 tokio = { version = "1", features = ["full"] }
 
 [[bin]]

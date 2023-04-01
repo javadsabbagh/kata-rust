@@ -11,7 +11,7 @@ For blocking service calls enable `blocking` feature in Cargo.toml, then use `re
 
 ### TLS
 For using SSL http protected resources, enable `rustls-tls` feature. `rust-tls` is a pure rust-native implementation of TLS, instead
-of using OpenSSL (implemented in C) in rust projects.
+of using default, which is based on OpenSSL and implemented in C.
 
 ### Library Tips
 1. For blocking usage after every method call use `?` operator to unwrap the `Result`:
@@ -39,7 +39,7 @@ Do this:
         .await?;
 ```
 
-Don't do this:
+Instead of this:
 ```rust
     let resp: HashMap<String, String> = reqwest::get("https://httpbin.org/ip")
         .await?
