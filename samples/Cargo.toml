@@ -23,5 +23,6 @@ members = [
     "date-time",
     "regex-example",
     "process-example",
-    "log-example"
+    "log-example",
+    "thiserror-sample"
 ]
