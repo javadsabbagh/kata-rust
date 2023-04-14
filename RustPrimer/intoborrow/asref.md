@@ -1,23 +1,23 @@
-# AsRef 和 AsMut
+# AsRef and AsMut
 
-`std::convert` 下面，还有另外两个 Trait，`AsRef/AsMut`，它们功能是配合泛型，在执行引用操作的时候，进行自动类型转换。这能够使一些场景的代码实现得清晰漂亮，大家方便开发。
+Below `std::convert`, there are two other Traits, `AsRef/AsMut`, which function to cooperate with generics to perform automatic type conversion when performing reference operations. This can make the code of some scenes clear and beautiful, and it is convenient for everyone to develop.
 
 ## AsRef<T>
 
-`AsRef` 提供了一个方法 `.as_ref()`。
+`AsRef` provides a method `.as_ref()`.
 
-对于一个类型为 `T` 的对象 `foo`，如果 `T` 实现了 `AsRef<U>`，那么，`foo` 可执行 `.as_ref()` 操作，即 `foo.as_ref()`。操作的结果，我们得到了一个类型为 `&U` 的新引用。
+For an object `foo` of type `T`, if `T` implements `AsRef<U>`, then `foo` can execute the `.as_ref()` operation, namely `foo.as_ref()`. As a result of the operation, we get a new reference of type `&U`.
 
-注：
+Note:
 
-1. 与 `Into<T>` 不同的是，`AsRef<T>` 只是类型转换，`foo` 对象本身没有被消耗；
-2. `T: AsRef<U>` 中的 `T`，可以接受 资源拥有者（owned）类型，共享引用（shared referrence）类型 ，可变引用（mutable referrence）类型。
+1. Unlike `Into<T>`, `AsRef<T>` is just a type conversion, and the `foo` object itself is not consumed;
+2. `T` in `T: AsRef<U>` can accept resource owner (owned) type, shared reference (shared reference) type, mutable reference (mutable reference) type.
 
-下面举个简单的例子：
+Here is a simple example:
 
 ```rust
 fn is_hello<T: AsRef<str>>(s: T) {
-   assert_eq!("hello", s.as_ref());
+    assert_eq!("hello", s.as_ref());
 }
 
 let s = "hello";
@@ -27,13 +27,13 @@ let s = "hello".to_string();
 is_hello(s);
 ```
 
-因为 `String` 和 `&str` 都实现了 `AsRef<str>`。
+Because both `String` and `&str` implement `AsRef<str>`.
 
 
 ## AsMut<T>
 
-`AsMut<T>` 提供了一个方法 `.as_mut()`。它是 `AsRef<T>` 的可变（mutable）引用版本。
+`AsMut<T>` provides a method `.as_mut()`. It is the mutable reference version of `AsRef<T>`.
 
-对于一个类型为 `T` 的对象 `foo`，如果 `T` 实现了 `AsMut<U>`，那么，`foo` 可执行 `.as_mut()` 操作，即 `foo.as_mut()`。操作的结果，我们得到了一个类型为 `&mut U` 的可变（mutable）引用。
+For an object `foo` of type `T`, if `T` implements `AsMut<U>`, then `foo` can execute the `.as_mut()` operation, namely `foo.as_mut()`. As a result of the operation, we get a mutable reference of type `&mut U`.
 
-注：在转换的过程中，`foo` 会被可变（mutable）借用。
+Note: During conversion, `foo` will be borrowed by mutable.

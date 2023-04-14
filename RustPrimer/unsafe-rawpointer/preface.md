@@ -1,3 +1,3 @@
-# Unsafe、原始指针
+# Unsafe, raw pointer
 
-本章开始讲解 Rust 中的 `Unsafe` 部分。
+This chapter begins with an introduction to the `Unsafe` part of Rust.

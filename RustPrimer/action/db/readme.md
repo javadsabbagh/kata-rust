@@ -1,15 +1,15 @@
-# rust数据库操作
+#rust database operation
 
-编程时，我们依赖数据库来存储相应的数据，很多编程语言都支持对数据库的操作，所以当然可以使用Rust操作数据库。
+When programming, we rely on the database to store the corresponding data. Many programming languages support the operation of the database, so of course we can use Rust to operate the database.
 
-不过在我自己操作时，发现很多问题，主要因为我不了解Rust在操作数据库时，应该注意的事情，从而浪费了很多的时间，在进行数据查询时。
-具体遇到的坑，我会做一些演示，从而让大家避免这些情况。
+However, when I operated it myself, I found many problems, mainly because I did not understand the things that Rust should pay attention to when operating the database, which wasted a lot of time when querying data.
+I will give some demonstrations about the specific pits I encountered, so that everyone can avoid these situations.
 
-首先使用Rust操作PostgreSQL,因为PostgreSQL是我最喜欢的数据库。
+First use Rust to manipulate PostgreSQL, because PostgreSQL is my favorite database.
 
-首先创建新项目 `cargo new db --bin`
+First create a new project `cargo new db --bin`
 
-在cargo.toml中添加 `postgres` 如下：
+Add `postgres` in cargo.toml as follows:
 
 
 ``` rust
@@ -23,7 +23,7 @@ postgres="*"
 ```
 
 
-当然我们还是进行最简单的操作，直接粘贴复制，[代码来源](https://github.com/sfackler/rust-postgres#overview)
+Of course, we still perform the simplest operation, directly paste and copy, [code source](https://github.com/sfackler/rust-postgres#overview)
 
 ``` rust
 
@@ -66,21 +66,21 @@ fn main() {
 
 ```
 
-这些简单的，当然不是我们想要的东西，我们想要的是能够进行一些分层，也就是
-基本的一些函数逻辑划分，而不是在一个main函数中，完成所有的一切。
+These simple, of course, are not what we want, what we want is to be able to do some layering, that is
+Some basic functions are logically divided, instead of doing everything in a main function.
 
-##创建lib.rs文件
+## Create lib.rs file
 
-从上到下来看文件：
+View the file from top to bottom:
 
-1. 首先导入postgres的各种库
-2. 创建一个Person 的struct，按照需求的字段和类型。
-3. 创建一个连接函数，返回连接对象。
-4. 创建一个插入函数，用来插入数据
-5. 创建一个查询函数，用来查询数据
-6. 创建一个查询函数，用来查询所有的数据。
+1. First import various libraries of postgres
+2. Create a Person struct, according to the required fields and types.
+3. Create a connection function that returns a connection object.
+4. Create an insert function to insert data
+5. Create a query function to query data
+6. Create a query function to query all data.
 
-当然这些函数都是有一定的功能局限性。
+Of course, these functions have certain functional limitations.
 
 ``` rust
 
@@ -143,11 +143,11 @@ pub fn query_all(conn: &Connection,query: &str){
 
 ```
 
-然后在main.rs 中调用相应的函数代码如下
-1. extern db ,引入db，也就是将项目本身引入
-2. use db 使用db，中的可以被引入的函数
-3. 定义Blog,由于个人使用blog表，是自己创建，所以如果报错说不存在表，需要你自己去创建
-4. 使用lib中定义的函数，进行最基本的一些操作
+Then call the corresponding function code in main.rs as follows
+1. extern db, import db, that is, import the project itself
+2. use db Use the functions that can be introduced in db
+3. Define the blog, since the personal blog table is created by yourself, so if an error is reported that the table does not exist, you need to create it yourself
+4. Use the functions defined in lib to perform some basic operations
 
 ``` rust
 extern crate postgres;
@@ -182,17 +182,17 @@ fn main() {
 
 ```
 
-自己遇到的坑
+the pit I encountered
 
-- 创建连接函数时，连接必须有一个返回值，所以必须指定返回值的类型，
-对于一个写Python的人而言，我觉得是痛苦的，我想按照官方的写法match
-一下，发现可能产生多个返回值。在编译时直接无法通过编译，所以最终
-使用了unwrap,解决问题，不过我还是没有学会，函数多值返回时我如何
-定义返回值
+- When creating a connection function, the connection must have a return value, so the type of the return value must be specified,
+For a person who writes Python, I think it is painful, I want to match according to the official way of writing
+After a while, it is found that multiple return values may be generated. It directly fails to compile at compile time, so in the end
+I used unwrap to solve the problem, but I still haven't learned how to return a function with multiple values
+Define the return value
 
-- 在使用`&conn.query(query,&[]).unwrap()`时，我按照文档操作，文档说
-返回的是一个可迭代的数据，那也就是说，我可以使用for循环，将数据打印，
-但是发现怎么也不能实现：
+- I followed the documentation when using `&conn.query(query,&[]).unwrap()`, the documentation says
+What is returned is an iterable data, that is to say, I can use the for loop to print the data,
+But found that it can't be achieved:
 
 ``` rust
 
@@ -222,12 +222,11 @@ Could not compile `db`.
 
 ```
 
-然后去查看了关于postgres模块的所有函数，尝试了无数种办法，依旧没有解决。
+Then I checked all the functions of the postgres module, tried countless methods, and still couldn't solve it.
 
-可能自己眼高手低，如果从头再把Rust的相关教程看一下，可能很早就发现这个问题，
-也有可能是因为习惯了写Python，导致自己使用固有的思维来看待问题和钻牛角尖，才
-导致出现这样的问题，浪费很多的时间。
+Maybe my eyes are high and my hands are low. If I read the relevant tutorials of Rust from the beginning, I may find this problem very early.
+It may also be because I am used to writing Python, causing myself to use inherent thinking to look at problems and dig into the corners, so
+This leads to such problems and wastes a lot of time.
 
-- 改变思维，把自己当作一个全新的新手，既要利用已有的思想来学习新的语言，同样不要
-被自己很精通的语言，固化自己的思维。
-
+- Change your thinking and treat yourself as a brand new novice. It is necessary to use existing thinking to learn a new language, but also not
+The language that I am very proficient in solidifies my thinking.

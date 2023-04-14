@@ -1,18 +1,18 @@
-# 裸指针
+# raw pointer
 
-**Rust**通过限制智能指针的行为保障了编译时安全，不过仍需要对指针做一些额外的操作。
+**Rust** ensures compile-time safety by restricting the behavior of smart pointers, but still requires some additional operations on pointers.
 
-`*const T`和`*mut T`在**Rust**中被称为“裸指针”。它允许别名，允许用来写共享所有权的类型，甚至是内存安全的共享内存类型如：`Rc<T>`和`Arc<T>`，但是赋予你更多权利的同时意味着你需要担当更多的责任：
+`*const T` and `*mut T` are called "naked pointers" in **Rust**. It allows aliasing, allows writing to types with shared ownership, and even memory-safe shared memory types such as `Rc<T>` and `Arc<T>`, but giving you more power also means that you need to be responsible Additional responsibilities:
 
-* 不能保证指向有效的内存，甚至不能保证是非空的
-* 没有任何自动清除，所以需要手动管理资源
-* 是普通旧式类型，也就是说，它不移动所有权，因此**Rust**编译器不能保证不出像释放后使用这种bug
-* 缺少任何形式的生命周期，不像`&`，因此编译器不能判断出悬垂指针
-* 除了不允许直接通过`*const T`改变外，没有别名或可变性的保障
+* is not guaranteed to point to valid memory, or even non-null
+* There is no automatic cleanup, so resources need to be managed manually
+* is a plain old type, i.e. it does not move ownership, so **Rust** compilers cannot guarantee against bugs like use-after-free
+* lacks any form of lifetime, unlike `&`, so the compiler cannot detect dangling pointers
+* There are no aliases or mutability guarantees, except that direct changes via `*const T` are not allowed
 
-## 使用
+## use
 
-创建一个裸指针：
+Create a raw pointer:
 
 ```rust
 let a = 1;
@@ -22,7 +22,7 @@ let mut x = 2;
 let y = &mut x as *mut i32;
 ```
 
-解引用需要在`unsafe`中进行：
+Dereferencing needs to be done in `unsafe`:
 
 ```rust
 let a = 1;
@@ -31,7 +31,7 @@ let c = unsafe { *b };
 println!("{}", c);
 ```
 
-`Box<T>`的`into_raw`：
+`into_raw` for `Box<T>`:
 
 ```rust
 let a: Box<i32> = Box::new(10);
@@ -41,13 +41,14 @@ let b: *const i32 = &*a;
 let c: *const i32 = Box::into_raw(a);
 ```
 
-如上说所，引用和裸指针之间可以隐式转换，但隐式转换后再解引用需要使用`unsafe`：
+As mentioned above, implicit conversions can be made between references and raw pointers, 
+but dereferencing after implicit conversions requires the use of `unsafe`:
 
 ```rust
-// 显式
+// explicit
 let a = 1;
-let b: *const i32 = &a as *const i32; //或者let b = &a as *const i32；
-// 隐式
+let b: *const i32 = &a as *const i32; // or let b = &a as *const i32;
+// Implicit
 let c: *const i32 = &a;
 unsafe {
 	println!("{}", *c);

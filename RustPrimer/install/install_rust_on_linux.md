@@ -1,50 +1,50 @@
 # Rust for Linux
 
-Rust 支持主流的操作系统，Linux,Mac和 windows。
+Rust supports mainstream operating systems, Linux, Mac and windows.
 
-Rust 为Linux用户提供了两种安装方式：
+Rust provides two installation methods for Linux users:
 
-### 1、直接下载安装包：
+### 1. Download the installation package directly:
 
-直接下载安装包的话需要检查一下你当前操作系统是64位还是32位，分别下载对应的安装包。
+If you download the installation package directly, you need to check whether your current operating system is 64-bit or 32-bit, and download the corresponding installation package respectively.
 
-查看操作系统请在终端执行如下命令:
+To view the operating system, please execute the following command in the terminal:
 
 `uname -a`
 
-结果如下图所示：
+The result is shown in the figure below:
 
 ![check system info](../images/install-on-linux-check-system.png)
 
-如上图所示，如果是 **x86_64** 则证明是64位系统，需要[下载](https://static.rust-lang.org/dist/rust-1.5.0-x86_64-unknown-linux-gnu.tar.gz)64位安装包；
+As shown in the figure above, if it is **x86_64**, it proves to be a 64-bit system, which requires [download](https://static.rust-lang.org/dist/rust-1.5.0-x86_64-unknown-linux- gnu.tar.gz) 64-bit installation package;
 
-如果是**x86-32**则需要[下载](https://static.rust-lang.org/dist/rust-1.5.0-i686-unknown-linux-gnu.tar.gz)32位安装包
+If it is **x86-32**, you need [download](https://static.rust-lang.org/dist/rust-1.5.0-i686-unknown-linux-gnu.tar.gz) 32-bit installation Bag
 
-下载安装包后解压运行即可。*在书写本章时，最新的稳定版本为1.5.0，*
- 解压：`tar -zxvf rust-1.5.0-x86_64-unknown-linux-gnu.tar.gz`
+After downloading the installation package, unzip and run it. *At the time of writing this chapter, the latest stable version is 1.5.0,*
+  Decompression: `tar -zxvf rust-1.5.0-x86_64-unknown-linux-gnu.tar.gz`
 
- 解压完进入对应的目录：`cd rust-1.5.0-x86_64-unknown-linux-gnu`
- 执行 `./install.sh`
+  Enter the corresponding directory after decompression: `cd rust-1.5.0-x86_64-unknown-linux-gnu`
+  Execute `./install.sh`
 
-上述命令执行完成后会打印： **Rust is ready to roll.** 表明安装成功
+After the above command is executed, it will print: **Rust is ready to roll.** indicating that the installation is successful
 
-此时执行: `rustc --version`, 你会看到对应的 rust 版本信息,如下图所示：
+Execute at this time: `rustc --version`, you will see the corresponding rust version information, as shown in the following figure:
 
 ![Success and show rust version info](../images/install-on-linux-rust-success.png)
 
-### 2、命令行一键安装：
-Rust 提供简单的一键安装，命令如下：
+### 2. One-click installation from the command line:
+Rust provides a simple one-click installation, the command is as follows:
 
 `curl -sSf https://static.rust-lang.org/rustup.sh | sh`
 
-打开终端执行如上命令即可。
+Open the terminal and execute the above command.
 
 
-**注意**
+**Notice**
 
-除了稳定版之外，Rust 还提供了 Beta 和 Nightly 版本，下载地址如下：
+In addition to the stable version, Rust also provides Beta and Nightly versions, the download addresses are as follows:
 https://www.rust-lang.org/zh-CN/other-installers.html
 
-如果你不想安装 Rust 在你的电脑上，但是你还是像尝试一下 rust，那么这里有一个在线的环境：http://play.rust-lang.org/
+If you don't want to install Rust on your computer, but you still want to try rust, there is an online environment here: http://play.rust-lang.org/
 
-中国科学技术大学镜像源包含 [rust-static](http://mirrors.ustc.edu.cn/rust-static/)，梯子暂时出问题的同学可以尝试从这里下载编译器；除此之外。还有 Crates 源，详见[这里的说明](https://servers.ustclug.org/2016/01/mirrors-add-rust-crates/)。
+The mirror source of the University of Science and Technology of China includes [rust-static](http://mirrors.ustc.edu.cn/rust-static/), students who have temporary problems with the ladder can try to download the compiler from here; in addition. There is also Crates source, see [instructions here](https://servers.ustclug.org/2016/01/mirrors-add-rust-crates/) for details.

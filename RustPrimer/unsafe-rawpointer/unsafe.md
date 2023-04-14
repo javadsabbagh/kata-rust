@@ -1,14 +1,14 @@
 # unsafe
 
-**Rust**的内存安全依赖于强大的类型系统和编译时检测，不过它并不能适应所有的场景。
-首先，所有的编程语言都需要跟外部的“不安全”接口打交道，调用外部库等，在“安全”的Rust下是无法实现的; 其次，“安全”的Rust无法高效表示复杂的数据结构，特别是数据结构内部有各种指针互相引用的时候；再次，
-事实上还存在着一些操作，这些操作是安全的，但不能通过编译器的验证。
+**Rust** The memory safety of C++ relies on a strong type system and compile-time checking, but it is not suitable for all scenarios.
+First of all, all programming languages need to deal with external "unsafe" interfaces, call external libraries, etc., which cannot be realized under "safe" Rust; secondly, "safe" Rust cannot efficiently represent complex data structures, Especially when there are various pointers referencing each other inside the data structure; again,
+In fact, there are some operations that are safe but cannot be verified by the compiler.
 
-因此在安全的Rust背后，还需要`unsafe`的支持。
+Therefore, behind the safe Rust, the support of `unsafe` is also needed.
 
-`unsafe`块能允许程序员做的额外事情有：
+Additional things the `unsafe` block allows the programmer to do are:
 
-* 解引用一个裸指针`*const T`和`*mut T`
+* Dereference a raw pointer `*const T` and `*mut T`
  
 ```rust
 let x = 5;
@@ -17,7 +17,7 @@ let points_at = unsafe { *raw };
 println!("raw points at {}", points_at);
 ```
 
-* 读写一个可变的静态变量`static mut`
+* Read and write a mutable static variable `static mut`
 
 ```rust
 static mut N: i32 = 5;
@@ -27,11 +27,11 @@ unsafe {
 }
 ```
 
-* 调用一个不安全函数
+* call an unsafe function
 
 ```rust
 unsafe fn foo() {
-	//实现
+	// implement
 }
 fn main() {
 	unsafe {
@@ -40,25 +40,25 @@ fn main() {
 }
 ```
 
-## 使用`unsafe`
+## use `unsafe`
 
-`unsafe fn`不安全函数标示如果调用它可能会违反**Rust**的内存安全语意：
+An `unsafe fn` unsafe function flags that calling it may violate **Rust**'s memory safety semantics:
 
 ```rust
 unsafe fn danger_will_robinson() {
-    // 实现
+    // implement
 }
 ```
 
-`unsafe block`不安全块可以在其中调用不安全的代码：
+`unsafe block` An unsafe block can call unsafe code within it:
 
 ```rust
 unsafe {
-    // 实现
+    // implement
 }
 ```
 
-`unsafe trait`不安全trait及它们的实现，所有实现它们的具体类型有可能是不安全的:
+`unsafe trait`Unsafe traits and their implementations, all concrete types that implement them may be unsafe:
 
 ```rust
 unsafe trait Scary { }
@@ -67,31 +67,31 @@ unsafe impl Scary for i32 {}
 
 ## safe != no bug
 
-对于**Rust**来说禁止你做任何不安全的事是它的本职，不过有些是编写代码时的`bug`，它们并不属于“内存安全”的范畴：
+For **Rust**, it is its job to prohibit you from doing any unsafe things, but some are `bugs` when writing code, and they do not belong to the category of "memory safety":
 
-* 死锁
-* 内存或其他资源溢出
-* 退出未调用析构函数
-* 整型溢出
+* deadlock
+* Out of memory or other resources
+* exit uncalled destructor
+* integer overflow
 
-使用`unsafe`时需要注意一些特殊情形：
+There are some special cases to be aware of when using `unsafe`:
 
-* 数据竞争
-* 解引用空裸指针和悬垂裸指针
-* 读取未初始化的内存
-* 使用裸指针打破指针重叠规则
-* `&mut T`和`&T`遵循LLVM范围的`noalias`模型，除了如果`&T`包含一个`UnsafeCell<U>`的话。不安全代码必须不能违反这些重叠（aliasing）保证
-* 不使用`UnsafeCell<U>`改变一个不可变值/引用
-* 通过编译器固有功能调用未定义行为：
-	* 使用`std::ptr::offset`（offset功能）来索引超过对象边界的值，除了允许的末位超出一个字节
-	* 在重叠（overlapping）缓冲区上使用`std::ptr::copy_nonoverlapping_memory`（memcpy32/memcpy64功能）
-* 原生类型的无效值，即使是在私有字段/本地变量中：
-	* 空/悬垂引用或装箱
-	* `bool`中一个不是`false`（0）或`true`（1）的值
-	* `enum`中一个并不包含在类型定义中判别式
-	* `char`中一个代理字（surrogate）或超过char::MAX的值
-	* `str`中非UTF-8字节序列
-* 在外部代码中使用Rust或在Rust中使用外部语言
+* Data race
+* Dereference null and dangling raw pointers
+* read uninitialized memory
+* Use raw pointers to break pointer overlap rules
+* `&mut T` and `&T` follow the LLVM-wide `noalias` model, except if `&T` contains an `UnsafeCell<U>`. Unsafe code must not violate these aliasing guarantees
+* Do not use `UnsafeCell<U>` to change an immutable value/reference
+* Invocation of undefined behavior via compiler intrinsics:
+  * Use `std::ptr::offset` (offset function) to index values beyond the bounds of the object, except that the last bit is allowed to exceed one byte
+  * Use `std::ptr::copy_nonoverlapping_memory` on overlapping buffers (memcpy32/memcpy64 function)
+* Invalid values for primitive types, even in private fields/local variables:
+  * Empty/dangling reference or boxed
+  * A value in `bool` that is not `false` (0) or `true` (1)
+  * one of the `enum` does not contain a discriminant in the type definition
+  * A surrogate in `char` or a value exceeding char::MAX
+  * non-UTF-8 byte sequence in `str`
+* Using Rust in external code or using external languages in Rust
 
 
 

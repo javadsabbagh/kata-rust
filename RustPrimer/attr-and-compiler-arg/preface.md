@@ -1,3 +1,3 @@
-# 属性和编译器参数
+# Attributes and compiler arguments
 
-本章将介绍Rust语言中的属性（Attribute）和编译器参数（Compiler Options）。
+This chapter will introduce the attributes (Attribute) and compiler parameters (Compiler Options) in the Rust language.

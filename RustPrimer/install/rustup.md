@@ -1,31 +1,36 @@
-# Rust 版本管理工具: rustup
+# Rust bǎnběn guǎnlǐ gōngjù: Rustup rustup shì rust guānfāng de bǎnběn guǎnlǐ gōngjù. Yīng dàng zuòwéi ānzhuāng Rust de shǒuxuǎn. Xiàngmù zhǔyè shì: <Https://Github.Com/rust-lang-nursery/rustup.Rs> ## Features * guǎnlǐ ānzhuāng duō gè guānfāng bǎnběn de Rust èrjìnzhì chéngxù. * Pèizhì jīyú mùlù de Rust gōngjù liàn. * Ānzhuāng hé gēngxīn láizì Rust de fǎ bù tōngdào: Nightly, beta hé stable. * Jiēshōu láizì fābù tōngdào gēngxīn de tōngzhī. * Cóng guānfāng ānzhuāng lìshǐ bǎnběn de nightly gōngjù liàn. * Tōngguò zhǐdìng stable bǎnběn lái ānzhuāng. * Ānzhuāng éwài de std yòng yú jiāochā biānyì. * Ānzhuāng zì dìngyì de gōngjù liàn. * Dúlì měi gè ānzhuāng de Cargo metadata. * Jiào yàn xiàzài de hash zhí. * Jiào yàn qiānmíng (rúguǒ GPG cúnzài). * Duàn diǎn xù chuán. * Zhǐ yīlài bash, curl hé chángjiàn unix gōngjù. * Zhīchí Linux, OS X, Windows(via MSYS2). ## Ānzhuāng ### Windows zài [rustup de zhǔyè](http://Www.Rustup.Rs) xiàzài bìng yùnxíng [rustup-init.Exe](https://Win.Rustup.Rs/), bìng ànzhào tíshì xuǎnzé xuǎnxiàng. ``` Welcome to Rust! This will download and install the official compiler for the Rust programming language, and its package manager, Cargo. It will add the cargo, rustc, rustup and other commands to Cargo's bin directory, located at: C:\Users\Liqueur Librazy\.Cargo\bin This path will then be added to your PATH environment variable by modifying the HKEY_CURRENT_USER/Environment/PATH registry key. You can uninstall at any time with rustup self uninstall and these changes will be reverted. Current installation options: Default host triple: X86_64-pc-windows-msvc default toolchain: Stable modify PATH variable: Yes 1) Proceed with installation (default) 2) Customize installation 3) Cancel installation ``` sān gè xuǎnxiàng fēnbié shì 1) kāishǐ ānzhuāng (mòrèn xuǎnxiàng) 2) zì dìngyì ānzhuāng 3) qǔxiāo qízhōng zì dìngyì ānzhuāng kěyǐ gēnggǎi mòrèn jiàgòu yǔ gōngjù liàn, shìfǒu tiānjiā PATH. Lìrú xiǎng yào xuǎnzé nightly gōngjù liàn kěyǐ jìnxíng yǐxià zì dìngyì
+Show more
+1,402 / 5,000
+Translation results
+Translation result
+# Rust version management tool: rustup
 
-rustup 是rust官方的版本管理工具。应当作为安装 Rust 的首选。
+rustup is the official version management tool for rust. Should be the first choice for installing Rust.
 
-项目主页是: <https://github.com/rust-lang-nursery/rustup.rs>
+The project home page is: <https://github.com/rust-lang-nursery/rustup.rs>
 
 ## Features
 
-* 管理安装多个官方版本的 Rust 二进制程序。
-* 配置基于目录的 Rust 工具链。
-* 安装和更新来自 Rust 的发布通道: nightly, beta 和 stable。
-* 接收来自发布通道更新的通知。
-* 从官方安装历史版本的 nightly 工具链。
-* 通过指定 stable 版本来安装。
-* 安装额外的 std 用于交叉编译。
-* 安装自定义的工具链。
-* 独立每个安装的 Cargo metadata。
-* 校验下载的 hash 值。
-* 校验签名 (如果 GPG 存在)。
-* 断点续传。
-* 只依赖 bash, curl 和常见 unix 工具。
-* 支持 Linux, OS X, Windows(via MSYS2)。
+* Manages installation of multiple official Rust binaries.
+* Configure a directory based Rust toolchain.
+* Install and update from Rust's release channels: nightly, beta and stable.
+* Receive notifications from release channel updates.
+* Install the historical version of the nightly toolchain from the official.
+* Install by specifying the stable version.
+* Install extra std for cross compilation.
+* Install a custom toolchain.
+* Cargo metadata per installation independently.
+* Check the downloaded hash value.
+* Verify signature (if GPG exists).
+* http.
+* Only depends on bash, curl and common unix tools.
+* Supports Linux, OS X, Windows (via MSYS2).
 
-## 安装
+## Install
 
 ### Windows
 
-在[rustup的主页](http://www.rustup.rs)下载并运行[rustup-init.exe](https://win.rustup.rs/),并按照提示选择选项。
+Download and run [rustup-init.exe](https://win.rustup.rs/) on [rustup's homepage](http://www.rustup.rs), and follow the prompts to select options.
 
 ```
 Welcome to Rust!
@@ -36,32 +41,32 @@ language, and its package manager, Cargo.
 It will add the cargo, rustc, rustup and other commands to Cargo's bin
 directory, located at:
 
-  C:\Users\Liqueur Librazy\.cargo\bin
+   C:\Users\Liqueur Librazy\.cargo\bin
 
 This path will then be added to your PATH environment variable by modifying the
 HKEY_CURRENT_USER/Environment/PATH registry key.
 
 You can uninstall at any time with rustup self uninstall and these changes will
-be reverted.
+be reversed.
 
 Current installation options:
 
-   default host triple: x86_64-pc-windows-msvc
-     default toolchain: stable
-  modify PATH variable: yes
+    default host triple: x86_64-pc-windows-msvc
+      default toolchain: stable
+   modify PATH variable: yes
 
 1) Proceed with installation (default)
 2) Customize installation
 3) Cancel installation
 ```
 
-三个选项分别是
+The three options are
 
-1) 开始安装（默认选项）
-2) 自定义安装
-3) 取消
+1) Start the installation (default option)
+2) Custom installation
+3) cancel
 
-其中自定义安装可以更改默认架构与工具链、是否添加 PATH。例如想要选择 nightly 工具链可以进行以下自定义
+Among them, the custom installation can change the default architecture and tool chain, and whether to add PATH. For example, if you want to choose the nightly toolchain, you can make the following customizations
 
 ```
 I'm going to ask you the value of each these installation options.
