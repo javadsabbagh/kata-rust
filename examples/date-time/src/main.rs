@@ -5,6 +5,13 @@ use chrono::Utc;
 use chrono::Local;
 use chrono::Duration;
 
+use std::time::Instant;
+
+fn distract_instants(in1: Instant, in2: Instant) {
+    let d = (in1 - in2);
+    println!("{:?}", d);
+}
+
 fn main() {
     let utc_time = Utc::now();
     let local_time = Local::now();

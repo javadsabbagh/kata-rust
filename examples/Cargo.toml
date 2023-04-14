@@ -5,7 +5,7 @@ members = [
     "async-tokio",
     "bearer-token",
     "benchmark",
-    "clap-examples",
+    "clap-example",
     "diesel-actix",
     "grpc-tonic",
     "http-client",
