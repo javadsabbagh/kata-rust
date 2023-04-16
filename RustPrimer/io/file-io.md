@@ -1,6 +1,6 @@
-# 文件输入与输出
+# file input and output
 
-文件 `std::fs::File` 本身实现了 `Read` 和 `Write` trait，所以文件的输入输出非常简单，只要得到一个 `File` 类型实例就可以调用读写接口进行文件输入与输出操作了。而要得到 `File` 就得让操作系统打开(open)或新建(create)一个文件。还是拿例子来说明
+The file `std::fs::File` itself implements the `Read` and `Write` traits, so the input and output of the file is very simple, as long as you get an instance of the `File` type, you can call the read and write interface to perform file input and output operations up. To get `File`, you have to let the operating system open (open) or create a new file (create). Or take an example to illustrate
 
 ```rust
 use std::io;
@@ -36,7 +36,7 @@ fn main() {
 }
 ```
 
-文件操作上面 Rust 与其它语言处理方式有些不一样，其它语言一般把读写选项作为函数参数传给 open 函数，而 Rust 则是在 option 上面调用 open 函数。 [`std::fs::OpenOptions`](http://doc.rust-lang.org/stable/std/fs/struct.OpenOptions.html) 是一个 builder，通过 new 函数创建后，可以链式调用设置打开文件的选项，是 read, write, append, truncate 还是 create 等，OpenOptions 构建完成后就可以再接着调用 open 方法了，看下下面的例子就明白了
+Rust’s handling of file operations is somewhat different from other languages. Other languages generally pass read and write options as function parameters to the open function, while Rust calls the open function on the option. [`std::fs::OpenOptions`](http://doc.rust-lang.org/stable/std/fs/struct.OpenOptions.html) is a builder, which can be chained after being created by the new function Set the option to open the file, whether it is read, write, append, truncate or create, etc. After the OpenOptions is built, you can then call the open method. See the following example to understand
 
 ```rust
 use std::fs::OpenOptions;
@@ -44,4 +44,4 @@ use std::fs::OpenOptions;
 let file = OpenOptions::new().write(true).truncate(true).open("foo.txt");
 ```
 
-Rust 这种用 builder pattern 来设置打开文件选项，相比于将选项以字符作为参数传给 open 函数的一个优点是可以让编译器保证检查选项合法性，不用等到运行时才发现手抖把 read-mode 的 `r` 写成了 `t`。
+Rust uses the builder pattern to set open file options. Compared with passing options to the open function with characters as parameters, one advantage is that it allows the compiler to ensure that the options are checked for validity, and you don’t have to wait until runtime to find out that the read- The `r` of mode is written as `t`.

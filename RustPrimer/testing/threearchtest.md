@@ -1,30 +1,30 @@
-# 测试
+# test
 
-> 程序测试是一种找到缺陷的有效方式，但是它对证明没有缺陷却无能为力。
+> Program testing is an effective way to find bugs, but it does nothing to prove the absence of bugs.
 >
->    Edsger W. Dijkstra, "The Humble Programmer" (1972)
+> Edsger W. Dijkstra, "The Humble Programmer" (1972)
 
-作为软件工程质量保障体系的重要一环，测试是应该引起我们充分注意并重视的事情。前面说过，Rust 语言的设计集成了最近十多年中总结出来的大量最佳工程实践，而对测试的原生集成也正体现了这一点。下面来看 Rust 是怎么设计测试特性的。
+As an important part of the software engineering quality assurance system, testing is something that should attract our full attention and attention. As mentioned earlier, the design of the Rust language integrates a large number of best engineering practices summed up in the past ten years, and the native integration of testing also reflects this. Let's see how Rust designs test features.
 
-Rust 的测试特性按精细度划分，分为 3 个层次：
+Rust's testing features are divided into three levels according to the granularity:
 
-1. 函数级；
-2. 模块级；
-3. 工程级；
+1. Function level;
+2. Module level;
+3. Engineering grade;
 
-另外，Rust 还支持对文档进行测试。
+Additionally, Rust supports testing against documentation.
 
-## 函数级测试
+## Function level tests
 
-在本章中，我们用创建一个库的实操来讲解测试的内容。我们先用 cargo 建立一个库工程：`adder`
+In this chapter, we use the practice of creating a library to explain the content of testing. We first use cargo to create a library project: `adder`
 
 ```
 $ cargo new adder
 $ cd adder
 ```
 
-### `#[test]` 标识
-打开 `src/lib.rs` 文件，可以看到如下代码
+### `#[test]` flag
+Open the `src/lib.rs` file, you can see the following code
 
 ```rust
 #[test]
@@ -33,9 +33,9 @@ fn it_works() {
 }
 ```
 
-Rust 中，只需要在一个函数的上面，加上 `#[test]` 就标明这是一个测试用的函数。
+In Rust, you only need to add `#[test]` above a function to indicate that it is a function for testing.
 
-有了这个属性之后，在使用 `cargo build` 编译时，就会忽略这些函数。使用 `cargo test` 可以运行这些函数。类似于如下效果：
+With this attribute, these functions are ignored when compiling with `cargo build`. These functions can be run with `cargo test`. Similar to the following effect:
 
 ```
 $ cargo test
@@ -54,13 +54,13 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured
 ```
 
-Rust 提供了两个宏来执行测试断言：
+Rust provides two macros to perform test assertions:
 
 ```rust
-assert!(expr)               测试表达式是否为 true 或 false
-assert_eq!(expr, expr)      测试两个表达式的结果是否相等
+assert!(expr) Tests whether an expression is true or false
+assert_eq!(expr, expr) Tests whether the results of two expressions are equal
 ```
-比如
+for example
 
 ```rust
 #[test]
@@ -69,7 +69,7 @@ fn it_works() {
 }
 ```
 
-运行 `cargo test`，你会得到类似下面这样的提示
+Run `cargo test`, you will get a prompt similar to the following
 
 ```
 $ cargo test
@@ -77,7 +77,7 @@ $ cargo test
      Running target/adder-91b3e234d4ed382a
 
 running 1 test
-test it_works ... FAILED
+test it_works... FAILED
 
 failures:
 
@@ -94,11 +94,11 @@ test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured
 thread '<main>' panicked at 'Some tests failed', /home/steve/src/rust/src/libtest/lib.rs:247
 ```
 
-### `#[should_panic]` 标识
+### `#[should_panic]` flag
 
-如果你的测试函数没完成，或没有更新，或是故意让它崩溃，但为了让测试能够顺利完成，我们主动可以给测试函数加上 `#[should_panic]` 标识，就不会让 `cargo test` 报错了。
+If your test function is not completed, or has not been updated, or intentionally crashes it, but in order to make the test complete smoothly, we can proactively add `#[should_panic]` to the test function, so that `cargo test will not be allowed ` An error was reported.
 
-如
+like
 
 ```rust
 #[test]
@@ -108,7 +108,7 @@ fn it_works() {
 }
 ```
 
-运行 `cargo test`，结果类似如下：
+Running `cargo test`, the result is similar to the following:
 
 ```
 $ cargo test
@@ -127,9 +127,9 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured
 ```
 
-### `#[ignore]` 标识
+### `#[ignore]` flag
 
-有时候，某个测试函数非常耗时，或暂时没更新，我们想不让它参与测试，但是又不想删除它，这时， `#[ignore]` 就派上用场了。
+Sometimes, a test function is very time-consuming, or has not been updated for a while, and we don't want it to participate in the test, but we don't want to delete it. At this time, `#[ignore]` comes in handy.
 
 ```rust
 #[test]
@@ -139,11 +139,11 @@ fn expensive_test() {
 }
 ```
 
-写上这个，运行 `cargo test` 的时候，就不会测试这个函数。
+By writing this, the function will not be tested when running `cargo test`.
 
-## 模块级测试
+## Module level tests
 
-有时，我们会组织一批测试用例，这时，模块化的组织结构就有助于建立结构性的测试体系。Rust 中，可以类似如下写法：
+Sometimes, we will organize a batch of test cases. At this time, a modular organizational structure helps to establish a structured test system. In Rust, it can be written like this:
 
 ```rust
 pub fn add_two(a: i32) -> i32 {
@@ -161,16 +161,16 @@ mod tests {
 }
 ```
 
-也即在 `mod` 的上面写上 `#[cfg(test)]` ，表明这个模块是个测试模块。一个测试模块中，可以包含若干测试函数，测试模块中还可以继续包含测试模块，即模块的嵌套。
+That is, write `#[cfg(test)]` on top of `mod`, indicating that this module is a test module. A test module can contain several test functions, and the test module can also continue to contain test modules, that is, the nesting of modules.
 
-如此，就形式了结构化的测试体系，甚是方便。
+In this way, a structured test system is formed, which is very convenient.
 
 
-## 工程级测试
+## Engineering level test
 
-函数级和模块级的测试，代码是与要测试的模块（编译单元）写在相同的文件中，一般做的是白盒测试。工程级的测试，一般做的就是黑盒集成测试了。
+For function-level and module-level tests, the code is written in the same file as the module (compilation unit) to be tested, and white-box testing is generally done. Engineering-level testing is generally done with black-box integration testing.
 
-我们看一个工程的目录，在这个目录下，有一个 `tests` 文件夹（没有的话，就手动建立）
+Let's look at the directory of a project. In this directory, there is a `tests` folder (if not, create it manually)
 
 ```
 Cargo.toml
@@ -180,7 +180,7 @@ src
 tests
 ```
 
-我们在 tests 目录下，建立一个文件 `testit.rs` ，名字随便取皆可。内容为：
+We create a file `testit.rs` in the tests directory, and the name can be whatever you want. The content is:
 
 ```rust
 extern crate adder;
@@ -191,11 +191,11 @@ fn it_works() {
 }
 ```
 
-这里，比如，我们 src 中，写了一个库，提供了一个 `add_two` 函数，现在进行集成测试。
+Here, for example, in our src, we have written a library that provides an `add_two` function, and now we are performing an integration test.
 
-首先，用 `extern crate` 的方式，引入这个库，由于是同一个项目，cargo 会自动找。引入后，就按模块的使用方法调用就行了，其它的测试标识与前面相同。
+First, use `extern crate` to import this library, since it is the same project, cargo will find it automatically. After importing, just call it according to the usage method of the module, and the other test identifiers are the same as before.
 
-写完后，运行一下 `cargo test`，提示类似如下：
+After writing, run `cargo test`, the prompt is similar to the following:
 
 ```
 $ cargo test
@@ -221,11 +221,11 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured
 ```
 
-## 文档级测试
+## Document-level tests
 
-Rust 对文档的哲学，是不要单独写文档，一是代码本身是文档，二是代码的注释就是文档。Rust 不但可以自动抽取代码中的文档，形成标准形式的文档集合，还可以对文档中的示例代码进行测试。
+Rust's philosophy on documentation is not to write documentation alone. One is that the code itself is the documentation, and the other is that the code comments are the documentation. Rust can not only automatically extract the documents in the code to form a standard form of document collection, but also test the sample code in the documents.
 
-比如，我们给上面库加点文档：
+For example, let's add some documentation to the above library:
 
 ``````rust
 //! The `adder` crate provides functions that add numbers to other numbers.
@@ -262,7 +262,7 @@ mod tests {
 ``````
 
 
-运行 `cargo test`，结果如下：
+Running `cargo test`, the results are as follows:
 
 ```
 $ cargo test
@@ -290,10 +290,10 @@ test _0 ... ok
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured
 ```
 
-看到了吧，多了些测试结果。
+See it, some more test results.
 
-## 结语
+## Conclusion
 
-我们可以看到，Rust 对测试，对文档，对文档中的示例代码测试，都有特性支持。从这些细节之处，可以看出 Rust 设计的周密性和严谨性。
+We can see that Rust has feature support for testing, documentation, and sample code testing in documentation. From these details, we can see the thoughtfulness and rigor of Rust's design.
 
-但是，光有好工具是不够的，工程的质量更重要的是写代码的人决定的。我们应该在 Rust 严谨之风的熏陶下，养成良好的编码和编写测试的习惯，掌握一定的分析方法，把质量要求贯彻到底。
+However, it is not enough to have good tools. The quality of the project is more determined by the person who writes the code. Under the influence of Rust's rigorous style, we should develop good coding and test writing habits, master certain analysis methods, and implement quality requirements to the end.

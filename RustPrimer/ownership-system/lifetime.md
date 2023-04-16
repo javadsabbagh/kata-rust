@@ -1,74 +1,74 @@
-# 生命周期（ Lifetime ）
+# Lifecycle ( Lifetime )
 
 
-下面是一个资源借用的例子：
+The following is an example of resource borrowing:
 
 ```rust
 fn main() {
-	let a = 100_i32;
+    let a = 100_i32;
 
-	{
-		let x = &a;
-	}  // x 作用域结束
-	println!("{}", x);
+    {
+        let x = &a;
+    } // x end of scope
+    println!("{}", x);
 }
 ```
 
-编译时，我们会看到一个严重的错误提示：
+When compiling, we will see a serious error message:
 
 > error: unresolved name `x`.
 
-错误的意思是“无法解析 `x` 标识符”，也就是找不到 `x` , 这是因为像很多编程语言一样，Rust中也存在作用域概念，当资源离开离开作用域后，资源的内存就会被释放回收，当借用/引用离开作用域后也会被销毁，所以 `x` 在离开自己的作用域后，无法在作用域之外访问。
+The error means "unable to parse `x` identifier", that is, `x` cannot be found, this is because like many programming languages, there is also a concept of scope in Rust, when the resource leaves the scope, the resource's The memory will be released and reclaimed, and it will be destroyed when the borrow/reference leaves the scope, so `x` cannot be accessed outside the scope after leaving its own scope.
 
 
-上面的涉及到几个概念：
+The above involves several concepts:
 
-* **Owner**: 资源的所有者 `a`
-* **Borrower**: 资源的借用者 `x`
-* **Scope**: 作用域，资源被借用/引用的有效期
+* **Owner**: The owner of the resource `a`
+* **Borrower**: The resource borrower `x`
+* **Scope**: Scope, the validity period of the resource being borrowed/referenced
 
 
-强调下，无论是资源的所有者还是资源的借用/引用，都存在在一个有效的存活时间或区间，这个时间区间称为**生命周期**， 也可以直接以**Scope作用域**去理解。
+To emphasize, whether it is the owner of the resource or the borrowing/reference of the resource, there is a valid survival time or interval. This time interval is called **life cycle**, and it can also be directly used as **Scope scope** to understand.
 
-所以上例子代码中的生命周期/作用域图示如下：
+So the life cycle/scope diagram in the above example code is as follows:
 
 
 ```
-            {    a    {    x    }    *    }
-所有者 a:         |________________________|
-借用者 x:                   |____|            x = &a
-  访问 x:                             |       失败：访问 x
+             { a { x } * }
+Owner a: |________________________|
+borrower x: |____| x = &a
+   access x: | failed: access x
 ```
 
-可以看到，借用者 `x` 的生命周期是资源所有者 `a` 的生命周期的**子集**。但是 `x` 的生命周期在第一个 `}` 时结束并销毁，在接下来的 `println!` 中再次访问便会发生严重的错误。
+As you can see, the lifetime of the borrower `x` is a **subset** of the lifetime of the resource owner `a`. However, the life cycle of `x` ends and is destroyed at the first `}`, and a serious error will occur if it is accessed again in the next `println!`.
 
-我们来修正上面的例子：
+Let's fix the example above:
 
 ```rust
 fn main() {
-	let a = 100_i32;
+let a = 100_i32;
 
-	{
-		let x = &a;
-		println!("{}", x);
-	}  // x 作用域结束
+{
+let x = &a;
+println!("{}", x);
+} // x end of scope
 
 }
 ```
 
-这里我们仅仅把 `println!` 放到了中间的 `{}`, 这样就可以在 `x`的生命周期内正常的访问 `x` ，此时的Lifetime图示如下：
+Here we just put `println!` in the middle `{}`, so that `x` can be accessed normally during the life cycle of `x`, and the Lifetime diagram at this time is as follows:
 
 ```
             {    a    {    x    *    }    }
-所有者 a:         |________________________|
-借用者 x:                   |_________|       x = &a
-  访问 x:                        |            OK：访问 x
+owner a:         |________________________|
+borrower x:                   |_________|       x = &a
+  visit x:                        |            OK：visit x
 ```
 
 
 
-## 隐式Lifetime
-我们经常会遇到参数或者返回值为引用类型的函数：
+## Implicit Lifetime
+We often encounter functions whose parameters or return values are reference types:
 
 ```rust
 fn foo(x: &str) -> &str {
@@ -76,9 +76,9 @@ fn foo(x: &str) -> &str {
 }
 ```
 
-上面函数在实际应用中并没有太多用处，`foo` 函数仅仅接受一个 `&str ` 类型的参数（`x`为对某个`string`类型资源`Something`的借用），并返回对资源`Something`的一个新的借用。
+The above function is not very useful in practical applications. The `foo` function only accepts a parameter of `&str` type (`x` is a borrow of a `string` type resource `Something`), and returns a reference to the resource` A new borrow of Something`.
 
-实际上，上面函数包含该了隐性的生命周期命名，这是由编译器自动推导的，相当于：
+In fact, the above function contains the implicit life cycle name, which is automatically deduced by the compiler, which is equivalent to:
 
 ```rust
 fn foo<'a>(x: &'a str) -> &'a str {
@@ -86,7 +86,7 @@ fn foo<'a>(x: &'a str) -> &'a str {
 }
 ```
 
-在这里，约束返回值的Lifetime必须大于或等于参数`x`的Lifetime。下面函数写法也是合法的：
+Here, the Lifetime of the constraint return value must be greater than or equal to the Lifetime of the parameter `x`. The following function writing is also legal:
 
 ```rust
 fn foo<'a>(x: &'a str) -> &'a str {
@@ -94,29 +94,29 @@ fn foo<'a>(x: &'a str) -> &'a str {
 }
 ```
 
-为什么呢？这是因为字符串"hello, world!"的类型是`&'static str`，我们知道`static`类型的Lifetime是整个程序的运行周期，所以她比任意传入的参数的Lifetime`'a`都要长，即`'static >= 'a`满足。
+why? This is because the type of the string "hello, world!" is `&'static str`, we know that the Lifetime of the `static` type is the running cycle of the entire program, so she is more than the Lifetime`'a` of any incoming parameter Both must be long, that is, `'static >= 'a` is satisfied.
 
 
-在上例中Rust可以自动推导Lifetime，所以并不需要程序员显式指定Lifetime `'a` 。
+In the above example, Rust can automatically deduce Lifetime, so the programmer does not need to explicitly specify Lifetime `'a`.
 
-`'a`是什么呢？它是Lifetime的标识符，这里的`a`也可以用`b`、`c`、`d`、`e`、...，甚至可以用`this_is_a_long_name`等，当然实际编程中并不建议用这种冗长的标识符，这样会严重降低程序的可读性。`foo`后面的`<'a>`为Lifetime的声明，可以声明多个，如`<'a, 'b>`等等。
+What is `'a`? It is the identifier of Lifetime, where `a` can also use `b`, `c`, `d`, `e`, ..., or even `this_is_a_long_name`, etc. Of course, it is not recommended in actual programming Using such lengthy identifiers can seriously reduce the readability of the program. The `<'a>` behind `foo` is the declaration of Lifetime, and multiple declarations can be made, such as `<'a, 'b>` and so on.
 
-另外，除非编译器无法自动推导出Lifetime，否则不建议显式指定Lifetime标识符，会降低程序的可读性。
+In addition, unless the compiler cannot automatically deduce Lifetime, it is not recommended to explicitly specify the Lifetime identifier, which will reduce the readability of the program.
 
-## 显式Lifetime
-当输入参数为多个借用/引用时会发生什么呢？
+## Explicit Lifetime
+What happens when the input parameter is multiple borrows/references?
 
 ```rust
 fn foo(x: &str, y: &str) -> &str {
-	if true {
-		x
-	} else {
-		y
-	}
+if true {
+x
+} else {
+the y
+}
 }
 ```
 
-这时候再编译，就没那么幸运了：
+Compile again at this time, not so lucky:
 
 ```
 error: missing lifetime specifier [E0106]
@@ -124,35 +124,9 @@ fn foo(x: &str, y: &str) -> &str {
                             ^~~~
 ```
 
-编译器告诉我们，需要我们显式指定Lifetime标识符，因为这个时候，编译器无法推导出返回值的Lifetime应该是比 `x`长，还是比`y`长。虽然我们在函数中中用了 `if true` 确认一定可以返回`x`，但是要知道，编译器是在编译时候检查，而不是运行时，所以编译期间会同时检查所有的输入参数和返回值。
+The compiler tells us that we need to explicitly specify the Lifetime identifier, because at this time, the compiler cannot deduce whether the Lifetime of the returned value should be longer than `x` or longer than `y`. Although we used `if true` in the function to confirm that `x` must be returned, but you must know that the compiler checks at compile time, not runtime, so all input parameters and return values will be checked at the same time during compilation .
 
-修复后的代码如下：
-
-```rust
-fn foo<'a>(x: &'a str, y: &'a str) -> &'a str {
-	if true {
-		x
-	} else {
-		y
-	}
-}
-```
-
-## Lifetime推导
-
-要推导Lifetime是否合法，先明确两点：
-
-* 输出值（也称为返回值）依赖哪些输入值
-* 输入值的Lifetime大于或等于输出值的Lifetime (准确来说：子集，而不是大于或等于)
-
-**Lifetime推导公式：**
-当输出值R依赖输入值X Y Z ...，当且仅当输出值的Lifetime为所有输入值的Lifetime交集的子集时，生命周期合法。
-
-```
-	Lifetime(R) ⊆ ( Lifetime(X) ∩ Lifetime(Y) ∩ Lifetime(Z) ∩ Lifetime(...) )
-```
-
-对于例子1：
+The fixed code is as follows:
 
 ```rust
 fn foo<'a>(x: &'a str, y: &'a str) -> &'a str {
@@ -164,19 +138,45 @@ fn foo<'a>(x: &'a str, y: &'a str) -> &'a str {
 }
 ```
 
-因为返回值同时依赖输入参数`x`和`y`，所以
+## Lifetime derivation
+
+To deduce whether Lifetime is legal, two points must be clarified first:
+
+* which input values the output value (also known as the return value) depends on
+* The Lifetime of the input value is greater than or equal to the Lifetime of the output value (accurately: a subset, not greater than or equal to)
+
+**Lifetime derivation formula:**
+When the output value R depends on the input value X Y Z ..., if and only if the Lifetime of the output value is a subset of the Lifetime intersection of all input values, the lifetime is legal.
 
 ```
-	Lifetime(返回值) ⊆ ( Lifetime(x) ∩ Lifetime(y) )
+Lifetime(R) ⊆ ( Lifetime(X) ∩ Lifetime(Y) ∩ Lifetime(Z) ∩ Lifetime(...) )
+```
 
-	即：
+For example 1:
 
-	'a ⊆ ('a ∩ 'a)  // 成立
+```rust
+fn foo<'a>(x: &'a str, y: &'a str) -> &'a str {
+	if true {
+		x
+	} else {
+		y
+	}
+}
+```
+
+Because the return value depends on both the input parameters `x` and `y`, so
+
+```
+Lifetime(return value) ⊆ ( Lifetime(x) ∩ Lifetime(y) )
+
+	Right now:
+
+'a ⊆ ('a ∩ 'a) // holds
 ```
 
 
-#### 定义多个Lifetime标识符
-那我们继续看个更复杂的例子，定义多个Lifetime标识符：
+#### Define multiple Lifetime identifiers
+Then let's continue to look at a more complex example, defining multiple Lifetime identifiers:
 
 ```rust
 fn foo<'a, 'b>(x: &'a str, y: &'b str) -> &'a str {
@@ -188,7 +188,7 @@ fn foo<'a, 'b>(x: &'a str, y: &'b str) -> &'a str {
 }
 ```
 
-先看下编译，又报错了：
+Look at the compilation first, and report an error again:
 
 ```
 <anon>:5:3: 5:4 error: cannot infer an appropriate lifetime for automatic coercion due to conflicting requirements [E0495]
@@ -203,103 +203,103 @@ fn foo<'a, 'b>(x: &'a str, y: &'b str) -> &'a str {
 <anon>:6 	}
 ```
 
-编译器说自己无法正确地推导返回值的Lifetime，读者可能会疑问，“我们不是已经指定返回值的Lifetime为`'a`了吗？"。
+The compiler says that it cannot correctly derive the Lifetime of the return value, and the reader may wonder, "Didn't we already specify the Lifetime of the return value as `'a`?".
 
-这儿我们同样可以通过生命周期推导公式推导：
+Here we can also deduce it through the life cycle derivation formula:
 
-因为返回值同时依赖`x`和`y`，所以
+Because the return value depends on both `x` and `y`, so
 
 ```
-	Lifetime(返回值) ⊆ ( Lifetime(x) ∩ Lifetime(y) )
+Lifetime(return value) ⊆ ( Lifetime(x) ∩ Lifetime(y) )
 
-	即：
+	Right now:
 
-	'a ⊆ ('a ∩ 'b)  //不成立
+'a ⊆ ('a ∩ 'b) // false
 ```
 
-很显然，上面我们根本没法保证成立。
+Obviously, we can't guarantee the above at all.
 
-所以，这种情况下，我们可以显式地告诉编译器`'b`比`'a`长（`'a`是`'b`的子集），只需要在定义Lifetime的时候, 在`'b`的后面加上`: 'a`, 意思是`'b`比`'a`长，`'a`是`'b`的子集:
+So, in this case, we can explicitly tell the compiler that `'b` is longer than `'a` (`'a` is a subset of `'b`), only when defining Lifetime, in ` Add `: 'a` after 'b`, which means that `'b` is longer than `'a`, and `'a` is a subset of `'b`:
 
 ```
 fn foo<'a, 'b: 'a>(x: &'a str, y: &'b str) -> &'a str {
-	if true {
-		x
-	} else {
-		y
-	}
+if true {
+x
+} else {
+the y
+}
 }
 ```
 
-这里我们根据公式继续推导：
+Here we continue to derive according to the formula:
 
 ```
-	条件：Lifetime(x) ⊆ Lifetime(y)
-	推导：Lifetime(返回值) ⊆ ( Lifetime(x) ∩ Lifetime(y) )
+Condition: Lifetime(x) ⊆ Lifetime(y)
+Derivation: Lifetime (return value) ⊆ ( Lifetime(x) ∩ Lifetime(y) )
 
-	即：
+	Right now:
 
-	条件： 'a ⊆ 'b
-	推导：'a ⊆ ('a ∩ 'b) // 成立
+Condition: 'a ⊆ 'b
+Derivation: 'a ⊆ ('a ∩ 'b) // established
 ```
 
-上面是成立的，所以可以编译通过。
+The above is established, so it can be compiled and passed.
 
-#### 推导总结
-通过上面的学习相信大家可以很轻松完成Lifetime的推导，总之，记住两点：
+#### Derivation summary
+Through the above study, I believe that you can easily complete the derivation of Lifetime. In short, remember two points:
 
-1. 输出值依赖哪些输入值。
-2. 推导公式。
+1. On which input values the output value depends.
+2. Deriving the formula.
 
 
 
 ## Lifetime in struct
-上面我们更多讨论了函数中Lifetime的应用，在`struct`中Lifetime同样重要。
+We discussed more about the application of Lifetime in functions above, and Lifetime is equally important in `struct`.
 
-我们来定义一个`Person`结构体：
+Let's define a `Person` structure:
 
 ```rust
 struct Person {
-	age: &u8,
+age: &u8,
 }
 ```
 
-编译时我们会得到一个error：
+When compiling we get an error:
 
 ```
 <anon>:2:8: 2:12 error: missing lifetime specifier [E0106]
-<anon>:2 	age: &str,
+<anon>:2 age: &str,
 ```
 
-之所以会报错，这是因为Rust要确保`Person`的Lifetime不会比它的`age`借用长，不然会出现`Dangling Pointer`的严重内存问题。所以我们需要为`age`借用声明Lifetime：
+The reason why the error is reported is because Rust needs to ensure that the Lifetime of `Person` will not be longer than its `age` borrowed, otherwise there will be a serious memory problem of `Dangling Pointer`. So we need to declare Lifetime for `age` borrowing:
 
 ```rust
 struct Person<'a> {
-	age: &'a u8,
+age: &'a u8,
 }
 ```
 
-不需要对`Person`后面的`<'a>`感到疑惑，这里的`'a`并不是指`Person`这个`struct`的Lifetime，仅仅是一个泛型参数而已，`struct`可以有多个Lifetime参数用来约束不同的`field`，实际的Lifetime应该是所有`field`Lifetime交集的子集。例如：
+There is no need to be confused about the `<'a>` behind `Person`. The `'a` here does not refer to the Lifetime of the `struct` of `Person`, it is just a generic parameter. How many `struct`s can there be? A Lifetime parameter is used to constrain different `field`s, and the actual Lifetime should be a subset of the intersection of all `field`Lifetimes. For example:
 
 ```
 fn main() {
-	let x = 20_u8;
-	let stormgbs = Person {
-						age: &x,
-					 };
+let x = 20_u8;
+let stormgbs = Person {
+age: &x,
+};
 }
 ```
 
-这里，生命周期/Scope的示意图如下：
+Here, the schematic diagram of the life cycle/Scope is as follows:
 
 ```
                   {   x    stormgbs      *     }
-所有者 x:              |________________________|
-所有者 stormgbs:                |_______________|  'a
-借用者 stormgbs.age:            |_______________|  stormgbs.age = &x
+owner x:              |________________________|
+owner stormgbs:                |_______________|  'a
+borrower stormgbs.age:         |_______________|  stormgbs.age = &x
 ```
 
-既然`<'a>`作为`Person`的泛型参数，所以在为`Person`实现方法时也需要加上`<'a>`，不然：
+Since `<'a>` is used as the generic parameter of `Person`, you also need to add `<'a>` when implementing the method for `Person`, otherwise:
 
 ```rust
 impl Person {
@@ -309,7 +309,7 @@ impl Person {
 }
 ```
 
-报错：
+Error:
 
 ```
 <anon>:5:6: 5:12 error: wrong number of lifetime parameters: expected 1, found 0 [E0107]
@@ -317,7 +317,7 @@ impl Person {
               ^~~~~~
 ```
 
-**正确的做法是**：
+**The correct approach is**:
 
 ```rust
 impl<'a> Person<'a> {
@@ -327,9 +327,9 @@ impl<'a> Person<'a> {
 }
 ```
 
-这样加上`<'a>`后就可以了。读者可能会疑问，为什么`print_age`中不需要加上`'a`？这是个好问题。因为`print_age`的输出参数为`()`，也就是可以不依赖任何输入参数, 所以编译器此时可以不必关心和推导Lifetime。即使是`fn print_age(&self, other_age: &i32) {...}`也可以编译通过。
+This can be done after adding `<'a>`. Readers may wonder why there is no need to add `'a` in `print_age`? That's a good question. Because the output parameter of `print_age` is `()`, that is, it does not depend on any input parameters, so the compiler does not need to care about and derive Lifetime at this time. Even `fn print_age(&self, other_age: &i32) {...}` can compile.
 
-**如果`Person`的方法存在输出值（借用）呢？**
+** What if there is an output value (borrowed) in the method of `Person`? **
 
 ```rust
 impl<'a> Person<'a> {
@@ -339,7 +339,7 @@ impl<'a> Person<'a> {
 }
 ```
 
-`get_age`方法的输出值依赖一个输入值`&self`，这种情况下，Rust编译器可以自动推导为：
+The output value of the `get_age` method depends on an input value `&self`. In this case, the Rust compiler can automatically deduce it as:
 
 ```rust
 impl<'a> Person<'a> {
@@ -349,7 +349,7 @@ impl<'a> Person<'a> {
 }
 ```
 
-**如果输出值（借用）依赖了多个输入值呢？**
+**What if the output value (borrowed) depends on multiple input values? **
 
 
 ```rust
@@ -364,18 +364,13 @@ impl<'a, 'b> Person<'a> {
 }
 ```
 
-类似之前的Lifetime推导章节，当返回值（借用）依赖多个输入值时，需显示声明Lifetime。和函数Lifetime同理。
+Similar to the previous Lifetime derivation chapter, when the return value (borrowed) depends on multiple input values, you need to explicitly declare Lifetime. It is the same as the function Lifetime.
 
+**other**
 
+Lifetime theoretical knowledge is the same whether in a function or in a `struct`, or even in an `enum`. I hope that everyone can slowly experience and absorb it, and learn from it.
 
-**其他**
+## Summarize
 
-无论在函数还是在`struct`中，甚至在`enum`中，Lifetime理论知识都是一样的。希望大家可以慢慢体会和吸收，做到举一反三。
-
-
-## 总结
-
-Rust正是通过所有权、借用以及生命周期，以高效、安全的方式近乎完美地管理了内存。没有手动管理内存的负载和安全性，也没有GC造成的程序暂停问题。
-
-
+Rust manages memory almost perfectly in an efficient and safe way through ownership, borrowing, and lifetime. There is no load and safety of manually managing memory, and no program halting issues caused by GC.
 

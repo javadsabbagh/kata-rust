@@ -1,6 +1,6 @@
-# print! 宏
+# print! macro
 
-我们在快速入门中就提到过标准输出的行缓冲。它一个表现就是 `print!` 宏。如果你在 `print!` 宏后面接上一个输入就会发现这种按行缓冲的机制。
+We mentioned line buffering of standard output in the quickstart. One of its manifestations is the `print!` macro. If you put an input after the `print!` macro, you will find this line-buffering mechanism.
 
 ```rust
 fn main() {
@@ -13,21 +13,21 @@ fn main() {
 }
 ```
 
-您可以编译并运行这段程序试一试，您会发现我们并没有得到预期的（下划线代表光标的位置）：
+You can try compiling and running this program, you will find that we did not get what we expected (the underscore represents the cursor position):
 
 ```
 hello!
 input:_
 ```
 
-而是得到了：
+Instead got:
 
 ```
 hello!
 _
 ```
 
-这就是由于标准输出中的这种行缓冲机制，在遇到换行符之前，输出的内容并不会隐式的刷新，这就导致 `print!` 宏和 `println!` 宏实际上并不完全相同。在标准库中 `print!` 宏是这样的：
+This is because of the line buffering mechanism in the standard output, the content of the output will not be refreshed implicitly before a newline character is encountered, which leads to the fact that the `print!` macro and the `println!` macro are not exactly the same . The `print!` macro in the standard library looks like this:
 
 ```rust
 macro_rules! print {
@@ -35,7 +35,7 @@ macro_rules! print {
 }
 ```
 
-由此，我们可以对它进行改进，使它和 `println!` 宏被自动刷新，不过这种刷新是一种显式的刷新。
+From this, we can improve it so that it and the `println!` macro are flushed automatically, but this flush is an explicit flush.
 
 ```rust
 use std::io::{self, Write};
@@ -48,4 +48,4 @@ macro_rules! printf {
 }
 ```
 
-此外，当您需要刷新还没有遇到换行符的一行内容的时候您都可以使用 `io::stdout().flush().unwrap();` 进行刷新，不过需要注意的是要先 `use std::io::{self, Write};` 如果您不这样做，将会得到一个错误。
+In addition, when you need to refresh a line that has not encountered a line break, you can use `io::stdout().flush().unwrap();` to refresh, but it should be noted that `use std::io::{self, Write};` If you don't do this, you will get an error.

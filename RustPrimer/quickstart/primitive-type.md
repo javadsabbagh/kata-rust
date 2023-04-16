@@ -1,99 +1,99 @@
-# 变量绑定与原生类型
+# Variable binding and primitive types
 
-## 变量绑定
-Rust 通过 let 关键字进行变量绑定。
-
-```rust
-fn main() {
-    let a1 = 5;
-    let a2:i32 = 5;
-    assert_eq!(a1, a2);
-    //let 绑定 整数变量默认类型推断是 i32
-
-    let b1:u32 = 5;
-    //assert_eq!(a1, b1);
-    //去掉上面的注释会报错，因为类型不匹配
-    //errer: mismatched types
-}
-```
-
-这里的 assert_eq! 宏的作用是判断两个参数是不是相等的，但如果是两个不匹配的类型，就算字面值相等也会报错。
-
-## 可变绑定
-rust 在声明变量时，在变量前面加入 mut 关键字，变量就会成为可变绑定的变量。
+## Variable Binding
+Rust uses the let keyword for variable binding.
 
 ```rust
 fn main() {
-    let mut a: f64 = 1.0;
-    let b = 2.0f32;
+     let a1 = 5;
+     let a2:i32 = 5;
+     assert_eq!(a1, a2);
+     //let binding integer variable default type inference is i32
 
-    //改变 a 的绑定
-    a = 2.0;
-    println!("{:?}", a);
-
-    //重新绑定为不可变
-    let a = a;
-
-    //不能赋值
-    //a = 3.0;
-
-    //类型不匹配
-    //assert_eq!(a, b);
+     let b1:u32 = 5;
+     //assert_eq!(a1, b1);
+     //Removing the above comment will report an error because the type does not match
+     //errer: mismatched types
 }
 ```
 
-这里的 b 变量，绑定了 2.0f32。这是 Rust 里面值类型显式标记的语法，规定为`value`+`type`的形式。
+The function of the assert_eq! macro here is to judge whether the two parameters are equal, but if the two parameters do not match, an error will be reported even if the literal values are equal.
 
-**例如：**
-固定大小类型：
-> 1u8 1i8  
-> 1u16 1i16  
-> 1u32 1i32  
+## Mutable Binding
+When declaring a variable in rust, add the mut keyword in front of the variable, and the variable will become a variable binding variable.
+
+```rust
+fn main() {
+     let mut a: f64 = 1.0;
+     let b = 2.0f32;
+
+     //Change the binding of a
+     a = 2.0;
+     println!("{:?}", a);
+
+     // Rebind as immutable
+     let a = a;
+
+     // cannot be assigned
+     //a = 3.0;
+
+     //type mismatch
+     //assert_eq!(a, b);
+}
+```
+
+The b variable here is bound to 2.0f32. This is the syntax for explicit marking of value types in Rust, specified in the form of `value`+`type`.
+
+**For example:**
+Fixed size type:
+> 1u8 1i8
+> 1u16 1i16
+> 1u32 1i32
 > 1u64 1i64
 
-可变大小类型：
+variable size type:
 > 1usize 1isize
 
-浮点类型：
+Float type:
 > 1f32 1f64
 
-## let解构
-为什么在 Rust 里面声明一个变量的时候要采用 let 绑定表达式？
-那是因为 let 绑定表达式的表达能力更强，而且 let 表达式实际上是一种模式匹配。
+## let deconstruction
+Why use a let binding expression when declaring a variable in Rust?
+That's because let binding expressions are more expressive, and let expressions are actually a type of pattern matching.
 
-**例如：**
+**For example:**
 
 ```rust
 fn main() {
-    let (a, mut b): (bool,bool) = (true, false);
-    println!("a = {:?}, b = {:?}", a, b);
-    //a 不可变绑定
-    //a = false;
+     let (a, mut b): (bool, bool) = (true, false);
+     println!("a = {:?}, b = {:?}", a, b);
+     //a immutable binding
+     //a = false;
 
-    //b 可变绑定
-    b = true;
-    assert_eq!(a, b);
+     //b mutable binding
+     b = true;
+     assert_eq!(a, b);
 }
 ```
 
-这里使用了 bool，只有true和false两个值，通常用来做逻辑判断的类型。
+The bool is used here, which has only two values of true and false, which are usually used for logical judgment.
 
-## 原生类型
+## Primitive types
 
-Rust内置的原生类型 (primitive types) 有以下几类：
+Rust's built-in primitive types (primitive types) are as follows:
 
-* 布尔类型：有两个值`true`和`false`。
-* 字符类型：表示单个Unicode字符，存储为4个字节。
-* 数值类型：分为有符号整数 (`i8`, `i16`, `i32`, `i64`, `isize`)、
-无符号整数 (`u8`, `u16`, `u32`, `u64`, `usize`) 以及浮点数 (`f32`, `f64`)。
-* 字符串类型：最底层的是不定长类型`str`，更常用的是字符串切片`&str`和堆分配字符串`String`，
-其中字符串切片是静态分配的，有固定的大小，并且不可变，而堆分配字符串是可变的。
-* 数组：具有固定大小，并且元素都是同种类型，可表示为`[T; N]`。
-* 切片：引用一个数组的部分数据并且不需要拷贝，可表示为`&[T]`。
-* 元组：具有固定大小的有序列表，每个元素都有自己的类型，通过解构或者索引来获得每个元素的值。
-* 指针：最底层的是裸指针`*const T`和`*mut T`，但解引用它们是不安全的，必须放到`unsafe`块里。
-* 函数：具有函数类型的变量实质上是一个函数指针。
-* 元类型：即`()`，其唯一的值也是`()`。
+* Boolean type: There are two values `true` and `false`.
+* Character type: represents a single Unicode character, stored as 4 bytes.
+* Numerical types: divided into signed integers (`i8`, `i16`, `i32`, `i64`, `isize`),
+Unsigned integers (`u8`, `u16`, `u32`, `u64`, `usize`) and floating point numbers (`f32`, `f64`).
+* String type: The lowest level is the variable length type `str`, and the more commonly used string slice `&str` and heap allocated string `String`,
+Among them, the string slice is statically allocated, has a fixed size, and is immutable, while the heap allocated string is variable.
+* Array: has a fixed size, and the elements are all of the same type, which can be expressed as `[T; N]`.
+* Slicing: refers to part of the data of an array and does not need to be copied, which can be expressed as `&[T]`.
+* Tuple: An ordered list with a fixed size, each element has its own type, and the value of each element is obtained by destructuring or indexing.
+* Pointer: The bottom layer is the raw pointer `*const T` and `*mut T`, but it is unsafe to dereference them and must be placed in the `unsafe` block.
+* Function: A variable with a function type is essentially a function pointer.
+* Metatype: namely `()`, its only value is also `()`.
 
 ```rust
 // boolean type
@@ -136,19 +136,19 @@ fn foo(x: i32) -> i32 { x }
 let bar: fn(i32) -> i32 = foo;
 ```
 
-有几点是需要特别注意的：
+There are a few points that need special attention:
 
-* 数值类型可以使用`_`分隔符来增加可读性。
-* Rust还支持单字节字符`b'H'`以及单字节字符串`b"Hello"`，仅限制于ASCII字符。
-此外，还可以使用`r#"..."#`标记来表示原始字符串，不需要对特殊字符进行转义。
-* 使用`&`符号将`String`类型转换成`&str`类型很廉价，
-但是使用`to_string()`方法将`&str`转换到`String`类型涉及到分配内存，
-除非很有必要否则不要这么做。
-* 数组的长度是不可变的，动态的数组称为Vec (vector)，可以使用宏`vec!`创建。
-* 元组可以使用`==`和`!=`运算符来判断是否相同。
-* 不多于32个元素的数组和不多于12个元素的元组在值传递时是自动复制的。
-* Rust不提供原生类型之间的隐式转换，只能使用`as`关键字显式转换。
-* 可以使用`type`关键字定义某个类型的别名，并且应该采用驼峰命名法。
+* Numeric types can use the `_` delimiter to increase readability.
+* Rust also supports the single-byte character `b'H'` and the single-byte string `b"Hello"`, limited to ASCII characters only.
+In addition, you can also use the `r#"..."#` tag to represent a raw string without escaping special characters.
+* Using the `&` symbol to convert `String` type to `&str` type is cheap,
+But using the `to_string()` method to convert `&str` to `String` type involves allocating memory,
+Don't do this unless absolutely necessary.
+* The length of the array is immutable, and the dynamic array is called Vec (vector), which can be created using the macro `vec!`.
+* Tuples can use `==` and `!=` operators to determine whether they are the same.
+* Arrays with no more than 32 elements and tuples with no more than 12 elements are automatically copied when the value is passed.
+* Rust does not provide implicit conversion between native types, only explicit conversion can be done using the `as` keyword.
+* You can use the `type` keyword to define an alias of a type, and should use camelCase.
 
 ```rust
 // explicit conversion

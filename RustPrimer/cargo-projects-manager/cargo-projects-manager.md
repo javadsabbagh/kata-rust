@@ -1,23 +1,23 @@
-# cargo简介
+#cargoIntroduction
 
-曾几何时，对于使用惯了`C/C++`语言的猿们来说，项目代码的组织与管理绝对是一场噩梦。为了解决`C/C++`项目的管理问题，猿神们想尽了各种办法，开发出了各种五花八门的项目管理工具，从一开始的`automake`到后来的`cmake`、`qmake`等等，但结果并不如人意，往往是解决了一些问题，却引入了更多的问题，`C/C++`猿们经常会陷入在掌握语言本身的同时，还要掌握复杂的构建工具语法的窘境。无独有偶，`java`的项目代码组织与管理工具`ant`和`maven`也存在同样的问题。复杂的项目管理配置参数，往往让猿们不知所措。
+Once upon a time, for apes who are accustomed to using `C/C++` language, the organization and management of project code is definitely a nightmare. In order to solve the management problem of `C/C++` projects, the ape gods have tried various methods and developed various project management tools, from `automake` at the beginning to `cmake` and `qmake` later Wait, but the result is not satisfactory. It often solves some problems, but introduces more problems. `C/C++` apes often fall into the trap of mastering the language itself and complex syntax of construction tools. Dilemma. Coincidentally, the project code organization and management tools `ant` and `maven` of `java` also have the same problem. Complex project management configuration parameters often overwhelm the apes.
 
-作为一门现代语言，`rust`自然要摒弃石器时代项目代码管理的方法和手段。`rust`项目组为各位猿提供了超级大杀器`cargo`，以解决项目代码管理所带来的干扰和困惑。用过`node.js`的猿们，应该对`node.js`中的神器`npm`、`grunt`、`gulp`等工具印象深刻。作为新一代静态语言中的翘楚，`rust`官方参考了现有语言管理工具的优点，于是就产生了`cargo`。
+As a modern language, `rust` naturally abandons the methods and means of project code management in the stone age. The `rust` project team provides a super killer `cargo` for everyone to solve the interference and confusion caused by project code management. Apes who have used `node.js` should be impressed by the artifacts `npm`, `grunt`, `gulp` and other tools in `node.js`. As the leader of the new generation of static languages, `rust` officially refers to the advantages of existing language management tools, so `cargo` was created.
 
-言而总之，作为`rust`的代码组织管理工具，`cargo`提供了一系列的工具，从项目的建立、构建到测试、运行直至部署，为`rust`项目的管理提供尽可能完整的手段。同时，与`rust`语言及其编译器`rustc`本身的各种特性紧密结合，可以说既是语言本身的知心爱人，又是`rust`猿们的贴心小棉袄，谁用谁知道。
-废话就不多说了，直接上例子和各种高清无马图。
+All in all, as the code organization and management tool of `rust`, `cargo` provides a series of tools, from project establishment, construction to testing, operation and deployment, providing as complete means as possible for the management of `rust` projects . At the same time, it is closely integrated with the various features of the `rust` language and its compiler `rustc` itself. It can be said that it is not only the intimate lover of the language itself, but also the intimate little padded jacket of the `rust` apes. Whoever uses it will know.
+Not much nonsense, just go straight to the examples and various high-definition horseless pictures.
 
-# cargo入门
-首先，当然还是废话，要使用cargo，自然首先要安装cargo。安装cargo有三种方法，前两种方法请参见rust的安装方法，因为cargo工具是官方正统出身，当然包含在官方的分发包中。第三种方法即从[`cargo`](https://github.com/rust-lang/cargo)项目的源码仓库进行构建。Oh，My God。的确是废话。
+# Getting started with cargo
+First of all, of course, it’s still nonsense. To use cargo, you must first install cargo. There are three ways to install cargo. For the first two methods, please refer to the installation method of rust, because the cargo tool is of official orthodox origin and is of course included in the official distribution package. The third method is to build from the source code repository of the [`cargo`](https://github.com/rust-lang/cargo) project. Oh, My God. It is indeed nonsense.
 
-好了，假设各位已经安装好了cargo，大家和我一起学一下起手式。当然了，猿的世界，起手式一般都千篇一律——那就是`hello world`大法。
-在终端中输入
+Well, assuming that you have installed cargo, let's learn the starting gesture with me. Of course, in the world of apes, the opening gestures are generally the same - that is the `hello world` method.
+Type in terminal
 
 ```bash
 $ cargo new hello_world --bin
 ```
 
-上述命令使用**cargo new**在当前目录下新建了基于cargo项目管理的rust项目，项目名称为hello_world，--bin表示该项目将生成可执行文件。具体生成的项目目录结构如下：
+The above command uses **cargo new** to create a new rust project based on cargo project management in the current directory. The project name is hello_world, and --bin means that the project will generate an executable file. The specific generated project directory structure is as follows:
 
 ```bash
 $ cd hello_world
@@ -30,8 +30,8 @@ $ tree .
 1 directory, 2 files
 ```
 
-大家可以在终端中输入上述命令，敲出回车键之后即可看到上述结果，或者直接去编辑器或文件管理器中去观察即可。
-打开main.rs文件，可以看到，cargo new命令为我们自动生成了hello_world运行所必须的所有代码：
+You can enter the above command in the terminal and press the Enter key to see the above results, or you can directly go to the editor or file manager to observe.
+Open the main.rs file, and you can see that the cargo new command automatically generates all the code necessary for hello_world to run:
 
 ```rust
 fn main() {
@@ -39,13 +39,13 @@ fn main() {
 }
 ```
 
-好了，心急的猿们可能已经迫不及待的脱裤子了，好吧，我们先来构建并看看cargo有多神奇，在终端中输入：
+Well, impatient apes may be impatient to take off their pants, well, let's build and see how amazing cargo is, enter in the terminal:
 
 ```bash
 $ cargo build
 ```
 
-稍等片刻，cargo会自动为我们构建好高清应用所需的一切，对于这个起手式来说，缓冲不会超过5秒，12秒88的选手要憋住了。
+Wait for a while, and cargo will automatically build everything needed for us to build a high-definition application. For this starting move, the buffer will not exceed 5 seconds, and the player with 12 seconds 88 will hold back.
 
 ```bash
 $ cargo run
@@ -54,34 +54,34 @@ Hello, world!
 
 ```
 
-看到了什么，看到了什么，吓尿了有木有，吓尿了有木有。好了，cargo就是这么简单。
+What did I see, what did I see, did I get scared, did I get scared. Well, cargo is that simple.
 
-当然了，说cargo美，并不仅仅是简单这么简单，cargo虽然简单，但是很强大。有多么强大？？可以说，基本上rust开发管理中所需的手段，cargo都有。很小很强大，既强又有节操，不带马，学习曲线几乎为零。
+Of course, the beauty of cargo is not just simple. Although cargo is simple, it is very powerful. How powerful is it? ? It can be said that, basically, the means needed for rust development and management are available in cargo. Small but powerful, strong and moral, without a horse, the learning curve is almost zero.
 
-# 基于cargo的rust项目组织结构
-这次不说废话了，先上高清无马图：
+# Organizational structure of rust project based on cargo
+Let’s not talk nonsense this time, first upload the high-definition horseless picture:
 
-![cargo项目组织结构](../images/project-structure.png)
+![cargo project organization structure](../images/project-structure.png)
 
-对上述cargo默认的项目结构解释如下：
+The default project structure of the above cargo is explained as follows:
 
-##### `cargo.toml`和`cargo.lock`文件总是位于项目根目录下。
-##### 源代码位于`src`目录下。
-##### 默认的库入口文件是`src/lib.rs`。
-##### 默认的可执行程序入口文件是`src/main.rs`。
-##### 其他可选的可执行文件位于`src/bin/*.rs`(这里每一个rs文件均对应一个可执行文件)。
-##### 外部测试源代码文件位于`tests`目录下。
-##### 示例程序源代码文件位于`examples`。
-##### 基准测试源代码文件位于`benches`目录下。
+##### `cargo.toml` and `cargo.lock` files are always located in the project root directory.
+##### The source code is located in the `src` directory.
+##### The default library entry file is `src/lib.rs`.
+##### The default executable program entry file is `src/main.rs`.
+##### Other optional executable files are located in `src/bin/*.rs` (here each rs file corresponds to an executable file).
+##### The external test source code files are located in the `tests` directory.
+##### Example program source code files are located in `examples`.
+##### Benchmark source code files are located in the `benches` directory.
 
-好了，大家一定谨记这些默认规则，最好按照这种模式来组织自己的rust项目。
+Well, everyone must keep these default rules in mind, and it is best to organize your rust projects according to this model.
 
-# cargo.toml和cargo.lock
-`cargo.toml`和`cargo.lock`是cargo项目代码管理的核心两个文件，cargo工具的所有活动均基于这两个文件。
+# cargo.toml and cargo.lock
+`cargo.toml` and `cargo.lock` are the two core files of the cargo project code management, and all activities of the cargo tool are based on these two files.
 
-`cargo.toml`是cargo特有的项目数据描述文件，对于猿们而言，`cargo.toml`文件存储了项目的所有信息，它直接面向rust猿，猿们如果想让自己的rust项目能够按照期望的方式进行构建、测试和运行，那么，必须按照合理的方式构建'cargo.toml'。
+`cargo.toml` is a cargo-specific project data description file. For the apes, the `cargo.toml` file stores all the information of the project. It is directly oriented to the rust apes. If the apes want their rust projects to follow the To build, test and run in the expected way, then 'cargo.toml' must be built in a reasonable way.
 
-而`cargo.lock`文件则不直接面向猿，猿们也不需要直接去修改这个文件。lock文件是cargo工具根据同一项目的toml文件生成的项目依赖详细清单文件，所以我们一般不用不管他，只需要对着`cargo.toml`文件撸就行了。
+The `cargo.lock` file is not directly oriented to apes, and apes do not need to modify this file directly. The lock file is a project dependency detailed list file generated by the cargo tool based on the toml file of the same project, so we generally don't need to ignore it, just need to look at the `cargo.toml` file.
 
 ```toml
 [package]
@@ -92,36 +92,36 @@ authors = ["fuying"]
 [dependencies]
 ```
 
-toml文件是由诸如[package]或[dependencies]这样的段落组成，每一个段落又由多个字段组成，这些段落和字段就描述了项目组织的基本信息，例如上述toml文件中的[package]段落描述了`hello_world`项目本身的一些信息，包括项目名称（对应于name字段）、项目版本（对应于version字段）、作者列表（对应于authors字段）等；[dependencies]段落描述了`hello_world`项目的依赖项目有哪些。
+The toml file is composed of paragraphs such as [package] or [dependencies], and each paragraph is composed of multiple fields. These paragraphs and fields describe the basic information of the project organization, such as the [package] paragraph in the above toml file Describes some information about the `hello_world` project itself, including the project name (corresponding to the name field), project version (corresponding to the version field), author list (corresponding to the authors field), etc.; the [dependencies] paragraph describes the `hello_world` project What are the dependent projects.
 
-下面我们来看看toml描述文件中常用段落和字段的意义。
+Let's take a look at the meaning of commonly used paragraphs and fields in the toml description file.
 
-# package段落
-[package]段落描述了软件开发者对本项目的各种元数据描述信息，例如[name]字段定义了项目的名称，[version]字段定义了项目的当前版本，[authors]定义了该项目的所有作者，当然，[package]段落不仅仅包含这些字段，[package]段落的其他可选字段详见cargo参数配置章节。
+# package paragraph
+The [package] paragraph describes the various metadata description information of the project by the software developer. For example, the [name] field defines the name of the project, the [version] field defines the current version of the project, and [authors] defines all of the project. Author, of course, the [package] section not only contains these fields, other optional fields in the [package] section are detailed in the cargo parameter configuration section.
 
-# 定义项目依赖
-使用cargo工具的最大优势就在于，能够对该项目的各种依赖项进行方便、统一和灵活的管理。这也是使用cargo对rust 的项目进行管理的重要目标之一。在cargo的toml文件描述中，主要通过各种依赖段落来描述该项目的各种依赖项。toml中常用的依赖段落包括一下几种：
-- 基于rust官方仓库crates.io，通过版本说明来描述：
-- 基于项目源代码的git仓库地址，通过URL来描述：
-- 基于本地项目的绝对路径或者相对路径，通过类Unix模式的路径来描述：
-这三种形式具体写法如下：
+# Define project dependencies
+The biggest advantage of using the cargo tool is that it can manage various dependencies of the project conveniently, uniformly and flexibly. This is also one of the important goals of using cargo to manage rust projects. In cargo's toml file description, various dependencies of the project are mainly described through various dependency paragraphs. Commonly used dependency paragraphs in toml include the following:
+- Based on crates.io, the official rust warehouse, described by release notes:
+- Based on the git warehouse address of the project source code, described by URL:
+- Based on the absolute path or relative path of the local project, described by the path in Unix-like mode:
+These three forms are specifically written as follows:
 
 ```toml
 [dependencies]
 typemap = "0.3"
 plugin = "0.2*"
-hammer = { version = "0.5.0"}
+hammer = {version = "0.5.0"}
 color = { git = "https://github.com/bjz/color-rs" }
 geometry = { path = "crates/geometry" }
 ```
 
-上述例子中，2-4行为方法一的写法，第5行为方法二的写法，第6行为方法三的写法。
-这三种写法各有用处，如果项目需要使用crates.io官方仓库来管理项目依赖项，推荐使用第一种方法。如果项目开发者更倾向于使用git仓库中最新的源码，可以使用方法二。方法二也经常用于当官方仓库的依赖项编译不通过时的备选方案。方法三主要用于源代码位于本地的依赖项。
+In the above example, 2-4 behaviors are written in method 1, 5th behavior is written in method 2, and 6th behavior is written in method 3.
+These three writing methods have their own advantages. If the project needs to use crates.io official warehouse to manage project dependencies, the first method is recommended. If the project developer prefers to use the latest source code in the git repository, method 2 can be used. Method 2 is also often used as an alternative when the dependencies of the official repository fail to compile. Method three is mainly used for dependencies whose source code is located locally.
 
-# 定义集成测试用例
+# Define integration test cases
 
-cargo另一个重要的功能，即将软件开发过程中必要且非常重要的测试环节进行集成，并通过代码属性声明或者toml文件描述来对测试进行管理。其中，单元测试主要通过在项目代码的测试代码部分前用`#[test]`属性来描述，而集成测试，则一般都会通过toml文件中的[[test]]段落进行描述。
-例如，假设集成测试文件均位于tests文件夹下，则toml可以这样来写：
+Another important function of cargo is to integrate the necessary and very important testing links in the software development process, and manage the tests through code attribute declarations or toml file descriptions. Among them, the unit test is mainly described by the `#[test]` attribute before the test code part of the project code, and the integration test is generally described by the [[test]] paragraph in the toml file.
+For example, assuming that the integration test files are located in the tests folder, toml can be written like this:
 
 ```toml
 [[test]]
@@ -133,15 +133,15 @@ name = "testtime"
 path = "tests/testtime.rs"
 ```
 
-上述例子中，name字段定义了集成测试的名称，path字段定义了集成测试文件相对于本toml文件的路径。
-看看，定义集成测试就是如此简单。
-需要注意的是:
+In the above example, the name field defines the name of the integration test, and the path field defines the path of the integration test file relative to this toml file.
+See how easy it is to define integration tests.
+have to be aware of is:
 
-- 如果没有在Cargo.toml里定义集成测试的入口，那么tests目录(不包括子目录)下的每个rs文件被当作集成测试入口.
-- 如果在Cargo.toml里定义了集成测试入口，那么定义的那些rs就是入口，不再默认指定任何集成测试入口.
+- If no integration test entry is defined in Cargo.toml, each rs file in the tests directory (not including subdirectories) is regarded as an integration test entry.
+- If the integration test entry is defined in Cargo.toml, then the defined rs are the entry, and no integration test entry is specified by default.
 
-# 定义项目示例和可执行程序
-**上面我们介绍了cargo项目管理中常用的三个功能，还有两个经常使用的功能：example用例的描述以及bin用例的描述。其描述方法和test用例描述方法类似。不过，这时候段落名称'[[test]]'分别替换为：'[[example]]'或者'[[bin]]'。例如：**
+# Define project examples and executable programs
+** Above we introduced three commonly used functions in cargo project management, and there are two frequently used functions: description of example use case and description of bin use case. Its description method is similar to the test case description method. However, this time the section name '[[test]]' is replaced by: '[[example]]' or '[[bin]]' respectively. For example:**
 
 ```toml
 [[example]]
@@ -154,9 +154,9 @@ path = "bin/bin1.rs"
 
 ```
 
-对于'[[example]]'和'[[bin]]'段落中声明的examples和bins，需要通过'cargo run --example NAME'或者'cargo run --bin NAME'来运行，其中NAME对应于你在name字段中定义的名称。
+The examples and bins declared in the '[[example]]' and '[[bin]]' paragraphs need to be run via 'cargo run --example NAME' or 'cargo run --bin NAME', where NAME corresponds to The name you define in the name field.
 
-# 构建、清理、更新以及安装
-领会了toml描述文件的写法，是一个重要的方面。另一个重要的方面，就是cargo工具本身为我们程序猿提供的各种好用的工具。如果大家感兴趣，自己在终端中输入'cargo --help'查看即可。其中开发时最常用的命令就是'cargo build'，用于构建项目。此外，'cargo clean'命令可以清理target文件夹中的所有内容；'cargo update'根据toml描述文件重新检索并更新各种依赖项的信息，并写入lock文件，例如依赖项版本的更新变化等等；'cargo install'可用于实际的生产部署。这些命令在实际的开发部署中均是非常有用的。
+# Build, clean, update and install
+It is an important aspect to understand the writing method of the toml description file. Another important aspect is the various useful tools that the cargo tool itself provides for our programmers. If you are interested, you can enter 'cargo --help' in the terminal to view it. The most commonly used command during development is 'cargo build', which is used to build the project. In addition, the 'cargo clean' command can clean up all the content in the target folder; 'cargo update' re-retrieve and update the information of various dependencies according to the toml description file, and write the lock file, such as the update and change of the dependency version, etc. etc; 'cargo install' can be used for actual production deployments. These commands are very useful in actual development and deployment.
 
-**cargo更多详细用法请参见['28. cargo参数配置'](../cargo-detailed-cfg/cargo-detailed-cfg.md)**
+**For more detailed usage of cargo, please refer to ['28. Cargo parameter configuration'](../cargo-detailed-cfg/cargo-detailed-cfg.md)**

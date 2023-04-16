@@ -1,77 +1,77 @@
-# 网络模块:W猫的回音
+# Network module: Echo of W cat
 
-本例子中，W猫将带大家写一个大家都写过但是没什么人用过的TCP ECHO软件，作为本章的结尾。本程序仅作为实例程序，我个人估计也没有人在实际的生活中去使用她。不过，作为标准库的示例来说，已经足够。
+In this example, W Mao will lead you to write a TCP ECHO software that everyone has written but no one has used, as the end of this chapter. This program is just an example program, and I personally estimate that no one uses her in real life. Still, it suffices as an example of the standard library.
 
-首先，我们需要一个一个服务器端。
+First, we need a server side.
 
 ```rust
 fn server<A: ToSocketAddrs>(addr: A) -> io::Result<()> {
-    // 建立一个监听程序
-    let listener = try!(TcpListener::bind(&addr)) ;
-    // 这个程序一次只需处理一个链接就好
-    for stream in listener.incoming() {
-        // 通过match再次解包 stream到
-        match stream {
-            // 这里匹配的重点是如何将一个mut的匹配传给一个Result
-            Ok(mut st) => {
-                // 我们总是要求client端先发送数据
-                // 准备一个超大的缓冲区
-                // 当然了，在实际的生活中我们一般会采用环形缓冲来重复利用内存。
-                // 这里仅作演示，是一种很低效的做法
-                let mut buf: Vec<u8> = vec![0u8; 1024];
-                // 通过try!方法来解包
-                // try!方法的重点是需要有特定的Error类型与之配合
-                let rcount = try!(st.read(&mut buf));
-                // 只输出缓冲区里读取到的内容
-                println!("{:?}", &buf[0..rcount]);
-                // 回写内容
-                let wcount = try!(st.write(&buf[0..rcount]));
-                // 以下代码实际上算是逻辑处理
-                // 并非标准库的一部分了
-                if rcount != wcount {
-                    panic!("Not Fully Echo!, r={}, w={}", rcount, wcount);
-                }
-                // 清除掉已经读到的内容
-                buf.clear();
-            }
-            Err(e) => {
-                panic!("{}", e);
-            }
-        }
-    }
-    // 关闭掉Serve端的链接
-    drop(listener);
-    Ok(())
+     // Create a listener
+     let listener = try!(TcpListener::bind(&addr)) ;
+     // This program only needs to process one link at a time
+     for stream in listener.incoming() {
+         // unpack the stream again by match
+         match stream {
+             // The focus of matching here is how to pass a mut match to a Result
+             Ok(mut st) => {
+                 // We always ask the client to send data first
+                 // Prepare a very large buffer
+                 // Of course, in real life we generally use ring buffers to reuse memory.
+                 // Here is only for demonstration, it is a very inefficient way
+                 let mut buf: Vec<u8> = vec![0u8; 1024];
+                 // unpack by try! method
+                 // The point of the try! method is that it needs to have a specific Error type to cooperate with it
+                 let rcount = try!(st. read(&mut buf));
+                 // Only output the content read in the buffer
+                 println!("{:?}", &buf[0..rcount]);
+                 // write back content
+                 let wcount = try!(st.write(&buf[0..rcount]));
+                 // The following code is actually logic processing
+                 // not part of the standard library anymore
+                 if rcount != wcount {
+                     panic!("Not Fully Echo!, r={}, w={}", rcount, wcount);
+                 }
+                 // Clear what has been read
+                 buf. clear();
+             }
+             Err(e) => {
+                 panic!("{}", e);
+             }
+         }
+     }
+     // Close the connection on the server side
+     drop(listener);
+     Ok(())
 }
 
 ```
 
 
-然后，我们准备一个模拟TCP短链接的客户端：
+Then, we prepare a client that simulates a TCP short link:
 
 ```rust
 fn client<A: ToSocketAddrs>(addr: A) -> io::Result<()> {
 
-    let mut buf = vec![0u8;1024];
-    loop {
-        // 对比Listener，TcpStream就简单很多了
-        // 本次模拟的是tcp短链接的过程，可以看作是一个典型的HTTP交互的基础IO模拟
-        // 当然，这个通讯里面并没有HTTP协议 XD！
-        let mut stream = TcpStream::connect(&addr).unwrap();
-        let msg = "WaySLOG comming!".as_bytes();
-        // 避免发送数据太快而刷屏
-        thread::sleep_ms(100);
-        let rcount = try!(stream.write(&msg));
-        let _ = try!(stream.read(&mut buf));
-        println!("{:?}", &buf[0..rcount]);
-        buf.clear();
-    }
-    Ok(())
+     let mut buf = vec![0u8;1024];
+     loop {
+         // Compared with Listener, TcpStream is much simpler
+         // This simulation is the process of tcp short link, which can be regarded as a basic IO simulation of a typical HTTP interaction
+         // Of course, there is no HTTP protocol in this newsletter XD!
+         let mut stream = TcpStream::connect(&addr).unwrap();
+         let msg = "WaySLOG comming!".as_bytes();
+         // Avoid sending data too fast and swiping the screen
+         thread::sleep_ms(100);
+         let rcount = try!(stream.write(&msg));
+         let _ = try!(stream. read(&mut buf));
+         println!("{:?}", &buf[0..rcount]);
+         buf. clear();
+     }
+     Ok(())
 }
 
 ```
 
-将我们的程序拼接起来如下：
+Stitching our program together looks like this:
 
 ```rust
 use std::net::*;
@@ -99,7 +99,7 @@ fn main() {
 
 ```
 
-各位可以自己试一下结果
+You can try the result yourself
 
 
-写网络程序，注定了要处理各种神奇的条件和错误，定义自己的数据结构，粘包问题等都是需要我们去处理和关注的。相较而言，Rust本身在网络方面的基础设施建设并不尽如人意，甚至连网络I/O都只提供了如上的block I/O 。可能其团队更关注于语言基础语法特性和编译的改进，但其实，有着官方出品的这种网络库是非常重要的。同时，我也希望Rust能够涌现出更多的网络库方案，让Rust的明天更好更光明。
+Writing network programs is destined to deal with all kinds of magical conditions and errors, defining your own data structure, sticky packets, etc., all need us to deal with and pay attention to. In comparison, Rust's own network infrastructure construction is not satisfactory, and even network I/O only provides the above block I/O. Perhaps its team is more concerned with the improvement of the language's basic grammatical features and compilation, but in fact, it is very important to have such an official network library. At the same time, I also hope that more network library solutions will emerge from Rust to make Rust's future better and brighter.

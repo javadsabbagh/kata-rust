@@ -1,8 +1,8 @@
-# 特性
+# Features
 
-## 特性与接口
-为了描述类型可以实现的抽象接口 (abstract interface)，
-Rust引入了特性 (trait) 来定义函数类型签名 (function type signature)：
+## Features and interfaces
+To describe an abstract interface that a type can implement,
+Rust introduces traits to define function type signatures:
 
 ```rust
 trait HasArea {
@@ -38,9 +38,9 @@ fn print_area<T: HasArea>(shape: T) {
 }
 ```
 
-其中函数`print_area()`中的泛型参数`T`被添加了一个名为`HasArea`的特性约束 (trait constraint)，
-用以确保任何实现了`HasArea`的类型将拥有一个`.area()`方法。
-如果需要多个特性限定 (multiple trait bounds)，可以使用`+`：
+Among them, the generic parameter `T` in the function `print_area()` is added a trait constraint named `HasArea`,
+Used to ensure that any type that implements `HasArea` will have a `.area()` method.
+If you need multiple trait bounds, you can use `+`:
 
 ```rust
 use std::fmt::Debug;
@@ -61,11 +61,11 @@ fn bar<T, K>(x: T, y: K)
 }
 ```
 
-其中第二个例子使用了更灵活的`where`从句，它还允许限定的左侧可以是任意类型，
-而不仅仅是类型参数。
+The second example uses a more flexible `where` clause, which also allows the left side of the qualification to be of any type,
+rather than just type parameters.
 
-定义在特性中的方法称为默认方法 (default method)，可以被该特性的实现覆盖。
-此外，特性之间也可以存在继承 (inheritance)：
+Methods defined in an attribute are called default methods and can be overridden by the implementation of that attribute.
+In addition, inheritance can also exist between attributes:
 
 ```rust
 trait Foo {
@@ -91,7 +91,7 @@ impl FooBar for Baz {
 }
 ```
 
-如果两个不同特性的方法具有相同的名称，可以使用通用函数调用语法 (universal function call syntax)：
+If two methods with different characteristics have the same name, you can use the universal function call syntax:
 
 ```rust
 // short-hand form
@@ -101,29 +101,29 @@ Trait::method(args);
 <Type as Trait>::method(args);
 ```
 
-关于实现特性的几条限制：
+A few restrictions on implementing features:
 
-* 如果一个特性不在当前作用域内，它就不能被实现。
-* 不管是特性还是`impl`，都只能在当前的包装箱内起作用。
-* 带有特性约束的泛型函数使用单态化实现 (monomorphization)，
-所以它是静态派分的 (statically dispatched)。
+* If a feature is not in the current scope, it cannot be implemented.
+* Both traits and `impl` only work within the current crate.
+* Generic functions with attribute constraints are implemented using monomorphization (monomorphization),
+So it is statically dispatched.
 
-下面列举几个非常有用的标准库特性：
+Here are a few very useful standard library features:
 
-* `Drop`提供了当一个值退出作用域后执行代码的功能，它只有一个`drop(&mut self)`方法。
-* `Borrow`用于创建一个数据结构时把拥有和借用的值看作等同。
-* `AsRef`用于在泛型中把一个值转换为引用。
-* `Deref<Target=T>`用于把`&U`类型的值自动转换为`&T`类型。
-* `Iterator`用于在集合 (collection) 和惰性值生成器 (lazy value generator) 上实现迭代器。
-* `Sized`用于标记运行时长度固定的类型，而不定长的切片和特性必须放在指针后面使其运行时长度已知，
-比如`&[T]`和`Box<Trait>`。
+* `Drop` provides the function of executing code when a value exits the scope, it only has a `drop(&mut self)` method.
+* `Borrow` is used to create a data structure that treats owned and borrowed values as equivalent.
+* `AsRef` is used to convert a value to a reference in generics.
+* `Deref<Target=T>` is used to automatically convert the value of `&U` type to `&T` type.
+* `Iterator` is used to implement iterators on collections and lazy value generators.
+* `Sized` is used to mark a type with a fixed length at runtime, while slices and properties with an indefinite length must be placed behind the pointer to make the length known at runtime,
+For example `&[T]` and `Box<Trait>`.
 
-## 泛型和多态
+## Generics and polymorphism
 
-泛型 (generics) 在类型理论中称作参数多态 (parametric polymorphism)，
-意为对于给定参数可以有多种形式的函数或类型。先看Rust中的一个泛型例子：  
+Generics are called parametric polymorphism in type theory,
+Means a function or type that can have multiple forms for a given argument. Let's look at an example of generics in Rust:
 
-Option在rust标准库中的定义:  
+The definition of Option in the rust standard library:
 
 ```rust
 enum Option<T> {
@@ -131,13 +131,13 @@ enum Option<T> {
     None,
 }
 ```
-Option的典型用法:  
+Typical usage of Option:
 ```rust
 let x: Option<i32> = Some(5);
 let y: Option<f64> = Some(5.0f64);
 ```
 
-其中`<T>`部分表明它是一个泛型数据类型。当然，泛型参数也可以用于函数参数和结构体域：
+The `<T>` part indicates that it is a generic data type. Of course, generic parameters can also be used for function parameters and structure fields:
 
 ```rust
 // generic functions
@@ -155,14 +155,14 @@ let int_origin = Point { x: 0, y: 0 };
 let float_origin = Point { x: 0.0, y: 0.0 };
 ```
 
-对于多态函数，存在两种派分 (dispatch) 机制：静态派分和动态派分。
-前者类似于C++的模板，Rust会生成适用于指定类型的特殊函数，然后在被调用的位置进行替换，
-好处是允许函数被内联调用，运行比较快，但是会导致代码膨胀 (code bloat)；
-后者类似于Java或Go的`interface`，Rust通过引入特性对象 (trait object) 来实现，
-在运行期查找虚表 (vtable) 来选择执行的方法。特性对象`&Foo`具有和特性`Foo`相同的名称，
-通过转换 (casting) 或者强制多态化 (coercing) 一个指向具体类型的指针来创建。
+For polymorphic functions, there are two dispatch mechanisms: static dispatch and dynamic dispatch.
+The former is similar to the template of C++, Rust will generate a special function suitable for the specified type, and then replace it at the called position,
+The advantage is that the function is allowed to be called inline, which runs faster, but it will cause code bloat;
+The latter is similar to `interface` in Java or Go, and Rust implements it by introducing trait objects,
+Look up the virtual table (vtable) at runtime to select the method to execute. The property object `&Foo` has the same name as the property `Foo`,
+Created by casting or coercing a pointer to a concrete type.
 
-当然，特性也可以接受泛型参数。但是，往往更好的处理方式是使用关联类型 (associated type)：
+Of course, traits can also accept generic parameters. However, it is often better to use an associated type:
 
 ```rust
 // use generic parameters

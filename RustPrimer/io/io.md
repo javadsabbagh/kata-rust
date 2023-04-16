@@ -1,15 +1,15 @@
-# 标准输入与输出
+# standard input and output
 
-回顾一下我们写的第一个 Rust 程序就是带副作用的，其副作用就是向标准输出(stdout)，通常是终端或屏幕，输出了 Hello, World! 让屏幕上这几个字符的地方点亮起来。`println!` 宏是最常见的输出，用宏来做输出的还有 `print!`，两者都是向标准输出(stdout)输出，两者的区别也一眼就能看出。至于格式化输出，[基础运算符和字符串格式化小节](../type/operator-and-formatting.md)有详细说明，这里就不再啰嗦了。
+Recall that the first Rust program we wrote had side effects, and its side effect was to output to the standard output (stdout), usually a terminal or a screen, and output Hello, World! to light up the place where these characters are on the screen. The `println!` macro is the most common output, and `print!` is also used to output macros. Both of them output to the standard output (stdout), and the difference between the two can be seen at a glance. As for formatted output, [Basic Operators and String Formatting Section](../type/operator-and-formatting.md) has detailed descriptions, so I won’t repeat it here.
 
-更通用的标准输入与输出定义在 `std::io` 模块里，调用 `std::io::stdin()` 和 `std::io::stdout()` 两个函数分别会得到输入句柄和输出句柄(哎，[句柄](https://zh.wikipedia.org/wiki/%E5%8F%A5%E6%9F%84)这个词是计算机史上最莫名其妙的翻译了)，这两个句柄默认会通过互斥锁同步，也就是说不让多个进程同时读或写标准输入输出，不然的话如果一个进程要往标准输出画马，一个进程要画驴，两个进程同时写标准输出的话，最后可能就给画出一头骡子了，如果更多进程画不同的动物最后可能就成四不像了。除了隐式地用互斥锁，我们还可以显式地在句柄上调用 `.lock()`。输入输出句柄实现了前面讲的读写 Trait，所以是 reader/writer，就可以调接口来读写标准输入与输出了。举几个栗子：
+The more general standard input and output are defined in the `std::io` module, calling the `std::io::stdin()` and `std::io::stdout()` two functions will get the input handle respectively And the output handle (hey, the word [handle](https://zh.wikipedia.org/wiki/%E5%8F%A5%E6%9F%84) is the most inexplicable translation in the history of computers), these two By default, the handle will be synchronized through a mutex, which means that multiple processes are not allowed to read or write standard input and output at the same time. Otherwise, if one process wants to draw a horse to the standard output, one process wants to draw a donkey, and two processes write to the standard output at the same time If so, a mule may be drawn in the end. If there are more processes to draw different animals, it may end up being completely different. In addition to implicitly using a mutex, we can also explicitly call `.lock()` on the handle. The input and output handle implements the read and write traits mentioned above, so it is a reader/writer, and the interface can be adjusted to read and write standard input and output. Give a few chestnuts:
 
 ```rust
 use std::io;
 
 fn read_from_stdin(buf: &mut String) -> io::Result<()> {
-	try!(io::stdin().read_line(buf));
-	Ok(())
+try!(io::stdin().read_line(buf));
+Ok(())
 }
 ```
 
@@ -17,69 +17,69 @@ fn read_from_stdin(buf: &mut String) -> io::Result<()> {
 use std::io;
 
 fn write_to_stdout(buf: &[u8]) -> io::Result<()> {
-	try!(io::stdout().write(&buf));
-	Ok(())
+try!(io::stdout().write(&buf));
+Ok(())
 }
 ```
 
-可以看到上面的例子都是返回了 `io::Result<()>` 类型，这不是偶然，而是 IO 操作通用的写法，因为 IO 操作是程序与外界打交道，所以都是有可能失败的，用 `io::Result<T>` 把结果包起来，`io::Result<T>` 只是标准 `Result<T,E>` 中 `E` 固定为 `io::Error` 后类型的别名，而作为有副作用的操作我们一般是不用关心其返回值的，因为执行这类函数其真正的意义都体现在副作用上面了，所以返回值只是用来表示是否成功执行，而本身 `Result` 类型本身已经可以表示执行状态了，里面的 `T` 是什么则无关紧要，既然 `T` 没什么意义，那我们就选没什么意义的 `unit` 类型好了，所以 IO 操作基本上都是使用 `io::Result<()>`。
+It can be seen that the above examples all return the `io::Result<()>` type. This is not accidental, but a common way of writing IO operations, because IO operations are programs that deal with the outside world, so they are all likely to fail. , use `io::Result<T>` to wrap the result, `io::Result<T>` is just the type of `E` fixed to `io::Error` in the standard `Result<T,E>` Alias, and as an operation with side effects, we generally don’t need to care about its return value, because the real meaning of executing such functions is reflected in the side effects, so the return value is only used to indicate whether the execution is successful, and `Result` itself The type itself can already represent the execution state, and it doesn’t matter what `T` is in it. Since `T` is meaningless, then we can choose the meaningless `unit` type, so IO operations basically use` io::Result<()>`.
 
-另外有一个地方需要注意的是由于 IO 操作可能会失败所以一般都是和 `try!` 宏一起使用的，但是 `try!` 在遇到错误时会把错误 `return` 出去的，所以需要保证包含 `try!` 语句的函数其返回类型是 `io::Result<T>`，很多新手文档没仔细看就直接查 std api 文档，然后照着 api 文档里面的例子把带 IO 操作的 `try!` 宏写到了 `main` 函数里。结果一编译，擦，照着文档写都编译不过，什么烂文档。其实点一下 api 文档上面的运行按钮就会发现文档里面的例子都是把 `try!` 放在另一个函数里面的，因为 `main` 函数是没有返回值的，而 `try!` 会返回 `io::Result<T>`，所以直接把 `try!` 放 `main` 函数里面肯定要跪。比如下面的从标准输入读取一行输入，由于把 `try!` 放在了 main 函数里，所以是编译不过的。
+Another thing to note is that because the IO operation may fail, it is generally used together with the `try!` macro, but `try!` will return the error when it encounters an error, so you need to ensure The return type of the function containing the `try!` statement is `io::Result<T>`. Many beginners directly check the std api documentation without carefully reading the documentation, and then follow the examples in the api documentation to use the `try with IO operation The !` macro is written in the `main` function. As a result, after compiling, wiping, and writing according to the document, it can't be compiled. What a bad document. In fact, click the run button on the api document, and you will find that the examples in the document all put `try!` in another function, because the `main` function has no return value, and `try!` will return` io::Result<T>`, so putting `try!` directly in the `main` function must be kneeling. For example, the following reads a line of input from standard input, because `try!` is placed in the main function, it cannot be compiled.
 
 ```rust
 use std::io;
 
 fn main() {
-	let mut input = String::new();
-	try!(io::stdin().read_line(&mut input));
-	println!("You typed: {}", input.trim());
+let mut input = String::new();
+try!(io::stdin().read_line(&mut input));
+println!("You typed: {}", input.trim());
 }
 ```
 
-这里有一件事需要主要的是 Rust 里面没有办法从键盘获取一个数字类型的值。实际上像 C 这样的语言也不是直接获取了数字类型，它只不过是做了一种转换。那么我们如果想要从键盘获取一个数字类型应该怎么做呢？
+One important thing to note here is that there is no way in Rust to get a numeric value from the keyboard. In fact, a language like C does not directly obtain the number type, it just does a conversion. So what should we do if we want to get a number type from the keyboard?
 
 ```rust
 fn main() {
-	let mut input = String::new();
-		std::io::stdin()
-			.read_line(&mut input)
-			.expect("Failed to read line");
-    // 这里等效的写法是：
-    // let num: i32 = input.trim().parse().unwrap(); 
-	let num = input.trim().parse::<i32>().unwrap();
-	println!("您输入的数字是：{}", num);
+let mut input = String::new();
+std::io::stdin()
+.read_line(&mut input)
+.expect("Failed to read line");
+     // The equivalent writing here is:
+     // let num: i32 = input.trim().parse().unwrap();
+let num = input.trim().parse::<i32>().unwrap();
+println!("The number you entered is: {}", num);
 }
 ```
 
-如果有很多地方都需要输入数字可以自行编写一个 `numin` 宏:
+If you need to enter numbers in many places, you can write a `numin` macro yourself:
 
 ```rust
 macro_rules! numin {
-	  () =>{
-	      {
-            let mut input = String::new();
-	          std::io::stdin()
-	              .read_line(&mut input)
-                .expect("Failed to read line");
-	          input.trim().parse().unwrap()
-        }
-    };
+() => {
+{
+             let mut input = String::new();
+std::io::stdin()
+.read_line(&mut input)
+                 .expect("Failed to read line");
+input.trim().parse().unwrap()
+         }
+     };
 }
 ```
 
-于是上面的程序可以被改写成：
+So the above program can be rewritten as:
 
 ```
 
 fn main() {
-    let num: i32 = numin!();
-	println!("您输入的数字是：{}", num);
+     let num: i32 = numin!();
+println!("The number you entered is: {}", num);
 }
 ```
 
-不过如果用户输入的不是数字，那么就会导致错误。这一点和 C 里面是非常相似的。当然您可以把程序写得再复杂一点儿来保证用户输入的一定是数字。不过这些就不是我们这一节要讨论的内容了。
+However, if the user enters something other than a number, an error will result. This is very similar to C. Of course, you can make the program more complicated to ensure that the user must input numbers. But these are not what we will discuss in this section.
 
-还有一点一些从其它语言转过来的程序员可能会疑惑的是，如何从命令行接受输入参数，因为 C 里面的 main 函数可以带参数所以可以直接从 main 函数的参数里获取输入参数。但其实这类输入与我们这里讲的有很大的差别的，它在 Rust 里面被归为环境变量，可以通过 `std::env::args()` 获取，这个函数返回一个 `Args` 迭代器，其中第一个就是程序名，后面的都是输入给程序的命令行参数。
+Another point that some programmers transferred from other languages may wonder is how to accept input parameters from the command line, because the main function in C can take parameters, so the input parameters can be obtained directly from the parameters of the main function. But in fact, this type of input is very different from what we are talking about here. It is classified as an environment variable in Rust and can be obtained through `std::env::args()`. This function returns an `Args` iteration device, the first of which is the program name, and the latter are the command line parameters input to the program.
 
 ```rust
 use std::env;
@@ -92,7 +92,7 @@ fn main() {
 }
 ```
 
-将上面的程序存为 *args.rs* 然后编译执行，结果如下
+Save the above program as *args.rs* and compile and execute, the result is as follows
 
 ```
 $ rustc args.rs
@@ -102,4 +102,3 @@ a
 b
 c
 ```
-

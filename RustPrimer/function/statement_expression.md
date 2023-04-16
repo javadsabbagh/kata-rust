@@ -1,9 +1,9 @@
-# 语句和表达式
-  rust是一个基于表达式的语言，不过它也有语句。rust只有两种语句：声明语句和表达式语句，其他的都是表达式。基于表达式是函数式语言的一个重要特征，表达式总是返回值。
+# Statements and expressions
+   rust is an expression-based language, but it also has statements. Rust has only two kinds of statements: declaration statements and expression statements, and the others are expressions. Based on the fact that expressions are an important feature of functional languages, expressions always return a value.
 
-## 声明语句
-  rust的声明语句可以分为两种，一种为变量声明语句，另一种为Item声明语句。
-  1. 变量声明语句。主要是指`let`语句，如:
+## Declaration statement
+   Rust declaration statements can be divided into two types, one is the variable declaration statement, and the other is the Item declaration statement.
+   1. Variable declaration statement. Mainly refers to the `let` statement, such as:
 
   ```rust
   let a = 8;
@@ -11,24 +11,24 @@
   let (a, c) = ("hi", false);
   ```
   
-  由于let是语句，所以不能将let语句赋给其他值。如下形式是错误的：
+   Since let is a statement, you cannot assign a let statement to other values. The following form is wrong:
   
   ```rust
   let b = (let a = 8);
   ```
   
-  rustc编译器会给出错误信息：![error](../images/function-statement-expression.png)
+   The rustc compiler will give an error message: ![error](../images/function-statement-expression.png)
 
-  2. Item声明。是指函数（function）、结构体（structure）、类型别名（type）、静态变量（static）、特质（trait）、实现（implementation）或模块（module）的声明。这些声明可以嵌套在任意块（block）中。关于Item声明，Rust Reference中的描述如下：
-  > An item declaration statement has a syntactic form identical to an item declaration within a module. Declaring an item — a function, enumeration, structure, type, static, trait, implementation or module — locally within a statement block is simply a way of restricting its scope to a narrow region containing all of its uses; it is otherwise identical in meaning to declaring the item outside the statement block.
+   2. Item statement. A declaration of a function, structure, type, static, trait, implementation, or module. These declarations can be nested in arbitrary blocks. Regarding the Item declaration, the description in the Rust Reference is as follows:
+   > An item declaration statement has a syntactic form identical to an item declaration within a module. Declaring an item — a function, enumeration, structure, type, static, trait, implementation or module — locally within a statement block is simply a way of restricting its scope to a narrow region containing all of its uses; it is otherwise identical in meaning to declaring the item outside the statement block.
 
-  当然，这里不能展开讲这些Item都是如何声明的，详情请看RustPrimer的其他相关章节。
+   Of course, we cannot expand on how these items are declared here. For details, please refer to other relevant chapters of RustPrimer.
 
-## 表达式语句
-  表达式语句，由一个表达式和一个分号组成，即在表达式后面加一个分号就将一个表达式转变为了一个语句。所以，有多少种表达式，就有多少种表达式语句。
+## expression statement
+   An expression statement consists of an expression and a semicolon, that is, adding a semicolon after the expression turns an expression into a statement. Therefore, there are as many expression statements as there are expressions.
 
-  __rust有许多种表达式：__
-  * 字面表达式（literal expression）
+   __rust has many kinds of expressions:__
+   * literal expression
 
   ```rust
   ();        // unit type
@@ -37,22 +37,22 @@
   15;         // integer type
   ```
 
-  * 元组表达式(Tuple expression)：
+   * Tuple expression:
 
   ```rust
   (0.0, 4.5);
   ("a", 4usize, true);
   ```
   
-  通常不使用一个元素的元组，不过如果你坚持的话，rust也是允许的，不过需要在元素后加一个逗号：
+   One-element tuples are generally not used, but if you insist, rust allows it, but you need to add a comma after the element:
   
   ```rust
   (0,); // single-element tuple
   (0); // zero in parentheses
   ```
 
-  * 结构体表达式（structure expression）
-  由于结构体有多种形式，所以结构体表达式也有多种形式。
+   * Structure expression (structure expression)
+   As structs come in many forms, struct expressions also come in many forms.
   
   ```rust
   Point {x: 10.0, y: 20.0};
@@ -61,28 +61,28 @@
   some_fn::<Cookie>(Cookie);
   ```
   
-  结构体表达式一般用于构造一个结构体对象，它除了以上从零构建的形式外，还可以在另一个对象的基础上进行构建：
+   Structure expressions are generally used to construct a structure object, which can be constructed on the basis of another object in addition to the above form of building from zero:
   
   ```rust
   let base = Point3d {x: 1, y: 2, z: 3};
   Point3d {y: 0, z: 10, .. base};
   ```
 
-  * 块表达式（block expression）：
-  块表达式就是用花括号`{}`括起来的一组表达式的集合，表达式间一般以分号分隔。块表达式的值，就是最后一个表达式的值。
+   * Block expression (block expression):
+   A block expression is a set of expressions enclosed in curly braces `{}`, and the expressions are usually separated by semicolons. The value of the block expression is the value of the last expression.
   
-  ```rust
-  let x: i32 = { println!("Hello."); 5 };
-  ```
+   ```rust
+   let x: i32 = { println!("Hello."); 5 };
+   ```
   
-  如果以语句结尾，则块表达式的值为`()`:
+   If it ends with a statement, the block expression evaluates to `()`:
   
-  ```rust
-  let x: () = { println!("Hello."); };
-  ```
+   ```rust
+   let x: () = { println!("Hello."); };
+   ```
 
-  * 范围表达式（range expression）:
-  可以使用范围操作符`..`来构建范围对象（variant of `std::ops::Range`）：
+   * range expression (range expression):
+   Range objects (variant of `std::ops::Range`) can be constructed using the range operator `..`:
   
   ```rust
   1..2;   // std::ops::Range
@@ -91,30 +91,31 @@
   ..;     // std::ops::RangeFull
   ```
 
-  * if表达式（if expression）：
+   * if expression (if expression):
 
   ```rust
   let a = 9;
   let b = if a%2 == 0 {"even"} else {"odd"};
   ```
 
-  * 除了以上这些外，还有许多，如：
-    + path expression
-    + mehond-call expression
-    + field expression
-    + array expression
-    + index expression
-    + unary operator expression
-    + binary operator expression
-    + return expression
-    + grouped expression
-    + match expression
-    + if expression
-    + lambda expression
-    + ... ...
+   * In addition to the above, there are many more, such as:
+     + path expression
+     + mehond-call expression
+     + field expression
+     + array expression
+     + index expression
+     + unary operator expression
+     + binary operator expression
+     + return expression
+     + grouped expression
+     + match expression
+     + if expression
+     + lambda expression
+     + ... ...
 
-  这里无法详细展开，读者可以到[Rust Reference][1]去查看。
-  [1]:http://doc.rust-lang.org/reference.html#statements-and-expressions
+   It cannot be expanded in detail here, readers can go to [Rust Reference][1] to check.
+   [1]: http://doc.rust-lang.org/reference.html#statements-and-expressions
 
-> #### 以上表达式语句中的部分例子引用自[Rust Reference][ref]
-  [ref]:http://doc.rust-lang.org/reference.html
+> #### Some examples in the above expression statements are quoted from [Rust Reference][ref]
+   [ref]: http://doc.rust-lang.org/reference.html
+   

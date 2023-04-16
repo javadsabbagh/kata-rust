@@ -1,13 +1,13 @@
-# 结构体与枚举
+# Structs and enumerations
 
-## 结构体
+## structure
 
-结构体 (struct) 是一种记录类型，所包含的每个域 (field) 都有一个名称。
-每个结构体也都有一个名称，通常以大写字母开头，使用驼峰命名法。
-元组结构体 (tuple struct) 是由元组和结构体混合构成，元组结构体有名称，
-但是它的域没有。当元组结构体只有一个域时，称为新类型 (newtype)。
-没有任何域的结构体，称为类单元结构体 (unit-like struct)。
-结构体中的值默认是不可变的，需要给结构体加上`mut`使其可变。
+A struct is a record type that contains a name for each field.
+Each struct also has a name, usually beginning with a capital letter and using camelCase.
+The tuple structure (tuple struct) is composed of a mixture of tuple and structure. The tuple structure has a name.
+But its domain doesn't. When a tuple structure has only one field, it is called a newtype.
+A structure without any fields is called a unit-like struct.
+The value in the structure is immutable by default, you need to add `mut` to the structure to make it variable.
 
 ```rust
 // structs
@@ -22,7 +22,7 @@ struct Color(u8, u8, u8);
 let android_green = Color(0xa4, 0xc6, 0x39);
 let Color(red, green, blue) = android_green;
 
-// A tuple struct’s constructors can be used as functions.
+// A tuple struct's constructors can be used as functions.
 struct Digit(i32);
 let v = vec![0, 1, 2];
 let d: Vec<Digit> = v.into_iter().map(Digit).collect();
@@ -37,38 +37,38 @@ struct EmptyStruct;
 let empty = EmptyStruct;
 ```
 
-一个包含`..`的`struct`可以用来从其它结构体拷贝一些值或者在解构时忽略一些域：
+A `struct` containing `..` can be used to copy some values from other structs or ignore some fields during destructuring:
 
 ```rust
 #[derive(Default)]
 struct Point3d {
-    x: i32,
-    y: i32,
-    z: i32,
+     x: i32,
+     y: i32,
+     z: i32,
 }
 
 let origin = Point3d::default();
-let point = Point3d { y: 1, ..origin };
+let point = Point3d { y: 1, .. origin };
 let Point3d { x: x0, y: y0, .. } = point;
 ```
 
-需要注意，Rust在语言级别不支持域可变性 (field mutability)，所以不能这么写：
+Note that Rust does not support field mutability at the language level, so you cannot write:
 
 ```rust
 struct Point {
-    mut x: i32,
-    y: i32,
+     mut x: i32,
+     y: i32,
 }
 ```
 
-这是因为可变性是绑定的一个属性，而不是结构体自身的。可以使用`Cell<T>`来模拟：
+This is because mutability is a property of the binding, not of the struct itself. This can be simulated using `Cell<T>`:
 
 ```rust
 use std::cell::Cell;
 
 struct Point {
-    x: i32,
-    y: Cell<i32>,
+     x: i32,
+     y: Cell<i32>,
 }
 
 let point = Point { x: 5, y: Cell::new(6) };
@@ -76,7 +76,7 @@ let point = Point { x: 5, y: Cell::new(6) };
 point.y.set(7);
 ```
 
-此外，结构体的域对其所在模块 (mod) 之外默认是私有的，可以使用`pub`关键字将其设置成公开。
+In addition, fields of structs are private by default outside the module (mod) in which they reside, and can be made public using the `pub` keyword.
 
 ```rust
 mod graph {
@@ -100,10 +100,10 @@ fn outside_fn() {
 }
 ```
 
-## 枚举
-Rust有一个集合类型，称为枚举 (enum)，代表一系列子数据类型的集合。
-其中子数据结构可以为空-如果全部子数据结构都是空的，就等价于C语言中的enum。
-我们需要使用`::`来获得每个元素的名称。
+## enumeration
+Rust has a collection type, called an enumeration (enum), which represents a collection of sub-datatypes.
+The sub-data structure can be empty - if all sub-data structures are empty, it is equivalent to enum in C language.
+We need to use `::` to get the name of each element.
 
 ```rust
 // enums
@@ -117,9 +117,9 @@ enum Message {
 let x: Message = Message::Move { x: 3, y: 4 };
 ```
 
-与结构体一样，枚举中的元素默认不能使用关系运算符进行比较 (如`==`, `!=`, `>=`)，
-也不支持像`+`和`*`这样的双目运算符，需要自己实现，或者使用`match`进行匹配。
+Like structures, elements in enumerations cannot be compared using relational operators by default (such as `==`, `!=`, `>=`),
+Binary operators like `+` and `*` are also not supported, you need to implement it yourself, or use `match` for matching.
 
-枚举默认也是私有的，如果使用`pub`使其变为公有，则它的元素也都是默认公有的。
-这一点是与结构体不同的：即使结构体是公有的，它的域仍然是默认私有的。这里的共有/私有仍然
-是针对其定义所在的模块之外。此外，枚举和结构体也可以是递归的 (recursive)。
+An enumeration is also private by default, and if it is made public using `pub`, its elements are also public by default.
+This is different from structs: even though a struct is public, its fields are still private by default. Public/private here is still
+is outside the module in which it is defined. Additionally, enums and structs can also be recursive.

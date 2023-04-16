@@ -1,10 +1,10 @@
-# 目录操作:简单grep
+# Directory operation: simple grep
 
-上一节我们实现了通过`Command`调用subprocess。这一节，我们将通过自己的代码去实现一个简单的grep。当然了，这种基础的工具你是能找到源码的，而我们的实现也并不像真正的grep那样注重效率，本节的主要作用就在于演示标准库API的使用。
+In the previous section, we realized calling subprocess through `Command`. In this section, we will implement a simple grep through our own code. Of course, you can find the source code of this basic tool, and our implementation does not focus on efficiency like the real grep. The main function of this section is to demonstrate the use of the standard library API.
 
-首先，我们需要对当前目录进行递归，遍历，每当查找到文件的时候，我们回调一个函数。
+First, we need to recurse and traverse the current directory, and whenever we find a file, we call back a function.
 
-于是，我们就有了这么个函数：
+So, we have this function:
 
 ```rust
 use std::env::args;
@@ -31,7 +31,7 @@ fn visit_dirs(dir: &Path, pattern: &String, cb: &Fn(&DirEntry, &String)) -> io::
 
 ```
 
-我们有了这样的一个函数，有同学可能觉得这代码眼熟。这不是标准库里的例子改了一下么？
+We have such a function, some students may find this code familiar. Isn't this the example in the standard library changed?
 
 .
 
@@ -39,10 +39,10 @@ fn visit_dirs(dir: &Path, pattern: &String, cb: &Fn(&DirEntry, &String)) -> io::
 
 .
 
-是啊！
+yes!
 
-好了，继续，我们需要读取每个查到的文件，同时判断每一行里有没有所查找的内容。
-我们用一个BufferIO去读取各个文件，同时用String的自带方法来判断内容是否存在。
+Well, continue, we need to read each found file, and at the same time judge whether there is what we are looking for in each line.
+We use a BufferIO to read each file, and use String's own method to determine whether the content exists.
 
 ```rust
 fn call_back(de: &DirEntry, pt: &String) {
@@ -57,7 +57,7 @@ fn call_back(de: &DirEntry, pt: &String) {
 }
 ```
 
-最后，我们将整个函数调用起来，如下：
+Finally, we call the entire function as follows:
 
 ```rust
 use std::env::args;
@@ -93,7 +93,7 @@ fn call_back(de: &DirEntry, pt: &String) {
     }
 }
 
-// 实现调用grep命令搜索文件
+// Realize calling the grep command to search for files
 fn main() {
     let mut arg_iter = args();
     arg_iter.next();
@@ -106,10 +106,10 @@ fn main() {
 
 ```
 
-调用如下：
+The call is as follows:
 
 ```
-➜  demo git:(master) ✗ ./target/debug/demo "fn main()" ../
+➜ demo git:(master) ✗ ./target/debug/demo "fn main()" ../
 fn main() {
 fn main() { }
 fn main() {

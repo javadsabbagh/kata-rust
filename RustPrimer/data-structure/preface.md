@@ -1,3 +1,3 @@
-# 常用数据结构实现
+# Commonly used data structure implementation
 
-本章讲解如何使用 Rust 进行一些常用数据结构的实现。实现的代码仅作示例用，并不一定十分高效。真正使用的时候，请使用标准库或第三方成熟库中的数据结构。
+This chapter explains how to use Rust to implement some common data structures. The implemented code is for example only and may not be very efficient. When actually using it, please use the data structure in the standard library or a third-party mature library.

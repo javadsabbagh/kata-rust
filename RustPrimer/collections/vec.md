@@ -1,39 +1,39 @@
-# 动态数组Vec
-在第七章我们粗略介绍了一下Vec的用法。实际上，作为Rust中一个非常重要的数据类型，熟练掌握Vec的用法能大大提升我们在Rust世界中的编码能力。
+# dynamic array Vec
+In Chapter 7, we briefly introduced the usage of Vec. In fact, as a very important data type in Rust, mastering the usage of Vec can greatly improve our coding ability in the Rust world.
 
-## 特性及声明方式
+## Features and declaration methods
 
-和我们之前接触到的Array不同，`Vec`具有动态的添加和删除元素的能力，并且能够以`O(1)`的效率进行随机访问。同时，对其尾部进行push或者pop操作的效率也是平摊`O(1)`的。
-同时，有一个非常重要的特性（虽然我们编程的时候大部分都不会考量它）就是，Vec的所有内容项都是生成在堆空间上的，也就是说，你可以轻易的将Vec move出一个栈而不用担心内存拷贝影响执行效率——毕竟只是拷贝的栈上的指针。
+Unlike the Array we have been exposed to before, `Vec` has the ability to dynamically add and delete elements, and can perform random access with `O(1)` efficiency. At the same time, the efficiency of the push or pop operation on its tail is equally amortized `O(1)`.
+At the same time, there is a very important feature (although most of us do not consider it when programming) that is, all content items of Vec are generated on the heap space, that is to say, you can easily move Vec out A stack without worrying about memory copy affecting execution efficiency - after all, it is just a pointer on the copied stack.
 
-另外的就是，`Vec<T>`中的泛型`T`必须是`Sized`的，也就是说必须在编译的时候就知道存一个内容项需要多少内存。对于那些在编译时候未知大小的项（函数类型等），我们可以用`Box`将其包裹，当成一个指针。
+In addition, the generic type `T` in `Vec<T>` must be `Sized`, that is to say, the amount of memory required to store a content item must be known at compile time. For those items whose size is unknown at compile time (function type, etc.), we can use `Box` to wrap it as a pointer.
 
 ### new
-我们可以用`std::vec::Vec::new()`的方式来声明一个Vec。
+We can declare a Vec with `std::vec::Vec::new()`.
 
 ```rust
 let mut v1: Vec<i32> = Vec::new();
 ```
 
-这里需要注意的是，`new`函数并没有提供一个能显式规定其泛型类型的参数，也就是说，上面的代码能根据`v1`的类型自动推导出`Vec`的泛型;但是，你不能写成如下的形式：
+It should be noted here that the `new` function does not provide a parameter that can explicitly specify its generic type, that is to say, the above code can automatically deduce the generic type of `Vec` according to the type of `v1`; but , you cannot write the following form:
 
 ```rust
 let mut v1 = Vec::new::<i32>();
-// 与之对比的,collect函数就能指定：
+// In contrast, the collect function can specify:
 // let mut v2 = (0i32..5).collect::<Vec<i32>>();
 ```
 
-这是因为这两个函数的声明形式以及实现形式，在此，我们不做深究。
+This is because of the declaration form and implementation form of these two functions, and we will not delve into them here.
 
 
-### 宏声明
+### Macro declaration
 
-相比调用new函数，Rust提供了一种更加直观便捷的方式声明一个动态数组： `vec!` 宏。
+Compared with calling the new function, Rust provides a more intuitive and convenient way to declare a dynamic array: the `vec!` macro.
 
 ```rust
 let v: Vec<i32> = vec![];
 
-// 以下语句相当于：
+// The following statements are equivalent to:
 // let mut temp = Vec::new();
 // temp.push(1);
 // temp.push(2);
@@ -41,32 +41,32 @@ let v: Vec<i32> = vec![];
 // let v = temp;
 let v = vec![1, 2, 3];
 
-let v = vec![0; 10]; //注意分号，这句话声明了一个 内容为10个0的动态数组
+let v = vec![0; 10]; //Pay attention to the semicolon, this statement declares a dynamic array of 10 zeros
 ```
 
-### 从迭代器生成
+### generate from iterator
 
-因为Vec实现了`FromIterator`这个trait，因此，借助collect，我们能将任意一个迭代器转换为Vec。
+Because Vec implements the `FromIterator` trait, we can convert any iterator into a Vec with the help of collect.
 
 ```rust
 let v: Vec<_> = (1..5).collect();
 ```
 
-## 访问及修改
+## access and modify
 
-### 随机访问
+### Random Access
 
-就像数组一样，因为Vec借助`Index`和`IndexMut`提供了随机访问的能力，我们通过`[index]`来对其进行访问，当然，既然存在随机访问就会出现越界的问题。而在Rust中，一旦越界的后果是极其严重的，可以导致Rust当前线程panic。因此，除非你确定自己在干什么或者在`for`循环中，不然我们不推荐通过下标访问。
+Just like an array, because Vec provides random access capabilities through `Index` and `IndexMut`, we access it through `[index]`. Of course, since there is random access, there will be out-of-bounds problems. In Rust, once the boundary is exceeded, the consequences are extremely serious, which can cause the current thread of Rust to panic. Therefore, unless you are sure what you are doing or in a `for` loop, we do not recommend accessing by subscript.
 
-以下是例子：
+Here are examples:
 
 ```rust
 let a = vec![1, 2, 3];
 assert_eq!(a[1usize], 2);
 ```
 
-那么，Rust中有没有安全的下标访问机制呢？答案是当然有：—— `.get(n: usize)` （`.get_mut(n: usize)`） 函数。
-对于一个数组，这个函数返回一个`Option<&T>` (`Option<&mut T>`)，当Option==None的时候，即下标越界，其他情况下，我们能安全的获得一个Vec里面元素的引用。
+So, is there a safe subscript access mechanism in Rust? The answer is of course: - `.get(n: usize)` (`.get_mut(n: usize)`) function.
+For an array, this function returns an `Option<&T>` (`Option<&mut T>`). When Option==None, the subscript is out of bounds. In other cases, we can safely get the elements in a Vec references.
 
 ```rust
 let v =vec![1, 2, 3];
@@ -74,27 +74,27 @@ assert_eq!(v.get(1), Some(&2));
 assert_eq!(v.get(3), None);
 ```
 
-### 迭代器
+### Iterators
 
-对于一个可变数组，Rust提供了一种简单的遍历形式—— for 循环。
-我们可以获得一个数组的引用、可变引用、所有权。
+For a mutable array, Rust provides a simple form of traversal - the for loop.
+We can get a reference, mutable reference, ownership of an array.
 
 ```rust
 let v = vec![1, 2, 3];
-for i in &v { .. } // 获得引用
-for i in &mut v { .. } // 获得可变引用
-for i in v { .. } // 获得所有权，注意此时Vec的属主将会被转移！！
+for i in &v { .. } // get reference
+for i in &mut v { .. } // get mutable reference
+for i in v { .. } // Obtain ownership, note that the owner of the Vec will be transferred at this time! !
 ```
 
-但是，这么写很容易出现多层`for`循环嵌套，因此，`Vec`提供了一个`into_iter()`方法，能显式地将自己转换成一个迭代器。然而迭代器怎么用呢？我们下一章将会详细说明。
+However, it is easy to have multiple layers of `for` loop nesting in this way, so `Vec` provides an `into_iter()` method that can explicitly convert itself into an iterator. But how to use iterators? We will explain in detail in the next chapter.
 
-### push的效率研究
+### push efficiency research
 
-前面说到，`Vec`有两个`O(1)`的方法，分别是`pop`和`push`，它们分别代表着将数据从尾部弹出或者装入。理论上来说，因为`Vec`是支持随机访问的，因此`push`效率应该是一致的。但是实际上，因为Vec的内部存在着内存拷贝和销毁，因此，如果你想要将一个数组，从零个元素开始，一个一个的填充直到最后生成一个非常巨大的数组的话，预先为其分配内存是一个非常好的办法。
+As mentioned earlier, `Vec` has two `O(1)` methods, namely `pop` and `push`, which respectively represent popping or loading data from the end. Theoretically, since `Vec` supports random access, the efficiency of `push` should be consistent. But in fact, because there is memory copying and destruction inside Vec, if you want to fill an array one by one from zero elements until a very huge array is generated at the end, pre-allocate memory for it is a very good way.
 
-这其中，有个关键的方法是reserve。
+Among them, a key method is reserve.
 
-如下代码(注意：由于SystemTime API在1.8以后才稳定, 请使用1.8.0 stable 以及以上版本的rustc编译)：
+The following code (Note: Since the SystemTime API is only stable after 1.8, please use 1.8.0 stable and above version of rustc to compile):
 
 ```rust
 use std::time;
@@ -117,17 +117,17 @@ fn main() {
 }
 ```
 
-在笔者自己的笔记本上，编译好了debug的版本，上面的代码跑出了：
+On the author's own notebook, the debug version was compiled, and the above code ran out:
 
 ```
-➜  debug git:(master) ✗ time ./demo
+➜ debug git:(master) ✗ time ./demo
 time spend: Duration { secs: 0, nanos: 368875346 }
 time spend: Duration { secs: 0, nanos: 259878787 }
-./demo  0.62s user 0.01s system 99% cpu 0.632 total
+./demo 0.62s user 0.01s system 99% cpu 0.632 total
 
 ```
 
-好像并没有太大差异？然而切换到release版本的时候:
+Doesn't seem like much of a difference? However, when switching to the release version:
 
 ```
 ➜  release git:(master) ✗ time ./demo
@@ -136,13 +136,13 @@ time spend: Duration { secs: 0, nanos: 24979520 }
 ./demo  0.06s user 0.02s system 97% cpu 0.082 total
 ```
 
-注意消耗的时间的位数。可见，在去除掉debug版本的调试信息之后，是否预分配内存消耗时间降低了一倍！
+Note the number of digits spent in time. It can be seen that after removing the debugging information of the debug version, whether the pre-allocation memory consumption time is doubled!
 
-这样的成绩，可见，预先分配内存确实有助于提升效率。
+Such results show that pre-allocating memory does help improve efficiency.
 
-有人可能会问了，你这样纠结这点时间，最后不也是节省在纳秒级别的么，有意义么？当然有意义。
+Some people may ask, if you are so entangled with this time, isn't it also saved at the nanosecond level in the end, is it meaningful? Of course it makes sense.
 
-第一，纳秒也是时间，这还是因为这个测试的`Vec`只是最简单的内存结构。一旦涉及到大对象的拷贝，所花费的时间可就不一定这么少了。
-第二，频繁的申请和删除堆空间，其内存一旦达到瓶颈的时候你的程序将会异常危险。
+First, nanoseconds are also time, again because the `Vec` for this test is just the simplest memory structure. Once the copying of large objects is involved, the time spent may not necessarily be so small.
+Second, frequent application and deletion of heap space, once the memory reaches the bottleneck, your program will be extremely dangerous.
 
-更多`Vec`的操作，请参照标准库的api。
+For more operations on `Vec`, please refer to the api of the standard library.

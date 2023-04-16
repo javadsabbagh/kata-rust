@@ -1,4 +1,4 @@
-# RustPrimer
+#RustPrimer
 
 [![build status][build-badge]][build-url]
 
@@ -7,61 +7,61 @@
 
 The Rust primer for beginners.
 
-给初学者的Rust中文教程。
+Rust Chinese tutorial for beginners.
 
-## 在线阅读地址
+## Online reading address
 
-[点我阅读](https://rustcc.gitbooks.io/rustprimer/content/)
+[Click me to read](https://rustcc.gitbooks.io/rustprimer/content/)
 
-也可复制以下链接：
+You can also copy the link below:
 
 ```
 https://rustcc.gitbooks.io/rustprimer/content/
 ```
 
-## 社区
+## Community
 
-### QQ群
+### QQ group
 
-群号：
+Group number:
 ```
-    Rust语言中文社区 144605258 （已满）
-    Rust编程语言社区2群 303838735
-    (telegram群)：
+    Rust language Chinese community 144605258 (full)
+    Rust programming language community group 2 303838735
+    (telegram group):
 ```
 
-*进群必须附带您的github地址，否则不予通过*
+*Entering the group must include your github address, otherwise it will not be accepted*
 
-### telegram社群
+### telegram community
 
-rust社区深水群：[https://t.me/rust_deep_water](https://t.me/rust_deep_water)
+Rust community deep water group: [https://t.me/rust_deep_water](https://t.me/rust_deep_water)
 
-rust众: [https://t.me/rust_zh](https://t.me/rust_zh)
+Rust crowd: [https://t.me/rust_zh](https://t.me/rust_zh)
 
 
-### 社区
+### Community
 
-chat: https://chat.rust-china.org/ (使用github验证登录)
+chat: https://chat.rust-china.org/ (login with github authentication)
 
 blog: https://rust-china.org/
 
-wiki: https://wiki.rust-china.org/
+Wiki: https://wiki.rust-china.org/
 
-## 版权规定
+## Copyright Regulations
 
-本书使用 `CC BY-SA 3.0` 协议，转载请注明地址。
+This book uses the `CC BY-SA 3.0` agreement, please indicate the address when reprinting.
 
-## GitBook 生成
+## GitBook generation
 
-直接用：
+Use directly:
 
 ```
 gitbook serve
 ```
 
-即可。
+That's it.
 
 ## ChangeLog
 
-1. 2016年3月31日，初稿完成。发布 v1.0 版。
-2. 2016年5月2日，完成 1.1.0 版本。
+1. On March 31, 2016, the first draft was completed. Release v1.0.
+2. On May 2, 2016, version 1.1.0 was completed.

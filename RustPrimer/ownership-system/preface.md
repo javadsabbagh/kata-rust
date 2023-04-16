@@ -1,22 +1,22 @@
-# 所有权系统
+# Ownership system
 
-## 概述
+## Overview
 
-所有权系统（Ownership System）是Rust语言最基本最独特也是最重要的特性之一。
+The Ownership System is one of the most fundamental, unique and important features of the Rust language.
 
-Rust追求的目标是内存安全与运行效率，但是它却没有golang, java, python等语言的内存垃圾回收机制GC。
+The goal Rust pursues is memory safety and operating efficiency, but it does not have the memory garbage collection mechanism GC of languages such as golang, java, and python.
 
-Rust语言号称，只要编译通过就不会崩溃（内存安全）；拥有着零或者极小的运行时开销（运行效率）。这些优点也都得益于Rust的所有权系统。
+The Rust language claims that as long as the compilation is passed, it will not crash (memory safety); it has zero or very small runtime overhead (running efficiency). These advantages also benefit from Rust's ownership system.
 
-所有权系统，包括三个重要的组成部分：
+The ownership system consists of three important components:
 
-- **Ownership**（所有权）
-- **Borrowing**（借用）
-- **Lifetimes**（生命周期）
+- **Ownership** (ownership)
+- **Borrowing**
+- **Lifetimes** (lifetime)
 
-这三个特性之间相互关联，后面章节会依次全面讲解。
+These three features are related to each other, and will be fully explained in the following chapters.
 
-> **提示:**
-> Rust的所有权系统对很多初学者来说，可能会觉得难以理解，Rust的内存检查是在编译阶段完成，这个检查是非常严谨的，所以初学者在编译代码的时候，刚开始可能很难一次编译通过。
+> **Hint:**
+> Rust’s ownership system may be difficult for many beginners to understand. Rust’s memory check is done at the compilation stage. This check is very rigorous, so it may be difficult for beginners to compile code at the beginning Compilation passed.
 
-> 不过不要害怕：），当你一旦了解熟悉它后你会喜欢上它，并且在日后的编程中受益颇多。所有权系统需要读者慢慢体会其中的奥秘，学习过程中也可以参考官方文档。
+> But don't be afraid :), once you get familiar with it you will love it and benefit a lot in future programming. The ownership system requires readers to slowly understand its mysteries, and you can also refer to official documents during the learning process.

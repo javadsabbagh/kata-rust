@@ -1,61 +1,61 @@
 # Heap & Stack
 
-## 简介
+## Introduction
 
-堆和栈是计算机里面最基本的概念，不过如果一直使用高级语言如 Python/Ruby/PHP/Java 等之类的语言的话，可能对堆和栈并不怎么理解，当然这里的栈(Stack)并不是数据结构里面的概念，而是计算机对内存的一个抽象。相比而言，C/C++/Rust 这些语言就必须对堆和栈的概念非常了解才能写出正确的程序，之所以有这样的区别是因为它们的内存管理方式不同，Python 之类的语言程序运行时会同时会运行垃圾回收器，垃圾回收器与用户程序或并行执行或交错执行，垃圾回收器会自动释放不再使用的内存空间，而 C/C++/Rust 则没有垃圾回收器。
+Heap and stack are the most basic concepts in computers, but if you have been using high-level languages such as Python/Ruby/PHP/Java, you may not understand heap and stack very well. Of course, the stack (Stack) here is not It is not a concept in a data structure, but an abstraction of memory by a computer. In contrast, languages such as C/C++/Rust must have a good understanding of the concepts of heap and stack to write correct programs. The reason for this difference is that their memory management methods are different. Language programs such as Python The runtime will run the garbage collector at the same time. The garbage collector and the user program are executed in parallel or interleaved. The garbage collector will automatically release the memory space that is no longer used, while C/C++/Rust does not have a garbage collector.
 
-操作系统会将物理内存映射成虚拟地址空间，程序在启动时看到的虚拟地址空间是一块完整连续的内存。
+The operating system maps physical memory into a virtual address space, and the virtual address space seen by the program at startup is a complete continuous memory.
 
-栈内存从高位地址向下增长，且栈内存分配是连续的，一般操作系统对栈内存大小是有限制的，Linux/Unix 类系统上面可以通过 ulimit 设置最大栈空间大小，所以 C 语言中无法创建任意长度的数组。在Rust里，函数调用时会创建一个临时栈空间，调用结束后 Rust 会让这个栈空间里的对象自动进入 `Drop` 流程，最后栈顶指针自动移动到上一个调用栈顶，无需程序员手动干预，因而栈内存申请和释放是非常高效的。
+The stack memory grows downward from the high address, and the stack memory allocation is continuous. The general operating system has a limit on the stack memory size. On Linux/Unix type systems, the maximum stack space size can be set through ulimit, so it cannot be created in C language. An array of arbitrary length. In Rust, a temporary stack space is created when a function is called. After the call is over, Rust will let the objects in this stack space automatically enter the `Drop` process, and finally the top pointer of the stack is automatically moved to the top of the previous call stack, without the need for the programmer to manually Intervention, so stack memory application and release is very efficient.
 
-相对地，堆上内存则是从低位地址向上增长，堆内存通常只受物理内存限制，而且通常是不连续的，一般由程序员手动申请和释放的，如果想申请一块连续内存，则操作系统需要在堆中查找一块未使用的满足大小的连续内存空间，故其效率比栈要低很多，尤其是堆上如果有大量不连续内存时。另外内存使用完也必须由程序员手动释放，不然就会出现内存泄漏，内存泄漏对需要长时间运行的程序(例如守护进程)影响非常大。
+In contrast, the memory on the heap grows upwards from the low address. The heap memory is usually only limited by the physical memory, and it is usually discontinuous. It is usually applied and released manually by the programmer. If you want to apply for a piece of continuous memory, the operating system It is necessary to find an unused continuous memory space of sufficient size in the heap, so its efficiency is much lower than that of the stack, especially if there is a large amount of discontinuous memory on the heap. In addition, the memory must be manually released by the programmer after use, otherwise there will be a memory leak, which has a great impact on programs that need to run for a long time (such as daemon processes).
 
-## Rust 中的堆和栈
+## Heap and stack in Rust
 
-由于函数栈在函数执行完后会销毁，所以栈上存储的变量不能在函数之间传递，这也意味着函数没法返回栈上变量的引用，而这通常是 C/C++ 新手常犯的错误。而 Rust 中编译器则会检查出这种错误，错误提示一般为 `xxx does not live long enough`，看下面一个例子
+Since the function stack will be destroyed after the function is executed, the variables stored on the stack cannot be passed between functions, which also means that the function cannot return the reference of the variables on the stack, and this is usually a common mistake made by C/C++ novices . The compiler in Rust will check out this kind of error, and the error message is generally `xxx does not live long enough`, see the following example
 
 
 ```rust
 fn main() {
-    let b = foo("world");
-    println!("{}", b);
+     let b = foo("world");
+     println!("{}", b);
 }
 
 fn foo(x: &str) -> &str {
-    let a = "Hello, ".to_string() + x;
-    &a
+     let a = "Hello, ".to_string() + x;
+     &a
 }
 ```
 
-之所以这样写，很多人觉得可以直接拷贝字符串 `a` 的引用从而避免拷贝整个字符串，然而得到的结果却是 `a does not live long enough` 的编译错误。因为引用了一个函数栈中临时创建的变量，函数栈在函数调用结束后会销毁，这样返回的引用就变得毫无意义了，指向了一个并不存在的变量。相对于 C/C++ 而言，使用 Rust 就会幸运很多，因为 C/C++ 中写出上面那样的程序，编译器会默默地让你通过直到运行时才会给你报错。
+The reason for writing this way is that many people think that they can directly copy the reference of the string `a` to avoid copying the entire string, but the result is a compilation error of `a does not live long enough`. Because a variable temporarily created in the function stack is referenced, the function stack will be destroyed after the function call ends, so the returned reference becomes meaningless, pointing to a variable that does not exist. Compared with C/C++, using Rust will be much luckier, because if you write the above program in C/C++, the compiler will silently let you pass it until it runs and will not give you an error.
 
-其实由于 `a` 本身是 String 类型，是使用堆来存储的，所以可以直接返回，在函数返回时函数栈销毁后依然存在。同时 Rust 中下面的代码实际上也只是浅拷贝。
+In fact, since `a` itself is of String type and is stored using the heap, it can be returned directly, and it still exists after the function stack is destroyed when the function returns. Also the following code in Rust is actually just a shallow copy.
 
 ```rust
 fn main() {
-    let b = foo("world");
-    println!("{}", b);
+     let b = foo("world");
+     println!("{}", b);
 }
 
 fn foo(x: &str) -> String {
-    let a = "Hello, ".to_string() + x;
-    a
+     let a = "Hello, ".to_string() + x;
+     a
 }
 ```
 
-Rust 默认使用栈来存储变量，而栈上内存分配是连续的，所以必须在编译之前了解变量占用的内存空间大小，编译器才能合理安排内存布局。
+Rust uses the stack to store variables by default, and the memory allocation on the stack is continuous, so you must know the memory space occupied by variables before compiling, so that the compiler can arrange the memory layout reasonably.
 
 ## Box
 
-C 里面是通过 malloc/free 手动管理堆上内存空间的，而 Rust 则有多种方式，其中最常用的一种就是 Box,通过 `Box::new()` 可以在堆上申请一块内存空间，不像 C 里面一样堆上空间需要手动调用 `free` 释放，Rust 中是在编译期编译器借助 lifetime 对堆内存生命期进行分析，在生命期结束时自动插入 `free`。当前  Rust 底层即 Box 背后是调用 jemalloc 来做内存管理的，所以堆上空间是不需要程序员手动去管理释放的。很多时候你被编译器虐得死去活来时，那些 `borrow`, `move`, `lifetime` 错误其实就是编译器在教你认识内存布局，教你用 lifetime 规则去控制内存。这套规则说难不难，说简单也不简单，以前用别的语言写程序时对内存不关心的，刚写起来可能真的会被虐得死去活来，但是一旦熟悉这套规则，对内存布局掌握清楚后，借助编译器的提示写起程序来就会如鱼得水，这套规则是理论界研究的成果在Rust编译器上的实践。
+In C, the memory space on the heap is managed manually through malloc/free, while in Rust there are many ways, the most commonly used one is Box, which can apply for a piece of memory space on the heap through `Box::new()`, Unlike C, where the space on the heap needs to be released manually by calling `free`, in Rust, the compiler uses lifetime to analyze the lifetime of the heap memory at compile time, and automatically inserts `free` at the end of the lifetime. The current bottom layer of Rust, namely Box, calls jemalloc for memory management, so the space on the heap does not need to be manually managed and released by programmers. Many times when you are tortured to death by the compiler, those `borrow`, `move`, `lifetime` errors are actually the compiler teaching you about memory layout and using lifetime rules to control memory. This set of rules is not difficult to say, and it is not easy to say that it is simple. When writing programs in other languages ​​in the past, you don’t care about memory. You may really be tortured to death when you first write it. But once you are familiar with this set of rules, you can master memory layout Once you understand it, you will be able to write programs with the help of the compiler's prompts. This set of rules is the result of research in the theoretical circles and practiced on the Rust compiler.
 
-大多数带 GC 的面向对象语言里面的对象都是借助 box 来实现的，比如常见的动态语言 Python/Ruby/JavaScript 等，其宣称的"一切皆对象(Everything is an object)"，里面所谓的对象基本上都是 boxed value。
+Objects in most object-oriented languages with GC are implemented with the help of boxes, such as the common dynamic languages Python/Ruby/JavaScript, etc., which declare that "everything is an object (Everything is an object)", the so-called object Basically all boxed value.
 
-boxed 值相对于 unboxed，内存占用空间会大些，同时访问值的时候也需要先进行 unbox，即对指针进行解引用再获取真正存储的值，所以内存访问开销也会大些。既然 boxed 值既费空间又费时间，为什么还要这么做呢？因为通过 box，所有对象看起来就像是以相同大小存储的，因为只需要存储一个指针就够了，应用程序可以同等看待各种值，而不用去管实际存储是多大的值，如何申请和释放相应资源。
+Compared with unboxed, the boxed value takes up more memory space. At the same time, when accessing the value, it needs to be unboxed first, that is, the pointer is dereferenced and then the actual stored value is obtained, so the memory access overhead will also be larger. Since boxed values are space and time consuming, why bother? Because through the box, all objects seem to be stored with the same size, because only one pointer needs to be stored, and the application can treat all kinds of values ​​equally, regardless of the actual storage value, how to apply and Release the corresponding resources.
 
-Box 是堆上分配的内存，通过 `Box::new()` 会创建一个堆空间并返回一个指向堆空间的指针
+Box is the memory allocated on the heap, through `Box::new()` will create a heap space and return a pointer to the heap space
 
-nightly 版本中引入 `box` 关键词，可以用来取代 `Box::new()` 申请一个堆空间，也可以用在模式匹配上面
+The `box` keyword is introduced in the nightly version, which can be used to replace `Box::new()` to apply for a heap space, and can also be used in pattern matching
 
 ```rust
 #![feature(box_syntax, box_patterns)]
@@ -68,7 +68,7 @@ fn main() {
 }
 ```
 
-下面看一个例子，对比一下 `Vec<i32>` 和 `Vec<Box<i32>>` 内存布局，这两个图来自 [Stack Overflow](http://stackoverflow.com/questions/21066133/what-is-the-difference-between-veci32-and-vecboxi32/21067103#21067103)，从这两张内存分布图可以清楚直观地看出 Box 是如何存储的
+Let's look at an example and compare the memory layout of `Vec<i32>` and `Vec<Box<i32>>`. These two pictures are from [Stack Overflow](http://stackoverflow.com/questions/21066133/what- is-the-difference-between-veci32-and-vecboxi32/21067103#21067103), from these two memory distribution diagrams, you can clearly and intuitively see how the Box is stored
 
 
 ```
@@ -104,8 +104,8 @@ Vec<Box<i32>>
                     └───┘
 ```
 
-一些语言里会有看起来既像数组又像列表的数据结构，例如 python 中的 List，其实就是与 `Vec<Box<i32>>` 类似，只是把 i32 换成任意类型，就操作效率而言比单纯的 List 高效，同时又比数组使用更灵活。
+In some languages, there are data structures that look like both arrays and lists. For example, List in python is actually similar to `Vec<Box<i32>>`, except that i32 is replaced by any type. In terms of operational efficiency It is more efficient than a simple List and more flexible than an array.
 
-一般而言，在编译期间不能确定大小的数据类型都需要使用堆上内存，因为编译器无法在栈上分配 编译期未知大小 的内存，所以诸如 String, Vec 这些类型的内存其实是被分配在堆上的。换句话说，我们可以很轻松的将一个 Vec move 出作用域而不必担心消耗，因为数据实际上不会被复制。
+Generally speaking, data types whose size cannot be determined during compilation need to use heap memory, because the compiler cannot allocate memory with an unknown size during compilation on the stack, so types of memory such as String and Vec are actually allocated on the heap Up. In other words, we can easily move a Vec out of scope without worrying about consumption, since the data won't actually be copied.
 
-另外,需要从函数中返回一个浅拷贝的变量时也需要使用堆内存而不能直接返回一个指向函数内部定义变量的引用。
+In addition, when you need to return a shallow copy variable from a function, you also need to use heap memory instead of directly returning a reference to a variable defined inside the function.

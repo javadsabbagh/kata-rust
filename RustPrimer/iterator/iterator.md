@@ -1,10 +1,10 @@
-# 迭代器
+# iterator
 
-## 从for循环讲起
+## Starting from the for loop
 
-我们在控制语句里学习了Rust的`for`循环表达式，我们知道，Rust的for循环实际上和C语言的循环语句是不同的。这是为什么呢？因为，`for`循环不过是Rust编译器提供的语法糖！
+We have learned Rust's `for` loop expression in the control statement. We know that Rust's for loop is actually different from the loop statement of C language. Why is this? Because, the `for` loop is nothing but syntactic sugar provided by the Rust compiler!
 
-首先，我们知道Rust有一个`for`循环能够依次对迭代器的任意元素进行访问，即：
+First of all, we know that Rust has a `for` loop that can sequentially access any element of the iterator, namely:
 
 ```rust
 for i in 1..10 {
@@ -12,8 +12,8 @@ for i in 1..10 {
 }
 ```
 
-这里我们知道， (1..10) 其本身是一个迭代器，我们能对这个迭代器调用 `.next()` 方法，因此，`for`循环就能完整的遍历一个循环。
-而对于`Vec`来说：
+Here we know that (1..10) itself is an iterator, and we can call the `.next()` method on this iterator, so the `for` loop can completely traverse a loop.
+And for `Vec`:
 
 ```
 let values = vec![1,2,3];
@@ -22,11 +22,11 @@ for x in values {
 }
 ```
 
-在上面的代码中，我们并没有显式地将一个`Vec`转换成一个迭代器，那么它是如何工作的呢？现在就打开标准库翻api的同学可能发现了,`Vec`本身并没有实现 `Iterator` ，也就是说，你无法对`Vec`本身调用 `.next()` 方法。但是，我们在搜索的时候，发现了`Vec`实现了 `IntoIterator` 的 trait。
+In the code above, we didn't explicitly convert a `Vec` to an iterator, so how does it work? Students who open the standard library and flip the api now may find that `Vec` itself does not implement `Iterator`, that is to say, you cannot call the `.next()` method on `Vec` itself. However, when we searched, we found that `Vec` implements the `IntoIterator` trait.
 
-其实，`for`循环真正循环的，并不是一个迭代器(Iterator)，真正在这个语法糖里起作用的，是 `IntoIterator` 这个 trait。
+In fact, what the `for` loop really loops is not an iterator (Iterator), what really works in this syntactic sugar is the `IntoIterator` trait.
 
-因此，上面的代码可以被展开成如下的等效代码(只是示意，不保证编译成功):
+Therefore, the above code can be expanded into the following equivalent code (just for illustration, no guarantee of successful compilation):
 
 ```rust
 let values = vec![1, 2, 3];
@@ -44,11 +44,11 @@ let values = vec![1, 2, 3];
 }
 ```
 
-在这个代码里，我们首先对`Vec`调用 `into_iter` 来判断其是否能被转换成一个迭代器，如果能，则进行迭代。
+In this code, we first call `into_iter` on `Vec` to determine whether it can be converted into an iterator, and if so, iterate.
 
-那么，迭代器自己怎么办？
+So, what about the iterator itself?
 
-为此，Rust在标准库里提供了一个实现：
+For this, Rust provides an implementation in the standard library:
 
 ```rust
 impl<I: Iterator> IntoIterator for I {
@@ -56,89 +56,89 @@ impl<I: Iterator> IntoIterator for I {
 }
 ```
 
-也就是说，Rust为所有的迭代器默认的实现了 `IntoIterator`，这个实现很简单，就是每次返回自己就好了。
+In other words, Rust implements `IntoIterator` for all iterators by default. This implementation is very simple, just return itself every time.
 
-也就是说：
+That is to say:
 
-任意一个 `Iterator` 都可以被用在 `for` 循环上！
+Any `Iterator` can be used in a `for` loop!
 
-### 无限迭代器
+### infinite iterator
 
-Rust支持通过省略高位的形式生成一个无限长度的自增序列，即：
+Rust supports generating an infinite-length auto-increment sequence by omitting the high bits, namely:
 
 ```rust
 let inf_seq = (1..).into_iter();
 ```
 
-不过不用担心这个无限增长的序列撑爆你的内存，占用你的CPU，因为适配器的惰性的特性，它本身是安全的，除非你对这个序列进行`collect`或者`fold`！
-不过，我想聪明如你，不会犯这种错误吧！
-因此，想要应用这个，你需要用`take`或者`take_while`来截断他，必须？ 除非你将它当作一个生成器。当然了，那就是另外一个故事了。
+But don't worry about this infinitely growing sequence bursting your memory and occupying your CPU, because the adapter is inert and itself is safe unless you `collect` or `fold` this sequence!
+However, I think you are as smart as you, and you won't make such a mistake!
+So, to apply this, you need to truncate it with `take` or `take_while`, must? Unless you use it as a generator. Of course, that's another story.
 
-## 消费者与适配器
+## Consumer and Adapter
 
-说完了`for`循环，我们大致弄清楚了 `Iterator` 和 `IntoIterator` 之间的关系。下面我们来说一说消费者和适配器。
+After talking about the `for` loop, we roughly figured out the relationship between `Iterator` and `IntoIterator`. Let's talk about consumers and adapters.
 
-消费者是迭代器上一种特殊的操作，其主要作用就是将迭代器转换成其他类型的值，而非另一个迭代器。
+A consumer is a special operation on an iterator whose main purpose is to convert an iterator into a value of another type, not another iterator.
 
-而适配器，则是对迭代器进行遍历，并且其生成的结果是另一个迭代器，可以被链式调用直接调用下去。
+The adapter traverses the iterator, and the result generated is another iterator, which can be directly called by the chain call.
 
-由上面的推论我们可以得出: *迭代器其实也是一种适配器！*
+From the above inference, we can draw: *Iterator is actually a kind of adapter! *
 
-### 消费者
+### Consumers
 
-就像所有人都熟知的生产者消费者模型，迭代器负责生产，而消费者则负责将生产出来的东西最终做一个转化。一个典型的消费者就是`collect`。前面我们写过`collect`的相关操作，它负责将迭代器里面的所有数据取出，例如下面的操作：
+Just like the producer-consumer model that everyone is familiar with, the iterator is responsible for production, and the consumer is responsible for the final transformation of the produced things. A typical consumer is `collect`. Earlier we wrote about `collect` related operations, which are responsible for taking out all the data in the iterator, such as the following operations:
 
 ```rust
-let v = (1..20).collect(); //编译通不过的！
+let v = (1..20).collect(); // Compilation fails!
 ```
 
-尝试运行上面的代码，却发现编译器并不让你通过。因为你没指定类型！指定什么类型呢？原来collect只知道将迭代器收集到一个实现了 `FromIterator` 的类型中去，但是，事实上实现这个 trait 的类型有很多（Vec, HashMap等），因此，collect没有一个上下文来判断应该将v按照什么样的方式收集！！
+Try running the above code, only to find that the compiler won't let you through. Because you didn't specify the type! What type to specify? It turns out that collect only knows to collect iterators into a type that implements `FromIterator`. However, in fact, there are many types that implement this trait (Vec, HashMap, etc.), so collect does not have a context to judge that v should be based on What a way to collect! !
 
-要解决这个问题，我们有两种解决办法：
+To solve this problem, we have two solutions:
 
-1. 显式地标明`v`的类型:
+1. Explicitly mark the type of `v`:
 
     ```rust
     let v: Vec<_> = (1..20).collect();
     ```
 
-2. 显式地指定`collect`调用时的类型：
+2. Explicitly specify the type of `collect` call:
 
     ```rust
     let v = (1..20).collect::<Vec<_>>();
     ```
 
-当然，一个迭代器中还存在其他的消费者，比如取第几个值所用的 `.nth()`函数，还有用来查找值的 `.find()` 函数，调用下一个值的`next()`函数等等，这里限于篇幅我们不能一一介绍。所以，下面我们只介绍另一个比较常用的消费者—— `fold` 。
+Of course, there are other consumers in an iterator, such as the `.nth()` function used to get the number of values, and the `.find()` function used to find the value, calling `next for the next value () `Functions and so on, we cannot introduce them one by one here due to space limitations. So, below we only introduce another commonly used consumer - `fold`.
 
-当然了，提起Rust里的名字你可能没啥感觉，其实，`fold`函数，正是大名鼎鼎的 MapReduce 中的 Reduce 函数(稍微有点区别就是这个Reduce是带初始值的)。
+Of course, you may not feel much about the name in Rust. In fact, the `fold` function is just the Reduce function in the famous MapReduce (the slight difference is that this Reduce has an initial value).
 
-`fold`函数的形式如下：
+The `fold` function has the following form:
 
 ```rust
 fold(base, |accumulator, element| .. )
 ```
 
-我们可以写成如下例子：
+We can write this as an example:
 
 ```rust
 let m = (1..20).fold(1u64, |mul, x| mul*x);
 ```
 
-需要注意的是，`fold`的输出结果的类型，最终是和`base`的类型是一致的（如果`base`的类型没指定，那么可以根据前面`m`的类型进行反推，除非`m`的类型也未指定），也就是说，一旦我们将上面代码中的`base`从 `1u64` 改成 `1`，那么这行代码最终将会因为数据溢出而崩溃！
+It should be noted that the type of the output result of `fold` is finally consistent with the type of `base` (if the type of `base` is not specified, then it can be reversed according to the type of `m` in front, unless` The type of m` is also unspecified), that is to say, once we change the `base` in the above code from `1u64` to `1`, then this line of code will eventually crash due to data overflow!
 
-### 适配器
+### Adapter
 
-我们所熟知的生产消费的模型里，生产者所生产的东西不一定都会被消费者买账，因此，需要对原有的产品进行再组装。这个再组装的过程，就是适配器。因为适配器返回的是一个新的迭代器，所以可以直接用链式请求一直写下去。
+In the production and consumption model that we are familiar with, the things produced by producers may not be bought by consumers. Therefore, the original products need to be reassembled. This reassembly process is the adapter. Because the adapter returns a new iterator, it can be written directly with chain requests.
 
-前面提到了 Reduce 函数，那么自然不得不提一下另一个配套函数 —— `map` :
+The Reduce function was mentioned earlier, so naturally I have to mention another supporting function - `map`:
 
-熟悉Python语言的同学肯定知道，Python里内置了一个`map`函数，可以将一个迭代器的值进行变换，成为另一种。Rust中的`map`函数实际上也是起的同样的作用，甚至连调用方法也惊人的相似！
+Students who are familiar with the Python language must know that there is a built-in `map` function in Python, which can transform the value of one iterator into another. The `map` function in Rust actually does the same thing, and even the calling method is surprisingly similar!
 
 ```rust
 (1..20).map(|x| x+1);
 ```
 
-上面的代码展示了一个“迭代器所有元素的自加一”操作，但是，如果你尝试编译这段代码，编译器会给你提示：
+The above code shows a "increment all elements of the iterator" operation, however, if you try to compile this code, the compiler will give you a hint:
 
 ```
 warning: unused result which must be used: iterator adaptors are lazy and
@@ -147,27 +147,27 @@ warning: unused result which must be used: iterator adaptors are lazy and
  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
-呀，这是啥？
+Yeah, what is this?
 
-因为，所有的适配器，都是惰性求值的！
+Because all adapters are lazy evaluated!
 
-**也就是说，除非你调用一个消费者，不然，你的操作，永远也不会被调用到！**
+**That is to say, unless you call a consumer, your operation will never be called! **
 
-现在，我们知道了`map`，那么熟悉Python的人又说了，是不是还有`filter`！？答，有……用法类似，`filter`接受一个闭包函数，返回一个布尔值，返回`true`的时候表示保留，`false`丢弃。
+Now, we know `map`, so people who are familiar with Python say, is there still `filter`! ? Answer, yes... the usage is similar. `filter` accepts a closure function and returns a boolean value. When `true` is returned, it means to keep it, and `false` is discarded.
 
 ```rust
 let v: Vec<_> = (1..20).filter(|x| x%2 == 0).collect();
 ```
 
-以上代码表示筛选出所有的偶数。
+The above code means to filter out all even numbers.
 
-## 其他
+## other
 
-上文中我们了解了迭代器、适配器、消费者的基本概念。下面将以例子来介绍Rust中的其他的适配器和消费者。
+Above we learned the basic concepts of iterators, adapters, and consumers. The following examples will introduce other adapters and consumers in Rust.
 
-### skip和take
+### skip and take
 
-`take(n)`的作用是取前`n`个元素，而`skip(n)`正好相反，跳过前`n`个元素。
+The function of `take(n)` is to take the first `n` elements, while `skip(n)` is just the opposite, skipping the first `n` elements.
 
 ```rust
 let v = vec![1, 2, 3, 4, 5, 6];
@@ -184,9 +184,9 @@ let v_skip: Vec<_> = v.iter()
 assert_eq!(v_skip, vec![3, 4, 5, 6]);
 ```
 
-### zip 和 enumerate的恩怨情仇
+### The love and hatred of zip and enumerate
 
-`zip`是一个适配器，他的作用就是将两个迭代器的内容压缩到一起，形成 `Iterator<Item=(ValueFromA, ValueFromB)>` 这样的新的迭代器；
+`zip` is an adapter, its function is to compress the contents of two iterators together to form a new iterator like `Iterator<Item=(ValueFromA, ValueFromB)>`;
 
 ```rust
 let names = vec!["WaySLOG", "Mike", "Elton"];
@@ -197,38 +197,38 @@ let score_map: HashMap<_, _> = names.iter()
 println!("{:?}", score_map);
 ```
 
-而`enumerate`, 熟悉的Python的同学又叫了：Python里也有！对的，作用也是一样的，就是把迭代器的下标显示出来，即：
+And `enumerate`, the familiar Python students called again: Python also has it! Yes, the effect is the same, that is, to display the subscript of the iterator, namely:
 
 ```rust
 let v = vec![1u64, 2, 3, 4, 5, 6];
 let val = v.iter()
-    .enumerate()
-    // 迭代生成标，并且每两个元素剔除一个
-    .filter(|&(idx, _)| idx % 2 == 0)
-    // 将下标去除,如果调用unzip获得最后结果的话，可以调用下面这句，终止链式调用
-    // .unzip::<_,_, vec<_>, vec<_>>().1
-    .map(|(idx, val)| val)
-    // 累加 1+3+5 = 9
-    .fold(0u64, |sum, acm| sum + acm);
+     .enumerate()
+     // Iterate to generate the mark, and remove one every two elements
+     .filter(|&(idx, _)| idx % 2 == 0)
+     // Remove the subscript, if you call unzip to get the final result, you can call the following sentence to terminate the chain call
+     // .unzip::<_,_, vec<_>, vec<_>>().1
+     .map(|(idx, val)| val)
+     // add up 1+3+5 = 9
+     .fold(0u64, |sum, acm| sum + acm);
 
 println!("{}", val);
 ```
 
-### 一系列查找函数
+### A series of lookup functions
 
-Rust的迭代器有一系列的查找函数，比如：
+Rust's iterators have a series of lookup functions, such as:
 
-* `find()`: 传入一个闭包函数，从开头到结尾依次查找能令这个闭包返回`true`的第一个元素，返回`Option<Item>`
-* `position()`: 类似`find`函数，不过这次输出的是`Option<usize>`，第几个元素。
-* `all()`: 传入一个函数，如果对于任意一个元素，调用这个函数返回`false`,则整个表达式返回`false`，否则返回`true`
-* `any()`: 类似`all()`，不过这次是任何一个返回`true`，则整个表达式返回`true`，否则`false`
-* `max()`和`min()`: 查找整个迭代器里所有元素，返回最大或最小值的元素。注意：因为第七章讲过的`PartialOrder`的原因，`max`和`min`作用在浮点数上会有不符合预期的结果。
+* `find()`: Pass in a closure function, search for the first element that can make this closure return `true` from the beginning to the end, and return `Option<Item>`
+* `position()`: Similar to the `find` function, but this time the output is `Option<usize>`, the number of elements.
+* `all()`: Pass in a function, if calling this function returns `false` for any element, then the entire expression returns `false`, otherwise it returns `true`
+* `any()`: Similar to `all()`, but this time if any one returns `true`, the entire expression returns `true`, otherwise `false`
+* `max()` and `min()`: Find all elements in the entire iterator and return the element with the largest or smallest value. Note: Because of the `PartialOrder` mentioned in Chapter 7, `max` and `min` will have unexpected results when they are applied to floating-point numbers.
 
 
-以上，为常用的一些迭代器和适配器及其用法，仅作科普，对于这一章。我希望大家能够多练习去理解，而不是死记硬背。
+The above are some commonly used iterators and adapters and their usage, just for popular science, for this chapter. I hope that everyone can practice more to understand, rather than rote memorization.
 
-好吧，留个习题：
+Well, leave an exercise:
 
-## 习题
+## Exercises
 
-利用迭代器生成一个升序的长度为10的水仙花数序列，然后对这个序列进行逆序,并输出
+Use an iterator to generate an ascending sequence of daffodil numbers with a length of 10, then reverse the sequence, and output

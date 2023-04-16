@@ -1,86 +1,86 @@
-# 哈希表 HashMap
+# Hash table HashMap
 
-和动态数组`Vec`一样，哈希表(HashMap)也是Rust内置的集合类型之一，同属`std::collections`模块下。
+Like the dynamic array `Vec`, the hash table (HashMap) is also one of Rust's built-in collection types, and it belongs to the `std::collections` module.
 
-它提供了一个平均复杂度为`O(1)`的查询方法，是实现快速搜索必备的类型之一。
+It provides a query method with an average complexity of `O(1)`, which is one of the necessary types for fast search.
 
-这里呢，主要给大家介绍一下HashMap的几种典型用法。
+Here, I will mainly introduce several typical usages of HashMap.
 
-## HashMap的要求
+## HashMap requirements
 
-顾名思义, HashMap 要求一个可哈希（实现 Hash trait）的Key类型，和一个编译时知道大小的Value类型。
-同时，Rust还要求你的Key类型必须是可比较的，在Rust中，你可以为你的类型轻易的加上编译器属性：
+As the name suggests, HashMap requires a Key type that can be hashed (implements the Hash trait), and a Value type whose size is known at compile time.
+At the same time, Rust also requires that your Key type must be comparable. In Rust, you can easily add compiler attributes to your type:
 
 ```rust
 #[derive(PartialEq, Eq, Hash)]
 ```
 
-这样，即可将你的类型转换成一个可以作为Hash的Key的类型。
-但是，如果你想要自己实现`Hash`这个trait的话，你需要谨记两点：
+In this way, your type can be converted into a type that can be used as a Hash Key.
+However, if you want to implement the `Hash` trait yourself, you need to keep two things in mind:
 
-* 1. 如果 Key1==Key2 ,那么一定有 Hash(Key1) == Hash(Key2)
-* 2. 你的Hash函数本身不能改变你的Key值，否则将会引发一个逻辑错误（很难排查，遇到就完的那种）
+* 1. If Key1==Key2, then there must be Hash(Key1) == Hash(Key2)
+* 2. Your Hash function itself cannot change your Key value, otherwise it will cause a logic error (difficult to troubleshoot, the kind that is over when you encounter it)
 
-什么？你看到 `std::hash::Hash` 这个 trait 中的函数没有`&mut self`的啊！但是，你不要忘了Rust中还有`Cell`和`RefCell`这种存在，他们提供了不可变对象的内部可变性，具体怎么变呢，请参照第20章。
+What? You see that the function in `std::hash::Hash` does not have `&mut self`! However, don't forget that there are `Cell` and `RefCell` in Rust, they provide the internal mutability of immutable objects, how to change, please refer to Chapter 20.
 
-另外，要保证你写的Hash函数不会被很轻易的碰撞，即 `Key1! = Key2`，但 `Hash(Key1)==Hash(Key2)`，碰撞的严重了，HashMap甚至有可能退化成链表！
+In addition, make sure that the Hash function you write will not be easily collided, that is, `Key1! = Key2`, but `Hash(Key1)==Hash(Key2)`, the collision is serious, and HashMap may even degenerate into Linked list!
 
-这里笔者提议，别费劲，就按最简单的来就好。
+Here the author suggests, don't bother, just follow the simplest way.
 
-## 增删改查
+## CRUD
 
-对于这种实用的类型，我们推荐用一个例子来解释：
+For this practical type, we recommend an example to explain:
 
 ```rust
 use std::collections::HashMap;
 
-// 声明
+// statement
 let mut come_from = HashMap::new();
-// 插入
+// insert
 come_from.insert("WaySLOG", "HeBei");
 come_from.insert("Marisa", "U.S.");
 come_from.insert("Mike", "HuoGuo");
 
-// 查找key
+// look up the key
 if !come_from.contains_key("elton") {
-    println!("Oh, 我们查到了{}个人，但是可怜的Elton猫还是无家可归", come_from.len());
+    println!("Oh, we found {} people, but poor Elton cat is still homeless", come_from.len());
 }
 
-// 根据key删除元素
+// Delete element according to key
 come_from.remove("Mike");
-println!("Mike猫的家乡不是火锅！不是火锅！不是火锅！虽然好吃！");
+println!("Mike cat's hometown is not hot pot! Not hot pot! Not hot pot! It's delicious!");
 
-// 利用get的返回判断元素是否存在
+// Use the return of get to determine whether the element exists
 let who = ["MoGu", "Marisa"];
 for person in &who {
     match come_from.get(person) {
-        Some(location) => println!("{} 来自: {}", person, location),
-        None => println!("{} 也无家可归啊.", person),
+        Some(location) => println!("{} from: {}", person, location),
+        None => println!("{} is also homeless.", person),
     }
 }
 
-// 遍历输出
-println!("那么，所有人呢？");
+// loop through the output
+println!("So, everyone?");
 for (name, location) in &come_from {
-    println!("{}来自: {}", name, location);
+    println!("{} from: {}", name, location);
 }
 ```
 
-这段代码输出：
+This code outputs:
 
 ```
-Oh, 我们查到了3个人，但是可怜的Elton猫还是无家可归
-Mike猫的家乡不是火锅！不是火锅！不是火锅！虽然好吃！
-MoGu 也无家可归啊.
-Marisa 来自: U.S.
-那么，所有人呢？
-Marisa来自: U.S.
-WaySLOG来自: HeBei
+Oh, we tracked down 3 people, but poor Elton the cat is still homeless
+Mike's hometown is not hot pot! Not hot pot! Not hot pot! Delicious though!
+MoGu is also homeless.
+Marisa From: U.S.
+So, what about everyone?
+MarisaFrom: U.S.
+WaySLOGFrom: HeBei
 ```
 
 ## entry
 
-我们在编程的过程中，经常遇到这样的场景，统计一个字符串中所有的字符总共出现过几次。借助各种语言内置的Map类型我们总能完成这件事，但是完成的几乎都并不令人满意。很多人讨厌的一点是：为什么我要判断这个字符在字典中有没有出现，就要写一个大大的if条件！烦不烦？烦！于是，现代化的编程语言开始集成了类似Python里`setdefault`类似的特性（方法），下面是一段Python代码：
+In the process of programming, we often encounter such a scenario, counting how many times all the characters in a string appear in total. We can always do this with the help of the built-in Map type in various languages, but almost all of them are not satisfactory. What many people hate is: why do I have to write a big if condition to judge whether this character appears in the dictionary! Are you bothered? bother! As a result, modern programming languages have begun to integrate features (methods) similar to `setdefault` in Python. The following is a piece of Python code:
 
 ```python
 val = {}
@@ -89,8 +89,8 @@ for c in "abcdefasdasdawe":
 print val
 ```
 
-唔，总感觉怪怪的。那么Rust是怎么解决这个问题的呢？
-以下内容摘自标注库api注释：
+Well, it always feels weird. So how does Rust solve this problem?
+The following is excerpted from annotation library api annotations:
 
 ```rust
 use std::collections::HashMap;
@@ -108,4 +108,4 @@ assert_eq!(letters[&'u'], 1);
 assert_eq!(letters.get(&'y'), None);
 ```
 
-Rust为我们提供了一个名叫 `entry` 的api，它很有意思，和Python相比，我们不需要在一次迭代的时候二次访问原map，只需要借用 entry 出来的Entry类型（这个类型持有原有HashMap的引用）即可对原数据进行修改。就语法来说，毫无疑问Rust在这个方面更加直观和具体。
+Rust provides us with an api called `entry`, which is very interesting. Compared with Python, we don't need to visit the original map twice during an iteration, we only need to borrow the Entry type from the entry (this type holds The original HashMap reference) can modify the original data. In terms of syntax, there is no doubt that Rust is more intuitive and specific in this regard.

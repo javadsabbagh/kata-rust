@@ -1,61 +1,61 @@
-# 链表
+# linked list
 
-## 链表简介
-链表是一种物理存储单元上非连续、非顺序的存储结构，数据元素的逻辑顺序是通过链表中的指针链接次序实现的。链表由一系列结点（链表中每一个元素称为结点）组成，结点可以在运行时动态生成。每个结点包括两个部分：一个是存储数据元素的数据域，另一个是存储下一个结点地址的指针域。 由于不必须按顺序存储，链表在给定位置插入的时候可以达到O(1)的复杂度，比另一种线性表顺序表快得多，但是在有序数据中查找一个节点或者访问特定下标的节点则需要O(n)的时间，而线性表相应的时间复杂度分别是O(logn)和O(1)。
+## Introduction to Linked List
+A linked list is a non-sequential and non-sequential storage structure on a physical storage unit, and the logical order of data elements is realized through the link order of pointers in the linked list. The linked list is composed of a series of nodes (each element in the linked list is called a node), and the nodes can be dynamically generated at runtime. Each node consists of two parts: one is a data field that stores data elements, and the other is a pointer field that stores the address of the next node. Since it does not have to be stored in order, the linked list can reach the complexity of O(1) when inserting at a given position, which is much faster than another linear list sequence table, but it is difficult to find a node in the ordered data or access a specific The target node requires O(n) time, and the corresponding time complexities of the linear table are O(logn) and O(1) respectively.
 
->使用链表结构可以克服数组需要预先知道数据大小的缺点，链表结构可以充分利用计算机内存空间，实现灵活的内存动态管理。但是链表失去了数组随机读取的优点，同时链表由于增加了结点的指针域，空间开销比较大。链表最明显的好处就是，常规数组排列关联项目的方式可能不同于这些数据项目在内存或磁盘上的顺序，数据的存取往往要在不同的排列顺序中转换。链表允许插入和移除表上任意位置上的节点，但是不允许随机存取。链表有很多种不同的类型：单向链表，双向链表以及循环链表。
+>Using the linked list structure can overcome the disadvantage that the array needs to know the data size in advance. The linked list structure can make full use of the computer memory space and realize flexible memory dynamic management. However, the linked list loses the advantage of random read of the array, and at the same time, the linked list has a relatively large space overhead due to the increase of the pointer field of the node. The most obvious advantage of the linked list is that the way the conventional array arranges the associated items may be different from the order of these data items in memory or on the disk, and the access of data often needs to be converted in different arrangement orders. Linked lists allow insertion and removal of nodes at arbitrary positions on the list, but do not allow random access. There are many different types of linked lists: singly linked lists, doubly linked lists, and circular linked lists.
 
-下面看我们一步步实现链表：
+Let's see how we implement the linked list step by step:
 
-## 定义链表结构
+## Define the linked list structure
 
 ```rust
 use List::*;
 
 enum List {
-    // Cons: 包含一个元素和一个指向下一个节点的指针的元组结构
+    // Cons: a tuple structure containing one element and a pointer to the next node
     Cons(u32, Box<List>),
-    // Nil: 表示一个链表节点的末端
+    // Nil: Indicates the end of a linked list node
     Nil,
 }
 ```
 
-## 实现链表的方法
+## How to implement linked list
 
 ```rust
-impl List {
-    // 创建一个空链表
+implList {
+    // Create an empty linked list
     fn new() -> List {
-        // `Nil` 是 `List`类型的。因为前面我们使用了 `use List::*;`
-        // 所以不需要 List::Nil 这样使用
+        // `Nil` is of type `List`. Because earlier we used `use List::*;`
+        // So no need to use List::Nil like this
         Nil
     }
 
-    // 在前面加一个元素节点，并且链接旧的链表和返回新的链表
+    // Add an element node in front, and link the old linked list and return the new linked list
     fn prepend(self, elem: u32) -> List {
-        // `Cons` 也是 List 类型的
+        // `Cons` is also of type List
         Cons(elem, Box::new(self))
     }
 
-    // 返回链表的长度
+    // return the length of the linked list
     fn len(&self) -> u32 {
-        // `self` 的类型是 `&List`, `*self` 的类型是 `List`,
-        // 匹配一个类型 `T` 好过匹配一个引用 `&T`
+        // `self` is of type `&List`, `*self` is of type `List`,
+        // Matching a type `T` is better than matching a reference `&T`
         match *self {
-            // 因为`self`是借用的，所以不能转移 tail 的所有权
-            // 因此使用 tail 的引用
+            // Since `self` is borrowed, ownership of tail cannot be transferred
+            // so use tail's reference
             Cons(_, ref tail) => 1 + tail.len(),
-            // 基本规则：所以空的链表长度都是0
+            // Basic rule: so the length of the empty linked list is 0
             Nil => 0
         }
     }
 
-    // 返回连链表的字符串表达形式
+    // return the string representation of the linked list
     fn stringify(&self) -> String {
         match *self {
             Cons(head, ref tail) => {
-                // `format!` 和 `print!` 很像
-                // 但是返回一个堆上的字符串去替代打印到控制台
+                // `format!` is similar to `print!`
+                // but returns a string on the heap instead of printing to the console
                 format!("{}, {}", head, tail.stringify())
             },
             Nil => {
@@ -66,7 +66,7 @@ impl List {
 }
 ```
 
-## 代码测试
+## code test
 
 ```rust
 fn main() {
@@ -81,9 +81,9 @@ fn main() {
 }
 ```
 
-## 练习
+## practise
 
-基于以上代码实现一个双向循环链表。
+Implement a two-way circular linked list based on the above code.
 
->双向链表也叫双链表，是链表的一种，它的每个数据结点中都有两个指针，分别指向直接后继和直接前驱。所以，从双向链表中的任意一个结点开始，都可以很方便地访问它的前驱结点和后继结点。一般我们都构造双向循环链表。
->循环链表是另一种形式的链式存贮结构。它的特点是表中最后一个结点的指针域指向头结点，整个链表形成一个环。
+>Doubly linked list is also called double linked list, which is a kind of linked list. Each data node in it has two pointers, which point to the direct successor and direct predecessor respectively. Therefore, starting from any node in the doubly linked list, you can easily access its predecessor node and successor node. Generally, we construct a two-way circular linked list.
+>Circular linked list is another form of linked storage structure. Its characteristic is that the pointer field of the last node in the list points to the head node, and the entire linked list forms a ring.

@@ -1,21 +1,21 @@
-# 图
+# picture
 
-## 图的存储结构
+## The storage structure of the graph
 
-图的存储结构除了要存储图中各个顶点的本身信息外，同时还要存储顶点与顶点之间的所有关系(边的信息)，因此，图的结构比较复杂，很难以数据元素在存储区中的物理位置来表示元素之间的关系，但也正是由于其任意的特性，故物理表示方法很多。常用的图的存储结构有邻接矩阵、邻接表等。
+In addition to storing the information of each vertex in the graph, the storage structure of the graph also needs to store all the relationships between vertices (edge information). Therefore, the structure of the graph is relatively complicated, and it is difficult to store data elements in the storage area The physical position of the element can be used to represent the relationship between elements, but it is precisely because of its arbitrary characteristics that there are many physical representation methods. Common graph storage structures include adjacency matrix, adjacency list, etc.
 
-## 邻接矩阵表示法
+## Adjacency Matrix Notation
 
-对于一个具有n个结点的图，可以使用n*n的矩阵(二维数组)来表示它们间的邻接关系。矩阵 A(i,j) = 1 表示图中存在一条边 (Vi,Vj),而A(i,j)=0表示图中不存在边 (Vi,Vj)。
-实际编程时，当图为不带权图时，可以在二维数组中存放 bool 值。
+For a graph with n nodes, an n*n matrix (two-dimensional array) can be used to represent the adjacency relationship between them. The matrix A(i,j) = 1 indicates that there is an edge (Vi,Vj) in the graph, and A(i,j)=0 indicates that there is no edge (Vi,Vj) in the graph.
+In actual programming, when the graph is an unweighted graph, bool values can be stored in a two-dimensional array.
 
-* A(i,j) = true 表示存在边 (Vi,Vj),
-* A(i,j) = false 表示不存在边 (Vi,Vj);
+* A(i,j) = true means there is an edge (Vi,Vj),
+* A(i,j) = false means there is no edge (Vi,Vj);
 
 
-当图带权值时，则可以直接在二维数值中存放权值，A(i,j) = null 表示不存在边 (Vi,Vj)。
+When the graph has weights, the weights can be directly stored in two-dimensional values, and A(i,j) = null means that there is no edge (Vi,Vj).
 
-下面看看我们使用邻接矩阵实现的图结构：
+Let's take a look at the graph structure we implemented using the adjacency matrix:
 
 ```rust
 #[derive(Debug)]
@@ -68,7 +68,7 @@ impl Graphadj {
         match v1.nodeid < self.nodenums && v2.nodeid<self.nodenums {
             true => {
                 self.graphadj[v1.nodeid][v2.nodeid] = Edge::have_edge();
-                //下面这句注释去掉相当于把图当成无向图
+                //Removing the following comment is equivalent to treating the graph as an undirected graph
                 //self.graphadj[v2.nodeid][v1.nodeid] = Edge::have_edge();
             }
             false => {
@@ -87,16 +87,16 @@ fn main() {
 }
 ```
 
-## 邻接表表示法
+## Adjacency list notation
 
-邻接表是图的一种最主要存储结构，用来描述图上的每一个点。
+The adjacency list is the most important storage structure of the graph, which is used to describe each point on the graph.
 
->**实现方式：**对图的每个顶点建立一个容器（n个顶点建立n个容器），第i个容器中的结点包含顶点Vi的所有邻接顶点。实际上我们常用的邻接矩阵就是一种未离散化每个点的边集的邻接表。
+>**Implementation method:** Create a container for each vertex of the graph (n vertices create n containers), and the nodes in the i-th container include all adjacent vertices of the vertex Vi. In fact, the adjacency matrix we commonly use is an adjacency list that does not discretize the edge set of each point.
 
-* 在有向图中，描述每个点向别的节点连的边（点 a->点 b 这种情况）。
-* 在无向图中，描述每个点所有的边(点 a->点 b这种情况)
+* In a directed graph, describe the edges that each point connects to other nodes (point a-> point b in this case).
+* In an undirected graph, describe all the edges of each point (point a-> point b in this case)
 
-与邻接表相对应的存图方式叫做边集表，这种方法用一个容器存储所有的边。
+The storage method corresponding to the adjacency list is called an edge set table. This method uses a container to store all the edges.
 
-## **练习：**
-实现链接表表示法的图结构。
+## **practise:**
+A graph structure that implements linked-list notation.

@@ -1,10 +1,10 @@
-# 控制流(control flow)
+# control flow
 
 ## If
 
-If是分支 (branch) 的一种特殊形式，也可以使用`else`和`else if`。
-与C语言不同的是，逻辑条件不需要用小括号括起来，但是条件后面必须跟一个代码块。
-Rust中的`if`是一个表达式 (expression)，可以赋给一个变量：
+If is a special form of branch, `else` and `else if` can also be used.
+Unlike the C language, logical conditions do not need to be enclosed in parentheses, but the condition must be followed by a code block.
+An `if` in Rust is an expression that can be assigned to a variable:
 
 ```rust
 let x = 5;
@@ -12,13 +12,13 @@ let x = 5;
 let y = if x == 5 { 10 } else { 15 };
 ```
 
-Rust是基于表达式的编程语言，有且仅有两种语句 (statement)：
+Rust is an expression-based programming language with one and only two statements:
 
-1. **声明语句** (declaration statement)，比如进行变量绑定的`let`语句。
-2. **表达式语句** (expression statement)，它通过在末尾加上分号`;`来将表达式变成语句，
-丢弃该表达式的值，一律返回unit`()`。
+1. **Declaration statement** (declaration statement), such as the `let` statement for variable binding.
+2. **Expression statement** (expression statement), it turns the expression into a statement by adding a semicolon `;` at the end,
+The value of this expression is discarded and unit`()` is always returned.
 
-表达式如果返回，总是返回一个值，但是语句不返回值或者返回`()`，所以以下代码会报错：
+If the expression returns, it always returns a value, but the statement does not return a value or returns `()`, so the following code will report an error:
 
 ```rust
 let y = (let x = 5);
@@ -26,37 +26,37 @@ let y = (let x = 5);
 let z: i32 = if x == 5 { 10; } else { 15; };
 ```
 
-值得注意的是，在Rust中赋值 (如`x = 5`) 也是一个表达式，返回unit的值`()`。
+It's worth noting that in Rust an assignment (such as `x = 5`) is also an expression, returning the value of the unit `()`.
 
 ## For
 
-Rust中的`for`循环与C语言的风格非常不同，抽象结构如下：
+The `for` loop in Rust is very different from the C language style, and the abstract structure is as follows:
 
 ```rust
 for var in expression {
-    code
+     code
 }
 ```
 
-其中`expression`是一个迭代器 (iterator)，具体的例子为`0..10` (不包含最后一个值)，
-或者`[0, 1, 2].iter()`。
+Where `expression` is an iterator (iterator), the specific example is `0..10` (excluding the last value),
+Or `[0, 1, 2].iter()`.
 
 ## While
 
-Rust中的`while`循环与C语言中的类似。对于无限循环，Rust有一个专用的关键字`loop`。
-如果需要提前退出循环，可以使用关键字`break`或者`continue`，
-还允许在循环的开头设定标签 (同样适用于`for`循环)：
+The `while` loop in Rust is similar to the one in C. For infinite loops, Rust has a dedicated keyword `loop`.
+If you need to exit the loop early, you can use the keyword `break` or `continue`,
+It is also allowed to set a label at the beginning of the loop (also applies to `for` loops):
 
 ```rust
 'outer: loop {
-   println!("Entered the outer loop");
+    println!("Entered the outer loop");
 
-   'inner: loop {
-       println!("Entered the inner loop");
-       break 'outer;
-   }
+    'inner: loop {
+        println!("Entered the inner loop");
+        break 'outer;
+    }
 
-   println!("This point will never be reached");
+    println!("This point will never be reached");
 }
 
 println!("Exited the outer loop");
@@ -64,103 +64,103 @@ println!("Exited the outer loop");
 
 ## Match
 
-Rust中的`match`表达式非常强大，首先看一个例子：
+The `match` expression in Rust is very powerful, first look at an example:
 
 ```rust
 let day = 5;
 
 match day {
-  0 | 6 => println!("weekend"),
-  1 ... 5 => println!("weekday"),
-  _ => println!("invalid"),
+   0 | 6 => println!("weekend"),
+   1 ... 5 => println!("weekday"),
+   _ => println!("invalid"),
 }
 ```
 
-其中`|`用于匹配多个值，`...`匹配一个范围 (包含最后一个值)，并且`_`在这里是必须的，
-因为`match`强制进行穷尽性检查 (exhaustiveness checking)，必须覆盖所有的可能值。
-如果需要得到`|`或者`...`匹配到的值，可以使用`@`绑定变量：
+Where `|` is used to match multiple values, `...` matches a range (including the last value), and `_` is required here,
+Because `match` enforces exhaustiveness checking, all possible values must be covered.
+If you need to get the value matched by `|` or `...`, you can use `@` bind variable:
 
 ```rust
 let x = 1;
 
 match x {
-    e @ 1 ... 5 => println!("got a range element {}", e),
-    _ => println!("anything"),
+     e @ 1 ... 5 => println!("got a range element {}", e),
+     _ => println!("anything"),
 }
 ```
 
-使用`ref`关键字来得到一个引用：
+Use the `ref` keyword to get a reference:
 
 ```rust
 let x = 5;
 let mut y = 5;
 
 match x {
-    // the `r` inside the match has the type `&i32`
-    ref r => println!("Got a reference to {}", r),
+     // the `r` inside the match has the type `&i32`
+     ref r => println!("Got a reference to {}", r),
 }
 
 match y {
-    // the `mr` inside the match has the type `&i32` and is mutable
-    ref mut mr => println!("Got a mutable reference to {}", mr),
+     // the `mr` inside the match has the type `&i32` and is mutable
+     ref mut mr => println!("Got a mutable reference to {}", mr),
 }
 ```
 
-再看一个使用`match`表达式来解构元组的例子：
+Here's another example of using a `match` expression to destructure a tuple:
 
 ```rust
 let pair = (0, -2);
 
 match pair {
-    (0, y) => println!("x is `0` and `y` is `{:?}`", y),
-    (x, 0) => println!("`x` is `{:?}` and y is `0`", x),
-    _ => println!("It doesn't matter what they are"),
+     (0, y) => println!("x is `0` and `y` is `{:?}`", y),
+     (x, 0) => println!("`x` is `{:?}` and y is `0`", x),
+     _ => println!("It doesn't matter what they are"),
 }
 ```
 
-`match`的这种解构同样适用于结构体或者枚举。如果有必要，还可以使用`..`来忽略域或者数据：
+This deconstruction of `match` also applies to structs or enums. If necessary, you can also use `..` to ignore fields or data:
 
 ```rust
 struct Point {
-    x: i32,
-    y: i32,
+     x: i32,
+     y: i32,
 }
 
 let origin = Point { x: 0, y: 0 };
 
 match origin {
-    Point { x, .. } => println!("x is {}", x),
+     Point { x, .. } => println!("x is {}", x),
 }
 
 enum OptionalInt {
-    Value(i32),
-    Missing,
+     Value(i32),
+     Missing,
 }
 
 let x = OptionalInt::Value(5);
 
 match x {
-    // 这里是 match 的 if guard 表达式，我们将在以后的章节进行详细介绍
-    OptionalInt::Value(i) if i > 5 => println!("Got an int bigger than five!"),
-    OptionalInt::Value(..) => println!("Got an int!"),
-    OptionalInt::Missing => println!("No such luck."),
+     // Here is the if guard expression of match, we will introduce it in detail in later chapters
+     OptionalInt::Value(i) if i > 5 => println!("Got an int bigger than five!"),
+     OptionalInt::Value(..) => println!("Got an int!"),
+     OptionalInt::Missing => println!("No such luck."),
 }
 ```
 
-此外，Rust还引入了`if let`和`while let`进行模式匹配：
+Additionally, Rust introduces `if let` and `while let` for pattern matching:
 
 ```rust
 let number = Some(7);
 let mut optional = Some(0);
 
-// If `let` destructures `number` into `Some(i)`, evaluate the block.
+// If `let` destroys `number` into `Some(i)`, evaluate the block.
 if let Some(i) = number {
     println!("Matched {:?}!", i);
 } else {
     println!("Didn't match a number!");
 }
 
-// While `let` destructures `optional` into `Some(i)`, evaluate the block.
+// While `let` destroys `optional` into `Some(i)`, evaluate the block.
 while let Some(i) = optional {
     if i > 9 {
         println!("Greater than 9, quit!");
@@ -171,4 +171,3 @@ while let Some(i) = optional {
     }
 }
 ```
-

@@ -1,14 +1,14 @@
-# 队列
+# queue
 
-## 队列简介
-队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行插入操作，和栈一样，队列是一种操作受限制的线性表。进行插入操作的端称为队尾，进行删除操作的端称为队头。队列中没有元素时，称为空队列。
+## Queue Profile
+Queue is a special linear table, which is special in that it only allows deletion at the front end (front) of the table, and insert operation at the back end (rear) of the table. Like a stack, a queue is an operation subject to A linear list of constraints. The end of the insertion operation is called the tail of the queue, and the end of the deletion operation is called the head of the queue. When there are no elements in the queue, it is called an empty queue.
 
->在队列的形成过程中，可以利用线性链表的原理，来生成一个队列。基于链表的队列，要动态创建和删除节点，效率较低，但是可以动态增长。队列采用的 **FIFO(first in first out)**，新元素（等待进入队列的元素）总是被插入到链表的尾部，而读取的时候总是从链表的头部开始读取。每次读取一个元素，释放一个元素。所谓的动态创建，动态释放。因而也不存在溢出等问题。由于链表由结构体间接而成，遍历也方便。
+>In the formation process of the queue, the principle of linear linked list can be used to generate a queue. The queue based on the linked list is less efficient to dynamically create and delete nodes, but it can grow dynamically. The queue uses **FIFO(first in first out)**, new elements (elements waiting to enter the queue) are always inserted at the end of the linked list, and when reading, they are always read from the head of the linked list. Each time an element is read, an element is freed. The so-called dynamic creation, dynamic release. Therefore, there is no problem such as overflow. Since the linked list is indirectly formed by the structure, traversal is also convenient.
 
-## 队列实现
-下面看一下我们使用 Vec 来实现的简单 Queue：
+## Queue implementation
+Let's take a look at our simple Queue implemented using Vec:
 
-主要实现的`new( ), push( ), pop( )`三个方法
+Main implementation of `new( ), push( ), pop( )` three methods
 
 ```rust
 #[derive(Debug)]
@@ -41,9 +41,9 @@ fn main() {
 }
 ```
 
-## 练习
-看起来比我们在上一节实现的Stack简单多了。不过这个Queue实现是有Bug的。
+## practise
+It looks much simpler than the Stack we implemented in the previous section. But this Queue implementation has bugs.
 
-练习：在这个代码的上找到 Bug，并修改。
+Exercise: Find a bug in this code and fix it.
 
-提示：`pop( )`方法有 Bug，请参考 Stack 小节的实现，利用 Option 来处理。
+Tip: The `pop( )` method has a bug, please refer to the implementation in the Stack section, and use Option to handle it.

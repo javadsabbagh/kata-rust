@@ -1,15 +1,15 @@
-# 输入与输出
+# input and output
 
-输入与输出可以说是一个实用程序的最基本要求，没有输入输出的程序是没有什么卵用的。虽然输入输出被函数式编程语言鄙称为副作用，但正是这个副作用才赋予了程序实用性，君不见某著名函数式语言之父称他主导设计的函数式语言"[is useless](https://www.youtube.com/watch?v=iSmkqocn0oQ)"。这章我们就来谈谈输入输出副作用。
+Input and output can be said to be the most basic requirements of a utility program, and a program without input and output is useless. Although input and output are despised by functional programming languages as side effects, it is this side effect that endows the program with practicality. Have you ever seen the father of a famous functional language call his leading functional language "[is useless](https: //www.youtube.com/watch?v=iSmkqocn0oQ)". In this chapter, we will talk about input and output side effects.
 
-## 读写 Trait
+## Read and write traits
 
-输入最基本的功能是读(Read)，输出最基本的功能是写(Write)。标准库里面把怎么读和怎么写抽象出来归到了 `Read` 和 `Write` 两个接口里面，实现了 `Read` 接口的叫 reader，而实现了 `Write` 的叫 writer。Rust里面的 Trait 比其它语言里面的接口更好的一个地方是 Trait 可以带默认实现，比如用户定义的 reader 只需要实现 `read` 一个方法就可以调用 `Read` trait 里面的任意其它方法，而 writer 也只需要实现 `write` 和 `flush` 两个方法。
+The most basic function of input is to read (Read), and the most basic function of output is to write (Write). In the standard library, how to read and how to write is abstracted into two interfaces `Read` and `Write`. The one that implements the `Read` interface is called a reader, and the one that implements `Write` is called a writer. Trait in Rust is better than interfaces in other languages because Trait can have a default implementation. For example, a user-defined reader only needs to implement `read` to call any other method in `Read` trait, while writer Also only need to implement `write` and `flush` two methods.
 
-Read 和 Write 这两个 Trait 都有定义了好多方法，具体可以参考标准库 API 文档中的[Read](http://doc.rust-lang.org/stable/std/io/trait.Read.html) 和 [Write](http://doc.rust-lang.org/stable/std/io/trait.Write.html)
+Both Trait, Read and Write, have defined many methods. For details, please refer to [Read](http://doc.rust-lang.org/stable/std/io/trait.Read.html in the standard library API documentation ) and [Write](http://doc.rust-lang.org/stable/std/io/trait.Write.html)
 
-Read 由于每调用一次 `read` 方法都会调用一次系统API与内核交互，效率比较低，如果给 reader 增加一个 buffer，在调用时 `read` 方法时多读一些数据放在 buffer 里面，下次调用 `read` 方法时就有可能只需要从 buffer 里面取数据而不用调用系统API了，从而减少了系统调用次数提高了读取效率，这就是所谓的 `BufRead` Trait。一个普通的 reader 通过 `io::BufReader::new(reader)` 或者 `io::BufReader::with_capacity(bufSize, reader)` 就可以得到一个 BufReader 了，显然这两个创建 BufReader 的函数一个是使用默认大小的 buffer 一个可以指定 buffer 大小。BufReader 比较常用的两个方法是按行读： `read_line(&mut self, buf: &mut String) -> Result<usize>` 和 `lines(&mut self) -> Lines<Self>`，从函数签名上就可以大概猜出函数的用法所以就不啰嗦了，需要注意的是后者返回的是一个迭代器。详细说明直接看 API 文档中的[BufRead](http://doc.rust-lang.org/stable/std/io/trait.BufRead.html)
+Read Because every call to the `read` method will call the system API to interact with the kernel, the efficiency is relatively low. If you add a buffer to the reader, when calling the `read` method, read more data and put it in the buffer. Next time you call` When using the read` method, it is possible to only fetch data from the buffer without calling the system API, thereby reducing the number of system calls and improving the reading efficiency. This is the so-called `BufRead` Trait. An ordinary reader can get a BufReader through `io::BufReader::new(reader)` or `io::BufReader::with_capacity(bufSize, reader)`, obviously one of these two functions to create BufReader is to use The default size of buffer One can specify the buffer size. The two commonly used methods of BufReader are to read by line: `read_line(&mut self, buf: &mut String) -> Result<usize>` and `lines(&mut self) -> Lines<Self>`, from the function signature You can roughly guess the usage of the function, so I won’t be verbose. It should be noted that the latter returns an iterator. See [BufRead](http://doc.rust-lang.org/stable/std/io/trait.BufRead.html) in the API documentation for details
 
-同样有 `BufWriter` 只不过由于其除了底层加了 buffer 之外并没有增加新的写方法，所以并没有专门的 `BufWrite` Trait，可以通过 `io::BufWriter::new(writer)` 或 `io::BufWriter::with_capacity(bufSize, writer)` 创建 `BufWriter`。
+There is also `BufWriter`, but because it does not add a new writing method except adding a buffer at the bottom layer, so there is no special `BufWrite` Trait, you can use `io::BufWriter::new(writer)` or ` io::BufWriter::with_capacity(bufSize, writer)` creates a `BufWriter`.
 
-输入与输出接口有了，我们接下来看看实际应用中最常用的两类 reader 和 writer：标准输入/输出，文件输入/输出
+With the input and output interfaces, let's look at the two most commonly used types of readers and writers in practical applications: standard input/output, file input/output

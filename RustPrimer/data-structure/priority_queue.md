@@ -1,19 +1,19 @@
-# 优先队列
+# priority queue
 
-## 简介
-普通的队列是一种先进先出的数据结构，元素在队列尾追加，而从队列头删除。在优先队列中，元素被赋予优先级。当访问元素时，具有最高优先级的元素最先删除。优先队列具有最高级先出 （largest-in，first-out）的行为特征。
+## Introduction
+Ordinary queue is a first-in first-out data structure, elements are appended at the end of the queue and deleted from the head of the queue. In a priority queue, elements are given priority. When elements are accessed, the element with the highest priority is removed first. The priority queue has the highest-level first-out (largest-in, first-out) behavioral characteristics.
 
->优先队列是0个或多个元素的集合，每个元素都有一个优先权或值，对优先队列执行的操作有：
+>The priority queue is a collection of 0 or more elements, each element has a priority or value, and the operations performed on the priority queue are:
 
-1. 查找;
-2. 插入一个新元素;
-3. 删除。
+1. Find;
+2. Insert a new element;
+3. Delete.
 
-在最小优先队列(min priority queue)中，查找操作用来搜索优先权最小的元素，删除操作用来删除该元素；对于最大优先队列(max priority queue)，查找操作用来搜索优先权最大的元素，删除操作用来删除该元素。优先权队列中的元素可以有相同的优先权，查找与删除操作可根据任意优先权进行。
+In the minimum priority queue (min priority queue), the search operation is used to search for the element with the lowest priority, and the delete operation is used to delete the element; for the maximum priority queue (max priority queue), the search operation is used to search for the element with the highest priority , the delete operation is used to delete the element. Elements in the priority queue can have the same priority, and search and delete operations can be performed according to any priority.
 
-## 优先队列的实现：
+## Implementation of priority queue:
 
-首先定义 PriorityQueue 结构体
+First define the PriorityQueue structure
 
 ```rust
 #[derive(Debug)]
@@ -22,9 +22,9 @@ struct PriorityQueue<T> where T: PartialOrd + Clone {
 }
 ```
 
-第二行的`where T: PartialOrd + Clone`指的是 PriorityQueue 存储的泛型 T 是满足 `PartialOrd` 和 `Clone` trait 约束的，意味着泛型 T 是可排序和克隆的。
+`where T: PartialOrd + Clone` in the second line means that the generic T stored in PriorityQueue satisfies the `PartialOrd` and `Clone` trait constraints, which means that the generic T is sortable and cloneable.
 
-后面是一些基本的方法实现，比较简单，就直接看代码吧。这个优先队列是基于Vec实现的，有O(1)的插入和O(n)的最大/最小值出列。
+The following are some basic method implementations, which are relatively simple, just look at the code directly. This priority queue is implemented based on Vec, with O(1) insertion and O(n) max/min dequeue.
 
 ```rust
 impl<T> PriorityQueue<T> where T: PartialOrd + Clone {
@@ -90,7 +90,7 @@ impl<T> PriorityQueue<T> where T: PartialOrd + Clone {
 }
 ```
 
-## 测试代码：
+## Test code:
 
 ```rust
 fn test_keep_min() {
@@ -160,5 +160,5 @@ fn main() {
 }
 ```
 
-## 练习
-基于二叉堆实现一个优先队列，以达到O(1)的出列和O(log n)的入列
+## practise
+Implement a priority queue based on a binary heap to achieve O(1) dequeue and O(log n) enqueue

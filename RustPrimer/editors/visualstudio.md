@@ -1,78 +1,78 @@
 # Visual Studio
 
-本文是使用VisualRust和VS GDB Debugger / VisualGDB 完成在VisualStudio中，编辑和调试Rust程序。
+This article is done using VisualRust and VS GDB Debugger / VisualGDB to edit and debug Rust programs in VisualStudio.
 
-## 安装Rust, Cargo
+## Install Rust, Cargo
 
-首先需要下载Rust, 下载地址https://www.rust-lang.org/downloads.html
+First you need to download Rust, download address https://www.rust-lang.org/downloads.html
 
-这里一定要下windows GNU ABI的版本, 因为我们要用GDB来调试.
+Here we must download the version of Windows GNU ABI, because we need to use GDB to debug.
 
 ![](../images/editor-visualstudio-download.png)
 
-另外，机器上也需要安装Visual Studio2013或2015。
-安装完Rust,打开命令行，执行
+In addition, Visual Studio 2013 or 2015 also needs to be installed on the machine.
+After installing Rust, open the command line and execute
 cargo install racer
 
 ![](../images/editor-visualstudio-racer.png)
 
-Racer是用来做Rust自动完成的，会在VisualRust使用。这里我们使用rust编译的racer, 并不用VisualRust里自带的racer，因为它太旧了.
-另外需要下载Rust源代码，设置
-RUST_SRC_PATH为Rust源代码src的目录
+Racer is used for Rust auto-completion and will be used in VisualRust. Here we use the racer compiled by rust, not the racer that comes with VisualRust, because it is too old.
+In addition, you need to download the Rust source code, set
+RUST_SRC_PATH is the directory of Rust source code src
 
 ![](../images/editor-visualstudio-racersc.png)
 
-## 安装VisualRust和VS GDB Debugger
+## Install VisualRust and VS GDB Debugger
 
-做完上述工作，就可以安装VisualRust和VS GDB Debugger,在这里下载
+After finishing the above work, you can install VisualRust and VS GDB Debugger, download here
 https://github.com/PistonDevelopers/VisualRust
 https://visualstudiogallery.msdn.microsoft.com/35dbae07-8c1a-4f9d-94b7-bac16cad9c01
 
-VisualGDB可在这里购买
+VisualGDB is available for purchase here
 http://www.visualgdb.com/
 
-## 编译Rust项目
+## Compile the Rust project
 
-新建Rust项目
+Create a new Rust project
 ![](../images/editor-visualstudio-newproject.png)
-在tool, option里设置racer和rust_src_path
+Set racer and rust_src_path in tool, option
 ![](../images/editor-visualstudio-settings.png)
-这时候就可以在写代码的时候就可以自动提示了。像下面这样
+At this time, you can automatically prompt when writing code. like below
 ![](../images/editor-visualstudio-autocomplete.png)
 
-## 用VS GDB Debugger调试Rust项目
+## Debug Rust project with VS GDB Debugger
 
-ok,愉快的开始你的Rust之旅吧。下面开始使用VS GDB Debugger调试Rust.
+Ok, let's start your Rust journey happily. Let's start debugging Rust with VS GDB Debugger.
 
 
-在解决方案中，添加GDB调试项目
+In the solution, add the GDB debug project
 ![](../images/editor-visualstudio-GDBproject.png)
 
-设置需要调试的程序所在的目录和文件名
+Set the directory and file name of the program to be debugged
 ![](../images/editor-visualstudio-GDBproject-settings.png)
 
-设置需要调试的程序的编译命令，此处用rustc，也可以使用cargo编译
+Set the compilation command of the program that needs to be debugged, use rustc here, or use cargo to compile
 ![](../images/editor-visualstudio-GDBproject-settings2.png)
 
-将需要调试的程序的源代码添加到项目目录下
+Add the source code of the program to be debugged to the project directory
 ![](../images/editor-visualstudio-add-files.png)
 
-打开源代码文件并设置断点信息，将项目设置为启动项目并选择Local GDB即可开始调试
+Open the source code file and set breakpoint information, set the project as the startup project and select Local GDB to start debugging
 ![](../images/editor-visualstudio-set-breakpoints.png)
 
 ![](../images/editor-visualstudio-debugging2.png)
 
 
-## 用VisualGDB调试Rust项目
+## Debugging Rust projects with VisualGDB
 
 
-Build完Rust程序，点击debug, 选择quick debug with gdb
+After building the Rust program, click debug, select quick debug with gdb
 ![](../images/editor-visualstudio-quickdebug.png)
 
-然后在里面选择MingW和exe的路径
+Then select the path of MingW and exe in it
 
 ![](../images/editor-visualstudio-setdebugger.png)
 
- 点击Debug,开始你的调试生活吧
+  Click Debug to start your debugging life
 
 ![](../images/editor-visualstudio-debugging.png)

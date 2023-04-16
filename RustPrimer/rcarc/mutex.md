@@ -1,15 +1,15 @@
-# Mutex 与 RwLock
+# Mutex and RwLock
 
 ## Mutex
 
-`Mutex` 意为互斥对象，用来保护共享数据。Mutex 有下面几个特征：
+`Mutex` means mutual exclusion object, used to protect shared data. Mutex has the following characteristics:
 
-1. `Mutex` 会等待获取锁令牌(token)，在等待过程中，会阻塞线程。直到锁令牌得到。同时只有一个线程的 `Mutex` 对象获取到锁；
-2. `Mutex` 通过 `.lock()` 或 `.try_lock()` 来尝试得到锁令牌，被保护的对象，必须通过这两个方法返回的 `RAII` 守卫来调用，不能直接操作；
-3. 当 `RAII` 守卫作用域结束后，锁会自动解开；
-4. 在多线程中，`Mutex` 一般和 `Arc` 配合使用。
+1. `Mutex` will wait to acquire the lock token (token), and will block the thread during the waiting process. until the lock token is obtained. At the same time, only one thread's `Mutex` object acquires the lock;
+2. `Mutex` tries to get the lock token through `.lock()` or `.try_lock()`. The protected object must be called through the `RAII` guard returned by these two methods, and cannot be directly operated;
+3. When the guard scope of `RAII` ends, the lock will be unlocked automatically;
+4. In multithreading, `Mutex` is generally used in conjunction with `Arc`.
 
-示例：
+Example:
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -27,44 +27,44 @@ let data = Arc::new(Mutex::new(0));
 
 let (tx, rx) = channel();
 for _ in 0..10 {
-    let (data, tx) = (data.clone(), tx.clone());
-    thread::spawn(move || {
-        // The shared state can only be accessed once the lock is held.
-        // Our non-atomic increment is safe because we're the only thread
-        // which can access the shared state when the lock is held.
-        //
-        // We unwrap() the return value to assert that we are not expecting
-        // threads to ever fail while holding the lock.
-        let mut data = data.lock().unwrap();
-        *data += 1;
-        if *data == N {
-            tx.send(()).unwrap();
-        }
-        // the lock is unlocked here when `data` goes out of scope.
-    });
+     let (data, tx) = (data. clone(), tx. clone());
+     thread::spawn(move || {
+         // The shared state can only be accessed once the lock is held.
+         // Our non-atomic increment is safe because we're the only thread
+         // which can access the shared state when the lock is held.
+         //
+         // We unwrap() the return value to assert that we are not expecting
+         // threads to ever fail while holding the lock.
+         let mut data = data. lock(). unwrap();
+         *data += 1;
+         if *data == N {
+             tx. send(()). unwrap();
+         }
+         // the lock is unlocked here when `data` goes out of scope.
+     });
 }
 
 rx.recv().unwrap();
 ```
 
-### `lock` 与 `try_lock` 的区别
+### Difference between `lock` and `try_lock`
 
-`.lock()` 方法，会等待锁令牌，等待的时候，会阻塞当前线程。而 `.try_lock()` 方法，只是做一次尝试操作，不会阻塞当前线程。
+The `.lock()` method will wait for the lock token, and when waiting, it will block the current thread. The `.try_lock()` method is just a trial operation and will not block the current thread.
 
-当 `.try_lock()` 没有获取到锁令牌时，会返回 `Err`。因此，如果要使用 `.try_lock()`，需要对返回值做仔细处理（比如，在一个循环检查中）。
+When `.try_lock()` does not get a lock token, `Err` will be returned. Therefore, if you want to use `.try_lock()`, you need to do careful handling of the return value (for example, in a loop check).
 
 
-__点评__：Rust 的 Mutex 设计成一个对象，不同于 C 语言中的自旋锁用两条分开的语句的实现，更安全，更美观，也更好管理。
+__Comment__: Rust's Mutex is designed as an object, which is different from the implementation of the spin lock in C language with two separate statements, which is safer, more beautiful, and easier to manage.
 
 
 ## RwLock
 
-`RwLock` 翻译成 `读写锁`。它的特点是：
+`RwLock` translates to `read-write lock`. It is characterized by:
 
-1. 同时允许多个读，最多只能有一个写；
-2. 读和写不能同时存在；
+1. Multiple reads are allowed at the same time, but only one write at most;
+2. Reading and writing cannot exist at the same time;
 
-比如：
+for example:
 
 ```rust
 use std::sync::RwLock;
@@ -73,25 +73,25 @@ let lock = RwLock::new(5);
 
 // many reader locks can be held at once
 {
-    let r1 = lock.read().unwrap();
-    let r2 = lock.read().unwrap();
-    assert_eq!(*r1, 5);
-    assert_eq!(*r2, 5);
+     let r1 = lock. read(). unwrap();
+     let r2 = lock. read(). unwrap();
+     assert_eq!(*r1, 5);
+     assert_eq!(*r2, 5);
 } // read locks are dropped at this point
 
 // only one write lock may be held, however
 {
-    let mut w = lock.write().unwrap();
-    *w += 1;
-    assert_eq!(*w, 6);
+     let mut w = lock.write().unwrap();
+     *w += 1;
+     assert_eq!(*w, 6);
 } // write lock is dropped here
 ```
 
-### 读写锁的方法
+### Read-write lock method
 
 1. `.read()`
 2. `.try_read()`
 3. `.write()`
 4. `.try_write()`
 
-注意需要对 `.try_read()` 和 `.try_write()` 的返回值进行判断。
+Note that you need to judge the return values of `.try_read()` and `.try_write()`.

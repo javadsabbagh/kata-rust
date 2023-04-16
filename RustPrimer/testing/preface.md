@@ -1,3 +1,3 @@
-# 测试与评测
+# Testing and Evaluation
 
-本章讲解 Rust 中内建的测试与评测相关知识。
+This chapter explains about the built-in testing and profiling in Rust.

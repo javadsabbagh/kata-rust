@@ -1,3 +1,3 @@
-# 基本程序结构
+# Basic program structure
 
-Rust 是多范式语言，当然支持命令式编程风格。本章讲解 Rust 中的几种基本程序结构。
+Rust is a multi-paradigm language and of course supports an imperative programming style. This chapter explains several basic program structures in Rust.

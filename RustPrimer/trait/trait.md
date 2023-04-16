@@ -1,8 +1,8 @@
-# 10.1 trait关键字
+# 10.1 trait keyword
 
-## trait与具体类型
+## traits and concrete types
 
-使用**trait**定义一个特征：
+Use **trait** to define a trait:
 
 ```rust
 trait HasArea {
@@ -10,7 +10,7 @@ trait HasArea {
 }
 ```
 
-**trait**里面的函数可以没有函数体，实现代码交给具体实现它的类型去补充：
+The functions in **trait** can have no function body, and the implementation code is handed over to the type that implements it to supplement:
 
 ```rust
 struct Circle {
@@ -35,21 +35,21 @@ fn main() {
 }
 ```
 
-**注**: **&self**表示的是**area**这个函数会将调用者的借代引用作为参数
+**Note**: **&self** means **area** This function will take the caller's reference as a parameter
 
-这个程序会输出：
+This program will output:
 
 ```
 circle c has an area of 3.141592653589793
 ```
 
-## trait与泛型
+## traits and generics
 
-> 我们了解了Rust中trait的定义和使用，接下来我们介绍一下它的使用场景，从中我们可以窥探出接口这特性带来的惊喜
+> We have learned about the definition and use of trait in Rust, and then we will introduce its usage scenarios, from which we can see the surprises brought by the feature of interface
 
-我们知道泛型可以指任意类型，但有时这不是我们想要的，需要给它一些约束。
+We know that generics can refer to any type, but sometimes this is not what we want and we need to give it some constraints.
 
-#### 泛型的trait约束
+#### Generic trait constraints
 
 ```rust
 use std::fmt::Debug;
@@ -58,11 +58,11 @@ fn foo<T: Debug>(s: T) {
 }
 ```
 
-`Debug`是**Rust**内置的一个trait，为"{:?}"实现打印内容，函数`foo`接受一个泛型作为参数，并且约定其需要实现`Debug`
+`Debug` is a built-in trait of **Rust**, which implements printing content for "{:?}". The function `foo` accepts a generic type as a parameter, and agrees that it needs to implement `Debug`
 
-#### 多trait约束
+#### Multiple trait constraints
 
-可以使用多个trait对泛型进行约束：
+Generics can be constrained using several traits:
 
 ```rust
 use std::fmt::Debug;
@@ -72,11 +72,11 @@ fn foo<T: Debug + Clone>(s: T) {
 }
 ```
 
-`<T: Debug + Clone>`中`Debug`和`Clone`使用`+`连接，标示泛型`T`需要同时实现这两个trait。
+In `<T: Debug + Clone>`, `Debug` and `Clone` are connected by `+`, indicating that the generic type `T` needs to implement these two traits at the same time.
 
-#### where关键字
+#### where keyword
 
-约束的trait增加后，代码看起来就变得诡异了，这时候需要使用`where`从句：
+After the constraint traits are added, the code looks weird. At this time, you need to use the `where` clause:
 
 ```rust
 use std::fmt::Debug;
@@ -86,14 +86,14 @@ fn foo<T: Clone, K: Clone + Debug>(x: T, y: K) {
     println!("{:?}", y);
 }
 
-// where 从句
+// where clause
 fn foo<T, K>(x: T, y: K) where T: Clone, K: Clone + Debug {
     x.clone();
     y.clone();
     println!("{:?}", y);
 }
 
-// 或者
+// or
 fn foo<T, K>(x: T, y: K)
     where T: Clone,
           K: Clone + Debug {
@@ -103,9 +103,9 @@ fn foo<T, K>(x: T, y: K)
 }
 ```
 
-## trait与内置类型
+## traits and built-in types
 
-内置类型如：`i32`, `i64`等也可以添加trait实现，为其定制一些功能：
+Built-in types such as `i32`, `i64`, etc. can also add trait implementations to customize some functions:
 
 ```rust
 trait HasArea {
@@ -121,9 +121,9 @@ impl HasArea for i32 {
 5.area();
 ```
 
-这样的做法是有限制的。Rust 有一个“孤儿规则”：当你为某类型实现某 trait 的时候，必须要求类型或者 trait 至少有一个是在当前 crate 中定义的。你不能为第三方的类型实现第三方的 trait 。
+There are limits to such an approach. Rust has an "orphan rule": when you implement a trait for a certain type, at least one of the type or trait must be defined in the current crate. You cannot implement third-party traits on third-party types.
 
-在调用 trait 中定义的方法的时候，一定要记得让这个 trait 可被访问。
+When calling methods defined in a trait, be sure to make the trait accessible.
 
 ```rust
 let mut f = std::fs::File::open("foo.txt").ok().expect("Couldn’t open foo.txt");
@@ -132,7 +132,7 @@ let result = f.write(buf);
 # result.unwrap();
 ```
 
-这里是错误：
+Here is the error:
 
 ```
 error: type `std::fs::File` does not implement any method in scope named `write`
@@ -140,7 +140,7 @@ let result = f.write(buf);
                ^~~~~~~~~~
 ```
 
-我们需要先use这个Write trait：
+We need to use this Write trait first:
 
 ```rust
 use std::io::Write;
@@ -151,10 +151,10 @@ let result = f.write(buf);
 # result.unwrap(); // ignore the error
 ```
 
-这样就能无错误地编译了。
+This compiles without errors.
 
 
-## trait的默认方法
+## default method of trait
 
 
 ```rust
@@ -165,9 +165,9 @@ trait Foo {
 }
 ```
 
-`is_invalid`是默认方法，`Foo`的实现者并不要求实现它，如果选择实现它，会覆盖掉它的默认行为。
+`is_invalid` is the default method, implementors of `Foo` are not required to implement it, if they choose to implement it, it will override its default behavior.
 
-## trait的继承
+## trait inheritance
 
 ```rust
 trait Foo {
@@ -179,7 +179,7 @@ trait FooBar : Foo {
 }
 ```
 
-这样`FooBar`的实现者也要同时实现`Foo`：
+Thus implementors of `FooBar` must also implement `Foo`:
 
 ```rust
 struct Baz;
@@ -193,9 +193,9 @@ impl FooBar for Baz {
 }
 ```
 
-## derive属性
+## derive attribute
 
-**Rust**提供了一个属性`derive`来自动实现一些trait，这样可以避免重复繁琐地实现他们，能被`derive`使用的trait包括：`Clone`, `Copy`, `Debug`, `Default`, `Eq`, `Hash`, `Ord`, `PartialEq`, `PartialOrd`
+**Rust** provides an attribute `derived` to automatically implement some traits, so as to avoid repetitive and tedious implementation of them. The traits that can be used by `derived` include: `Clone`, `Copy`, `Debug`, ` Default`, `Eq`, `Hash`, `Ord`, `PartialEq`, `PartialOrd`
 
 ```rust
 #[derive(Debug)]
@@ -207,9 +207,9 @@ fn main() {
 ```
 
 ## impl Trait
-在版本1.26 开始，Rust提供了`impl Trait`的写法，作为和Scala 对等的`既存型别(Existential Type)`的写法。
+Starting from version 1.26, Rust provides `impl Trait`, which is equivalent to Scala's `Existential Type'.
 
-在下面这个写法中，`fn foo()`将返回一个实作了`Trait`的trait。
+In the following syntax, `fn foo()` will return a trait that implements `Trait`.
 
 ```rust
 //before
@@ -223,9 +223,9 @@ fn foo() -> impl Trait {
 }
 ```
 
-相较于1.25 版本以前的写法，新的写法会在很多场合中更有利于开发和执行效率。
+Compared with the way of writing before version 1.25, the new way of writing will be more conducive to development and execution efficiency in many occasions.
 
-#### impl Trait 的普遍用例
+#### Common use cases for impl Trait
 
 ```rust
 trait Trait {
@@ -241,7 +241,7 @@ impl Trait for f32 {
 }
 ```
 
-利用Box 会意味：即便回传的内容是固定的，但也会使用到动态内存分配。利用`impl Trait` 的写法可以避免便用Box。
+Using Box means that even if the returned content is fixed, dynamic memory allocation will be used. Use `impl Trait` to avoid using Box.
 
 ```rust
 //before
@@ -255,9 +255,9 @@ fn foo() -> impl Trait {
 }
 ```
 
-#### 其他受益的用例
+#### Other benefit use cases
 
-闭包:
+Closure:
 ```rust
 // before
 fn foo() -> Box<Fn(i32) -> i32> {
@@ -270,7 +270,7 @@ fn foo() -> impl Fn(i32) -> i32 {
 }
 ```
 
-传参：
+Pass parameters:
 ```rust
 // before
 fn foo<T: Trait>(x: T) {

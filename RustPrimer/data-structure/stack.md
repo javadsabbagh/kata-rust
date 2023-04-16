@@ -1,22 +1,22 @@
-# 栈
+# stack
 
-## 栈简介
+## Introduction to the stack
 
-- 栈作为一种数据结构，是一种只能在**一端**进行**插入**和**删除**操作的特殊线性表。
+- As a data structure, a stack is a special linear table that can only perform **insert** and **delete** operations on **one end**.
 
-- 它按照**先进后出**的原则存储数据，先进入的数据被压入栈底，最后的数据在栈顶，需要读数据的时候从栈顶开始弹出数据（最后一个数据被第一个读出来）。
+- It stores data according to the principle of **first in, last out**, the data that enters first is pushed into the bottom of the stack, and the last data is on the top of the stack. read out).
 
->栈（stack）又名堆栈，它是一种运算受限的线性表。其限制是仅允许在表的一端进行插入和删除运算。这一端被称为栈顶，相对地，把另一端称为栈底。向一个栈插入新元素又称作进栈、入栈或压栈，它是把新元素放到栈顶元素的上面，使之成为新的栈顶元素；从一个栈删除元素又称作出栈或退栈，它是把栈顶元素删除掉，使其相邻的元素成为新的栈顶元素。
+>Stack (stack), also known as stack, is a linear table with limited operations. The limitation is that insertion and deletion operations are only allowed at one end of the table. This end is called the top of the stack, and the other end is called the bottom of the stack. Inserting a new element into a stack is also called pushing, pushing, or pushing. It is to put the new element on top of the top element of the stack to make it a new top element of the stack; deleting an element from a stack is also called stacking or stacking. Unstack, it is to delete the top element of the stack, so that the adjacent element becomes the new top element of the stack.
 
-## 栈的实现步骤：
+## Implementation steps of the stack:
 
-- 定义一个栈结构`Stack`
-- 定义组成栈结构的栈点`StackNode`
-- 实现栈的初始化函数`new( )`
-- 实现进栈函数`push( )`
-- 实现退栈函数`pop( )`
+- Define a stack structure `Stack`
+- Define the stack point `StackNode` that makes up the stack structure
+- Implement stack initialization function `new( )`
+- Implement push function `push( )`
+- Implement unstack function `pop( )`
 
-## 定义一个栈结构`Stack`
+## Define a stack structure `Stack`
 
 ```rust
 #[derive(Debug)]
@@ -25,13 +25,13 @@ struct Stack<T> {
 }
 ```
 
-让我们一步步来分析
+Let's analyze step by step
 
-- 第一行的`#[derive(Debug)]`是为了让`Stack`结构体可以打印调试。
-- 第二行是定义了一个`Stack`结构体，这个结构体包含一个泛型参数`T`。
-- 第三行比较复杂，在定义`StackNode`的时候介绍
+- The `#[derive(Debug)]` in the first line is to make the `Stack` structure printable for debugging.
+- The second line defines a `Stack` structure, which contains a generic parameter `T`.
+- The third line is more complicated, introduced when defining `StackNode`
 
-## 定义组成栈结构的栈点`StackNode`
+## Define the stack point `StackNode` that makes up the stack structure
 
 ```rust
 #[derive(Clone,Debug)]
@@ -41,23 +41,23 @@ struct StackNode<T> {
 }
 ```
 
-在这段代码的第三行， 我们定义了一个`val`保存`StackNode`的值。
+In the third line of this code, we define a `val` to hold the value of `StackNode`.
 
->现在我们重点来看看第四行：
-我们**从里到外**拆分来看看，首先是`Box<StackNode<T>`，这里的`Box`是 Rust 用来显式分配堆内存的类型：
+> Now let's focus on the fourth line:
+Let's take a look **from the inside out**, first of all `Box<StackNode<T>`, where `Box` is the type used by Rust to explicitly allocate heap memory:
 
-> `pub struct Box<T> where T: ?Sized(_);`  
-[详细文档请参考Rust的标准库](http://doc.rust-lang.org/nightly/std/boxed/struct.Box.html)
+> `pub struct Box<T> where T: ?Sized(_);`
+[For detailed documentation, please refer to Rust's standard library](http://doc.rust-lang.org/nightly/std/boxed/struct.Box.html)
 
-> 在 Rust 里面用强大的类型系统做了统一的抽象。在这里相当于在堆空间里申请了一块内存保存`StackNode<T>`。  
+> A unified abstraction in Rust with a powerful type system. Here it is equivalent to applying for a piece of memory in the heap space to save `StackNode<T>`.
 
-> **为什么要这么做了？如果不用Box封装会怎么样呢？**  
+> **Why did you do this? What happens if you don't use Box packaging? **
 
-> 如果不用 Box 封装，rustc 编译器会报错，在 Rust 里面，rustc 默认使用栈空间，但是这里的`StackNode`定义的时候使用了递归的数据结构，next 属性的类型是 `StackNode<T>`，而这个类型是无法确定大小的，所有这种无法确定大小的类型，都不能保存在栈空间。所以需要使用`Box`来封装。这样的话`next`的类型就是一个指向某一块堆空间的指针，而指针是可以确定大小的，因此能够保存在栈空间。  
+> If you don’t use Box encapsulation, the rustc compiler will report an error. In Rust, rustc uses stack space by default, but here `StackNode` is defined using a recursive data structure, and the type of the next attribute is `StackNode<T>`, And this type cannot be determined in size, and all types of this indeterminate size cannot be stored in the stack space. So you need to use `Box` to encapsulate. In this case, the type of `next` is a pointer to a certain piece of heap space, and the size of the pointer can be determined, so it can be stored in the stack space.
 
-> **那么为什么还需要使用`Option`来封装呢？**  
+> **So why do you need to use `Option` to encapsulate it? **
 
-> `Option`是 Rust 里面的一个抽象类型，定义如下：  
+> `Option` is an abstract type in Rust, defined as follows:
 >
 
 ```rust
@@ -67,16 +67,16 @@ pub enum Option<T> {
 }
 ```
 
-Option 里面包括元素，None 和 Some(T) ，这样就很轻松的描述了 next 指向栈尾的元素的时候，都是在 Option 类型下，方便了功能实现，也方便了错误处理。Option 还有很多强大的功能，读者可以参考下面几个连接：
+Option includes elements, None and Some(T), so that it is easy to describe that when next points to the element at the end of the stack, it is all under the Option type, which is convenient for function realization and error handling. Option also has many powerful functions, readers can refer to the following links:
 
-[Option标准库文档](http://doc.rust-lang.org/nightly/std/option/enum.Option.html)
+[Option standard library documentation](http://doc.rust-lang.org/nightly/std/option/enum.Option.html)
 
 [Error Handling in Rust](http://blog.burntsushi.net/rust-error-handling/)
 
-[rustbyexample 的 Error handling](https://doc.rust-lang.org/stable/rust-by-example/error.html)
+[Error handling for rustbyexample](https://doc.rust-lang.org/stable/rust-by-example/error.html)
 
-## 实现 `new( ) push( ) pop( )`
-接下来是实现 stack 的主要功能了。
+## Implement `new( ) push( ) pop( )`
+Next is to implement the main functions of the stack.
 
 ```rust
 impl<T> Stack<T> {
@@ -104,16 +104,16 @@ impl<T> Stack<T> {
 }
 ```
 
-- `new( )`比较简单，Stack 初始化的时候为空，栈顶元素 `top` 就没有任何值，所以 `top` 为 `None`。
+- `new( )` is relatively simple. When the Stack is initialized, it is empty, and the top element of the stack `top` has no value, so `top` is `None`.
 
-- `push( )`的主要功能是往栈里面推入元素，把新的 StackNode 指向 Stack 里面旧的值，同时更新 Stack 栈顶指向新进来的值。
-> 这里有个需要注意的地方是第8行代码里面，`let next = self.top.take();`，使用了 Option 类型的 take 方法：  
+- The main function of `push( )` is to push elements into the stack, point the new StackNode to the old value in the Stack, and update the top of the Stack to point to the new value.
+> One thing to note here is that in line 8 of the code, `let next = self.top.take();` uses the take method of the Option type:
 `fn take(&mut self) -> Option<T>`
-它会把 Option 类型的值取走，并把它的元素改为 None
+It will take the value of type Option and change its elements to None
 
-- `pop( )`的功能是取出栈顶的元素，如果栈顶为 None 则返回 None。
+- The function of `pop( )` is to take out the element at the top of the stack, and return None if the top of the stack is None.
 
-## 完整代码（包含简单的测试）
+## Complete code (including simple tests)
 
 ```rust
 #[derive(Debug)]

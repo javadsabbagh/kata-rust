@@ -1,47 +1,46 @@
+# Packages and modules
 
-# 包和模块
+## package (crate)
 
-## 包（crate）
+In Rust, a crate is an independent compilable unit. Specifically, it is one or a batch of files (if it is a batch of files, then one file is the entry of this crate). After it is compiled, it will generate an executable file or a library correspondingly.
 
-Rust 中，`crate` 是一个独立的可编译单元。具体说来，就是一个或一批文件（如果是一批文件，那么有一个文件是这个 crate 的入口）。它编译后，会对应着生成一个可执行文件或一个库。
-
-执行 `cargo new foo`，会得到如下目录层级：
+Execute `cargo new foo`, you will get the following directory hierarchy:
 
 ```
 foo
 ├── Cargo.toml
 └── src
-    └── lib.rs
+     └── lib.rs
 ```
 
-这里，`lib.rs` 就是一个 crate（入口），它编译后是一个库。一个工程下可以包含不止一个 crate，本工程只有一个。
+Here, `lib.rs` is a crate (entry), which is compiled into a library. A project can contain more than one crate, and this project only has one.
 
-执行 `cargo new --bin bar`，会得到如下目录层级：
+Execute `cargo new --bin bar`, you will get the following directory hierarchy:
 
 ```
 bar
 ├── Cargo.toml
 └── src
-    └── main.rs
+     └── main.rs
 ```
 
-这里，`main.rs` 就是一个 crate（入口），它编译后是一个可执行文件。
+Here, `main.rs` is a crate (entry), which is compiled into an executable file.
 
 
-## 模块（module）
+## module
 
-Rust 提供了一个关键字 `mod`，它可以在一个文件中定义一个模块，或者引用另外一个文件中的模块。
+Rust provides a keyword `mod`, which can define a module in one file, or reference a module in another file.
 
-关于模块的一些要点：
+Some key points about modules:
 
-1. 每个 crate 中，默认实现了一个隐式的 `根模块（root module）`；
-2. 模块的命名风格也是 `lower_snake_case`，跟其它的 Rust 的标识符一样；
-3. 模块可以嵌套；
-4. 模块中可以写任何合法的 Rust 代码；
+1. In each crate, an implicit root module is implemented by default;
+2. The naming style of the module is also `lower_snake_case`, which is the same as other Rust identifiers;
+3. Modules can be nested;
+4. Any legal Rust code can be written in the module;
 
-### 在文件中定义一个模块
+### Define a module in the file
 
-比如，在上述 `lib.rs` 中，我们写上如下代码：
+For example, in the above `lib.rs`, we write the following code:
 
 ```rust
 mod aaa {
@@ -53,7 +52,7 @@ mod aaa {
 }
 ```
 
-我们可以继续写如下代码：
+We can continue to write the following code:
 
 ```rust
 mod aaa {
@@ -71,7 +70,7 @@ mod aaa {
 }
 ```
 
-还可以继续写：
+You can also continue to write:
 
 ```rust
 mod aaa {
@@ -97,11 +96,11 @@ mod ccc {
 
 ```
 
-### 模块的可见性
+### Module Visibility
 
-我们前面写了一些模块，但实际上，我们写那些模块，目前是没有什么作用的。写模块的目的一是为了分隔逻辑块，二是为了提供适当的函数，或对象，供外部访问。而模块中的内容，默认是私有的，只有模块内部能访问。
+We wrote some modules earlier, but in fact, we wrote those modules, which currently have no effect. The purpose of writing a module is to separate logical blocks, and the second is to provide appropriate functions or objects for external access. The content in the module is private by default and can only be accessed inside the module.
 
-为了让外部能使用模块中 item，需要使用 `pub` 关键字。外部引用的时候，使用 `use` 关键字。例如：
+In order to make the item in the module available externally, the `pub` keyword needs to be used. For external references, use the `use` keyword. For example:
 
 ```rust
 mod ccc {
@@ -114,19 +113,19 @@ fn main() {
     use ccc::print_ccc;
 
     print_ccc();
-    // 或者
+    // or
     ccc::print_ccc();
 }
 ```
 
-规则很简单，一个 item（函数，绑定，Trait 等），前面加了 `pub`，那么就它变成对外可见（访问，调用）的了。
+The rule is very simple, an item (function, binding, Trait, etc.), if `pub` is added in front of it, then it becomes visible (accessed, called) to the outside world.
 
 
-### 引用外部文件模块
+### Reference external file module
 
-通常，我们会在单独的文件中写模块内容，然后使用 `mod` 关键字来加载那个文件作为我们的模块。
+Normally, we would write module content in a separate file, and then use the `mod` keyword to load that file as our module.
 
-比如，我们在 `src` 下新建了文件 `aaa.rs`。现在目录结构是下面这样子：
+For example, we created a new file `aaa.rs` under `src`. The directory structure now looks like this:
 
 ```
 foo
@@ -136,7 +135,7 @@ foo
     └── main.rs
 ```
 
-我们在 `aaa.rs` 中，写上：
+In `aaa.rs`, we write:
 
 ```rust
 pub fn print_aaa() {
@@ -144,7 +143,7 @@ pub fn print_aaa() {
 }
 ```
 
-在 `main.rs` 中，写上：
+In `main.rs`, write:
 
 ```rust
 mod aaa;
@@ -152,72 +151,72 @@ mod aaa;
 use self::aaa::print_aaa;
 
 fn main () {
-    print_aaa();
+     print_aaa();
 }
 ```
 
-编译后，生成一个可执行文件。
+After compilation, an executable file is generated.
 
-细心的朋友会发现，`aaa.rs` 中，没有使用 `mod xxx {}` 这样包裹起来，是因为 `mod xxx;` 相当于把 `xxx.rs` 文件用 `mod xxx {}` 包裹起来了。初学者往往会多加一层，请注意。
+Careful friends will find that in `aaa.rs`, `mod xxx {}` is not used to wrap it up, because `mod xxx;` is equivalent to wrapping the `xxx.rs` file with `mod xxx {}` up. Beginners tend to add an extra layer, beware.
 
 
-### 多文件模块的层级关系
+### Hierarchical relationship of multi-file modules
 
-Rust 的模块支持层级结构，但这种层级结构本身与文件系统目录的层级结构是解耦的。
+Rust's modules support a hierarchy, but the hierarchy itself is decoupled from the filesystem directory hierarchy.
 
-`mod xxx;` 这个 `xxx` 不能包含 `::` 号。也即在这个表达形式中，是没法引用多层结构下的模块的。也即，你不可能直接使用 `mod a::b::c::d;` 的形式来引用 `a/b/c/d.rs` 这个模块。
+`mod xxx;` The `xxx` cannot contain a `::` sign. That is to say, in this expression form, it is impossible to refer to the modules under the multi-layer structure. That is, you cannot directly use `mod a::b::c::d;` to refer to `a/b/c/d.rs` this module.
 
-那么，Rust 的多层模块遵循如下两条规则：
+Then, Rust's multi-layer modules follow the following two rules:
 
-1. 优先查找`xxx.rs` 文件
-    1.  `main.rs`、`lib.rs`、`mod.rs`中的`mod xxx;` 默认优先查找同级目录下的 `xxx.rs` 文件；
-    2.  其他文件`yyy.rs`中的`mod xxx;`默认优先查找同级目录的`yyy`目录下的 `xxx.rs` 文件；
-2. 如果 `xxx.rs` 不存在，则查找 `xxx/mod.rs` 文件，即 `xxx` 目录下的 `mod.rs` 文件。
+1. First look for `xxx.rs` files
+     1. `mod xxx;` in `main.rs`, `lib.rs`, and `mod.rs` will search for `xxx.rs` files in the same directory by default;
+     2. `mod xxx;` in other files `yyy.rs` will first search for `xxx.rs` files in the `yyy` directory of the same level directory by default;
+2. If `xxx.rs` does not exist, then look for the `xxx/mod.rs` file, that is, the `mod.rs` file under the `xxx` directory.
 
-上述两种情况，加载成模块后，效果是相同的。Rust 就凭这两条规则，通过迭代使用，结合 `pub` 关键字，实现了对深层目录下模块的加载；
+In the above two cases, after being loaded into a module, the effect is the same. Based on these two rules, Rust implements the loading of modules in deep directories through iterative use and the `pub` keyword;
 
-下面举个例子，现在我们建了一个测试工程，目录结构如下：
+Let's take an example, now we have built a test project, the directory structure is as follows:
 
 ```
 src
 ├── a
-│   ├── b
-│   │   ├── c
-│   │   │   ├── d.rs
-│   │   │   └── mod.rs
-│   │   └── mod.rs
-│   └── mod.rs
+│ ├── b
+│ │ ├── c
+│ │ │ ├── d.rs
+│ │ │ └── mod.rs
+│ │ └── mod.rs
+│ └── mod.rs
 └── main.rs
 
 ```
 
-`a/b/c/d.rs` 文件内容：
+`a/b/c/d.rs` file content:
 
 ```rust
 pub fn print_ddd() {
-    println!("i am ddd.");
+     println!("i am ddd.");
 }
 ```
 
-`a/b/c/mod.rs` 文件内容：
+`a/b/c/mod.rs` file content:
 
 ```rust
 pub mod d;
 ```
 
-`a/b/mod.rs` 文件内容：
+`a/b/mod.rs` file content:
 
 ```rust
 pub mod c;
 ```
 
-`a/mod.rs` 文件内容：
+`a/mod.rs` file content:
 
 ```rust
 pub mod b;
 ```
 
-`main.rs` 文件内容：
+`main.rs` file content:
 
 ```rust
 mod a;
@@ -225,77 +224,77 @@ mod a;
 use self::a::b::c::d;
 
 fn main() {
-    d::print_ddd();
+     d::print_ddd();
 }
 
 ```
-输出结果为：`i am ddd.`
+The output is: `i am ddd.`
 
-仔细理解本例子，就明白 Rust 的层级结构模块的用法了。
+After carefully understanding this example, you will understand the usage of Rust's hierarchical structure module.
 
-至于为何 Rust 要这样设计，有几下几个原因：
+As for why Rust is designed this way, there are several reasons:
 
-1. Rust 本身模块的设计是与操作系统文件系统目录解耦的，因为 Rust 本身可用于操作系统的开发；
-2. Rust 中的一个文件内，可包含多个模块，直接将 `a::b::c::d` 映射到 `a/b/c/d.rs` 会引起一些歧义；
-3. Rust 一切从安全性、显式化立场出发，要求引用路径中的每一个节点，都是一个有效的模块，比如上例，`d` 是一个有效的模块的话，那么，要求 `c, b, a` 分别都是有效的模块，可单独引用。
+1. The design of Rust's own module is decoupled from the file system directory of the operating system, because Rust itself can be used for the development of the operating system;
+2. A file in Rust can contain multiple modules, directly mapping `a::b::c::d` to `a/b/c/d.rs` will cause some ambiguity;
+3. Starting from the standpoint of safety and explicitness, Rust requires every node in the reference path to be a valid module. For example, if `d` is a valid module in the above example, then `c, b, a` are valid modules respectively and can be referenced individually.
 
 
-### 路径
+### path
 
-前面我们提到，一个 crate 是一个独立的可编译单元。它有一个入口文件，这个入口文件是这个 crate（里面可能包含若干个 module）的模块根路径。整个模块的引用，形成一个链，每个模块，都可以用一个精确的路径（比如：`a::b::c::d`）来表示；
+As we mentioned earlier, a crate is an independent compilable unit. It has an entry file, which is the module root path of this crate (which may contain several modules). The reference of the whole module forms a chain, and each module can be represented by a precise path (for example: `a::b::c::d`);
 
-与文件系统概念类似，模块路径也有相对路径和绝对路径的概念。为此，Rust 提供了 `self` 和 `super` 两个关键字。
+Similar to the concept of the file system, the module path also has the concept of relative path and absolute path. For this, Rust provides two keywords `self` and `super`.
 
-`self` 在路径中，有两种意思：
+`self` in the path has two meanings:
 
-1. `use self::xxx` 表示，加载当前模块中的 `xxx`。此时 self 可省略；
-2. `use xxx::{self, yyy}`，表示，加载当前路径下模块 `xxx` 本身，以及模块 `xxx` 下的 `yyy`；
+1. `use self::xxx` means to load `xxx` in the current module. In this case self can be omitted;
+2. `use xxx::{self, yyy}` means to load the module `xxx` itself under the current path, and `yyy` under the module `xxx`;
 
-`super` 表示，当前模块路径的上一级路径，可以理解成父模块。
+`super` indicates that the upper level path of the current module path can be understood as the parent module.
 ```rust
 use super::xxx;
 ```
-表示引用父模块中的 `xxx`。
+Indicates the reference to `xxx` in the parent module.
 
-另外，还有一种特殊的路径形式：
+Additionally, there is a special path form:
 ```rust
 ::xxx::yyy
 ```
-它表示，引用根路径下的 `xxx::yyy`，这个根路径，指的是当前 crate 的根路径。
+It means to refer to `xxx::yyy` under the root path, which refers to the root path of the current crate.
 
-路径中的 `*` 符号：
+`*` symbols in paths:
 ```rust
 use xxx::*;
 ```
-表示导入 `xxx` 模块下的所有可见 item（加了 pub 标识的 item）。
+Indicates all visible items (items marked with pub) imported under the `xxx` module.
 
 ### Re-exporting
 
-我们可以结合使用 `pub use` 来实现 `Re-exporting`。`Re-exporting` 的字面意思就是 `重新导出`。它的意思是这样的，把深层的 item 导出到上层目录中，使调用的时候，更方便。接口设计中会大量用到这个技术。
+We can combine `pub use` to achieve `Re-exporting`. `Re-exporting` literally means `re-exporting`. It means this, to export the deep item to the upper directory, so that it is more convenient to call. This technique will be used extensively in interface design.
 
-还是举上面那个 `a::b::c::d` 的例子。我们在 `main.rs` 中，要调用 `d`，得使用 `use a::b::c::d;` 来调用。而如果我们修改 `a/mod.rs` 文件为：
-`a/mod.rs` 文件内容：
+Or take the example of `a::b::c::d` above. We are in `main.rs`, to call `d`, we have to use `use a::b::c::d;` to call. And if we modify the `a/mod.rs` file to:
+`a/mod.rs` file content:
 
 ```rust
 pub mod b;
 pub use b::c::d;
 ```
 
-那么，我们在 `main.rs` 中，就可以使用 `use a::d;` 来调用了。从这个例子来看没觉得方便多少。但是如果开发的一个库中有大量的内容，而且是在不同层次的模块中。那么，通过统一导出到一个地方，就能大大方便接口使用者。
+Then, in `main.rs`, we can use `use a::d;` to call. From this example, I don't think it's much more convenient. But if there is a large amount of content in a developed library, and it is in modules of different levels. Then, by uniformly exporting to one place, it will greatly facilitate the interface users.
 
-### 加载外部 crate
+### Load external crate
 
-前面我们讲的，都是在当前 crate 中的技术。真正我们在开发时，会大量用到外部库。外部库是通过
+What we have mentioned above are all technologies in the current crate. When we are actually developing, we will use a lot of external libraries. External libraries are accessed via
 
 ```rust
 extern crate xxx;
 ```
 
-这样来引入的。
+Introduced in this way.
 
-注：要使上述引用生效，还必须在 `Cargo.toml` 的 `dependecies` 段，加上 `xxx="version num"` 这种依赖说明，详情见 `Cargo 项目管理` 这一章。
+Note: To make the above references effective, you must also add `xxx="version num"` in the `dependencies` section of `Cargo.toml`, see `Cargo Project Management` for details.
 
-引入后，就相当于引入了一个符号 `xxx`，后面可以直接以这个 `xxx` 为根引用这个 crate 中的 item：
+After importing, it is equivalent to introducing a symbol `xxx`, and later you can directly use this `xxx` as the root to refer to the item in this crate:
 
 ```rust
 extern crate xxx;
@@ -303,7 +302,7 @@ extern crate xxx;
 use xxx::yyy::zzz;
 ```
 
-引入的时候，可以通过 `as` 关键字重命名。
+When imported, it can be renamed with the `as` keyword.
 
 ```rust
 extern crate xxx as foo;

@@ -1,7 +1,7 @@
-# 模式匹配
+# pattern matching
 
-除了我们常见的控制语句之外，Rust还提供了一个更加强大的关键字——`match` 。但是，需要指出的一点是，match只是*匹配*，要发挥其全部威力，还需要*模式*的配合。本章，我们就将的对Rust的模式匹配进行一番探索。
+In addition to our common control statements, Rust also provides a more powerful keyword - `match`. However, one thing that needs to be pointed out is that match is just *match*, and to exert its full power, it also needs the cooperation of *mode*. In this chapter, we will explore Rust's pattern matching.
 
-本章内容：
-* [match关键字](match.md)
-* [模式](pattern.md)
+Contents of this chapter:
+* [match keyword](match.md)
+* [pattern](pattern.md)

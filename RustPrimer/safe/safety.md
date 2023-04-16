@@ -1,67 +1,64 @@
-# 安全（Safety）
+# Safety
 
-本章不讲解任何语言知识点，而是对 Rust 安全理念的一些总结性说明。
+This chapter does not explain any language knowledge points, but some summary descriptions of Rust's security concepts.
 
-安全，本身是一个相当大的话题。安全性，本身也需要一个局部性的定义。
+Security, itself is a pretty big topic. Security itself also requires a definition of locality.
 
-Rust 的定义中，凡是 **可能** 会导致程序内存使用出错的特性，都被认为是 **不安全的（unsafe）**。反之，则是 **安全的（safe）**。
+In Rust's definition, any feature that **may** cause the program to use memory incorrectly is considered **unsafe**. On the contrary, it is **safe (safe)**.
 
-基于这种定义，C 语言，基本是不安全的语言（它是众多不安全特性的集合。特别是指针相关特性，多线程相关特性）。
+Based on this definition, the C language is basically an unsafe language (it is a collection of many unsafe features. Especially pointer related features, multi-thread related features).
 
-Rust 的这个定义，隐含了一个先决假设：人之初，性本恶。人是不可靠的，人是会犯错误的，即 Rust 不相信人的实施过程。在这一点上，C 语言的理念与之完全相反：C 语言完全相信人，人之初，性本善，由人进行完全地控制。
+This definition of Rust implies a presupposition: human nature is inherently evil. Humans are unreliable and fallible, i.e. Rust doesn't trust human implementations. At this point, the philosophy of the C language is completely opposite to it: the C language completely believes in people. At the beginning of people, people are inherently good, and they are completely controlled by people.
 
-根据 Rust 的定义，C 语言几乎是不安全的代名字。但是，从本质上来说，一段程序是否安全，并不由开发它的语言决定。用 C 语言开发出的程序，不一定就是不安全的代码，只不过相对来说，需要花更多的精力进行良好的设计和长期的实际运行验证。Rust 使开发出安全可靠的代码相对容易了。
+C is almost synonymous with unsafe by Rust's definition. However, in essence, whether a program is safe is not determined by the language in which it is developed. A program developed in C language is not necessarily an unsafe code, but relatively speaking, it needs to spend more energy on good design and long-term actual operation verification. Rust makes it relatively easy to develop safe and reliable code.
 
-世界本身是肮脏的。正如，纯函数式语言中还必须有用于处理副作用的 `Monad` 存在一样，Rust 仅凭安全的特性集合，也是无法处理世界的所有结构和问题的。所以，Rust 中，还有 `unsafe` 部分的存在。实际上，Rust 的 std 本身也是建立在大量 `unsafe` 代码的基础之上的。所以，世界就是纯粹建立在不纯粹之上，“安全”建立在“不安全”之上。
+The world itself is dirty. Just as there must be a `Monad` for handling side effects in a pure functional language, Rust cannot handle all the structures and problems of the world with only a safe set of features. Therefore, in Rust, there is still an `unsafe` part. In fact, Rust's std itself is built on a lot of `unsafe` code. Therefore, the world is purely based on impurity, and "safety" is based on "unsafe".
 
-因此，Rust 本身可以被认为是两种编程语言的混合：`Safe Rust` 和 `Unsafe Rust`。
+Thus, Rust itself can be thought of as a hybrid of two programming languages: `Safe Rust` and `Unsafe Rust`.
 
-只使用 `Safe Rust` 的情况下，你不需要担心任何类型安全性和内存安全性的问题。你永远不用忍受空指针，悬挂指针或其它可能的未定义行为的干扰。
+By using only `Safe Rust`, you don't need to worry about any type safety and memory safety issues. You never have to suffer from null pointers, dangling pointers, or other possible undefined behavior.
 
-`Unsafe Rust` 在 `Safe Rust` 的所有特性上，只给程序员开放了以下四种能力：
+`Unsafe Rust` only opens up the following four capabilities to programmers on all the features of `Safe Rust`:
 
-1. 对原始指针进行解引（Dereference raw pointers）；
-2. 调用 `unsafe` 函数（包括 C 函数，内部函数，和原始分配器）；
-3. 实现 `unsafe` traits；
-4. 修改（全局）静态变量。
+1. Dereference raw pointers;
+2. Call `unsafe` functions (including C functions, intrinsic functions, and raw allocators);
+3. Implement `unsafe` traits;
+4. Modify the (global) static variable.
 
-上述这四种能力，如果误用的话，会导致一些未定义行为，具有不确定后果，很容易引起程序崩溃。
+The above four capabilities, if misused, will lead to some undefined behavior, with uncertain consequences, and it is easy to cause the program to crash.
 
-Rust 中定义的不确定性行为有如下一些：
+The non-deterministic behavior defined in Rust is as follows:
 
-1. 对空指针或悬挂指针进行解引用；
-2. 读取未初始化的内存；
-3. 破坏指针重命名规则（比如同一资源的 `&mut` 引用不能出现多次，`&mut` 与 `&` 不能同时出现）；
-4. 产生无效的原生值：
-  - 空指针，悬挂指针；
-  - bool 值不是 0 或 1；
-  - 未定义的枚举取值；
-  - char 值超出取值范围 [0x0, 0xD7FF] 和 [0xE000, 0x10FFFF]；
-  - 非 utf-8 字符串；
-5. Unwinding 到其它语言中；
-6. 产生一个数据竞争。
+1. Dereferencing a null or dangling pointer;
+2. Read uninitialized memory;
+3. Break the pointer renaming rules (for example, `&mut` references of the same resource cannot appear multiple times, `&mut` and `&` cannot appear at the same time);
+4. Produces an invalid native value:
+   - null pointer, dangling pointer;
+   - the bool value is not 0 or 1;
+   - undefined enumeration value;
+   - char value out of range [0x0, 0xD7FF] and [0xE000, 0x10FFFF];
+   - non-utf-8 strings;
+5. Unwinding into other languages;
+6. A data race occurs.
 
-以下一些情况，Rust 认为不属于安全性的处理范畴，即认为它们是“安全”的：
+Some of the following situations are considered "safe" by Rust as outside the scope of security:
 
-1. 死锁；
-2. 存在竞争条件；
-3. 内存泄漏；
-4. 调用析构函数失败；
-5. 整数溢出；
-6. 程序被中断；
-7. 删除产品数据库（:D）；
-
-
+1. Deadlock;
+2. There is a race condition;
+3. Memory leaks;
+4. Failed to call the destructor;
+5. Integer overflow;
+6. The program is interrupted;
+7. Delete product database (:D);
 
 
-## 参考
 
-下面一些链接，给出了安全性更详细的讲解（部分未来会有对应的中文翻译）。
+
+## refer to
+
+The following links give a more detailed explanation of security (some of them will have corresponding Chinese translations in the future).
 
 - [Unsafe](http://doc.rust-lang.org/book/unsafe.html)
 - [Meet Safe and Unsafe](http://doc.rust-lang.org/nightly/nomicon/meet-safe-and-unsafe.html)
 - [How Safe and Unsafe Interact](http://doc.rust-lang.org/nightly/nomicon/safe-unsafe-meaning.html)
-- [蓦然回首万事空 ————空指针漫谈](http://jimhuang.cn/2015/09/12/%E8%93%A6%E7%84%B6%E5%9B%9E%E9%A6%96%E4%B8%87%E4%BA%8B%E7%A9%BA%20%E2%80%94%E2%80%94%E2%80%94%E2%80%94%E7%A9%BA%E6%8C%87%E9%92%88%E6%BC%AB%E8%B0%88/)
-
-
-
+- [Suddenly looking back on everything is empty———Null pointer talk](http://jimhuang.cn/2015/09/12/%E8%93%A6%E7%84%B6%E5%9B%9E%E9% A6%96%E4%B8%87%E4%BA%8B%E7%A9%BA%20%E2%80%94%E2%80%94%E2%80%94%E2%80%94%E7% A9%BA%E6%8C%87%E9%92%88%E6%BC%AB%E8%B0%88/)

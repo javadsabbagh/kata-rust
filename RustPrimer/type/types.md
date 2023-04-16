@@ -1,50 +1,50 @@
-# 原生类型
+# native type
 
-像其他现代编程语言一样，Rust提供了一系列基础的类型，我们一般称之为*原生类型*。其强大的类型系统就是建立在这些原生类型之上的，因此，在写Rust代码之前，必须要对Rust的原生类型有一定的了解。
+Like other modern programming languages, Rust provides a basic set of types, which we generally call *primitive types*. Its powerful type system is based on these native types. Therefore, before writing Rust code, you must have a certain understanding of Rust's native types.
 
 ## bool
 
-Rust自带了`bool`类型，其可能值为`true`或者`false`。
-我们可以通过这样的方式去声明它：
+Rust comes with a `bool` type whose possible values are `true` or `false`.
+We can declare it this way:
 
 ```rust
 let is_she_love_me = false;
 let mut is_he_love_me: bool = true;
 ```
 
-当然，bool类型被用的最多的地方就是在`if表达式`里了。
+Of course, the place where the bool type is used the most is in the `if expression`.
 
 ## char
 
-在Rust中，一个`char`类型表示一个*Unicode*字符,这也就意味着，在某些语言里代表一个字符(8bit)的char，在Rust里实际上是四个字节(32bit)。
-同时，我们可以将各种奇怪的非中文字符随心所欲的赋值给一个char类型。需要注意的是，Rust中我们要用`'`来表示一个char，如果用`"`的话你得到的实际上是一个`&'static str`。
+In Rust, a `char` type represents a *Unicode* character, which means that a char that represents a character (8bit) in some languages is actually four bytes (32bit) in Rust.
+At the same time, we can freely assign all kinds of strange non-Chinese characters to a char type. It should be noted that in Rust, we need to use `'` to represent a char. If you use `"`, what you get is actually a `&'static str`.
 
 ```rust
 let c = 'x';
-let cc = '王';
+let cc = 'King';
 ```
 
-## 数字类型
+## Number type
 
-和其他类C系的语言不一样，Rust用一种*符号+位数*的方式来表示其基本的数字类型。可能你习惯了`int`、`double`、`float`之类的表示法，Rust的表示法需要你稍微适应一下。
+Unlike other C-like languages, Rust uses a *symbol+digits* way to represent its basic numeric types. Maybe you are used to representations such as `int`, `double`, `float`, Rust’s representation requires you to get used to it a little bit.
 
-你可用的符号有 `i`、`f`、`u`
+The symbols you can use are `i`, `f`, `u`
 
-你可用的位数，当然了，都是2的n次幂，分别为`8`、`16`、`32`、`64`及`size`。
+The number of bits you can use, of course, is 2 to the power of n, namely `8`, `16`, `32`, `64` and `size`.
 
-你可以将其组合起来，形成诸如`i32`,`u16`等类型。
+You can combine them to form types such as `i32`, `u16`, etc.
 
-当然了，这样的组合并不自由，因为浮点类型最少只能用32位来表示，因此只能有`f32`和`f64`来表示。
+Of course, such a combination is not free, because the floating-point type can only be represented by at least 32 bits, so it can only be represented by `f32` and `f64`.
 
-### 自适应类型
+### Adaptive type
 
-看完上面你一定会对`isize`和`usize`很好奇。这两个是来干啥的。这两个嘛，其实是取决于你的操作系统的位数。简单粗暴一点比如64位电脑上就是64位，32位电脑上就是32位，16位……呵呵哒。
+After reading the above, you must be curious about `isize` and `usize`. What are these two here for? Well, these two actually depend on the number of bits in your operating system. Simple and rude, for example, 64-bit computers are 64-bit, 32-bit computers are 32-bit, 16-bit... Hehehe.
 
-但是需要注意的是，你不能因为你的电脑是64位的，而强行将它等同于64，也就是说`isize != i64`，任何情况下你都需要强制转换。
+But it should be noted that you cannot force it to be equal to 64 because your computer is 64-bit, that is to say `isize != i64`, you need to convert it in any case.
 
-## 数组 array
+## array array
 
-Rust的数组是被表示为`[T;N]`。其中N表示数组大小，并且这个大小一定是个编译时就能获得的整数值，T表示`泛型`类型，即任意类型。我们可以这么来声明和使用一个数组:
+Arrays in Rust are represented as `[T;N]`. Among them, N represents the size of the array, and this size must be an integer value that can be obtained at compile time, and T represents the `generic` type, that is, any type. We can declare and use an array like this:
 
 ```rust
 let a = [8, 9, 10];
@@ -52,7 +52,7 @@ let b: [u8;3] = [8, 6, 5];
 print!("{}", a[0]);
 ```
 
-和Golang一样，Rust的数组中的`N`（大小）也是类型的一部分，即`[u8; 3] != [u8; 4]`。这么设计是为了更安全和高效的使用内存，当然了，这会给第一次接触类似概念的人带来一点点困难，比如以下代码。
+Like Golang, the `N` (size) in Rust's array is also part of the type, ie `[u8; 3] != [u8; 4]`. This design is to use memory more safely and efficiently. Of course, this will bring a little difficulty to people who are exposed to similar concepts for the first time, such as the following code.
 
 ```rust
 fn show(arr: [u8;3]) {
@@ -69,7 +69,7 @@ fn main() {
 }
 ```
 
-编译运行它你将获得一个编译错误：
+Compile and run it and you will get a compile error:
 
 ```
 <anon>:11:10: 11:11 error: mismatched types:
@@ -83,27 +83,27 @@ fn main() {
 error: aborting due to previous error
 ```
 
-这是因为你将一个4长度的数组赋值给了一个只需要3长度数组作为参数的函数。那么如何写一个通用的show方法来展现任意长度数组呢？请看下节`Slice`
+This is because you are assigning an array of length 4 to a function that only expects an array of length 3 as an argument. So how to write a general show method to display arrays of any length? See the next section `Slice`
 
 ## Slice
 
-`Slice`从直观上讲，是对一个`Array`的切片，通过`Slice`，你能获取到一个`Array`的部分或者全部的访问权限。和`Array`不同，`Slice`是可以动态的，但是呢，其范围是不能超过`Array`的大小，这点和Golang是不一样的。
+Intuitively speaking, `Slice` is a slice of an `Array`, and through `Slice`, you can obtain access to part or all of an `Array`. Unlike `Array`, `Slice` can be dynamic, but its range cannot exceed the size of `Array`, which is different from Golang.
 
-一个`Slice`的表达式可以为如下: `&[T]` 或者 `&mut [T]`。
+A `Slice` expression can be as follows: `&[T]` or `&mut [T]`.
 
-这里`&`符号是一个难点，我们不妨放开这个符号，简单的把它看成是`Slice`的甲鱼臀部——规定。另外，同样的，`Slice`也是可以通过下标的方式访问其元素，下标也是从0开始的哟。
-你可以这么声明并使用一个`Slice`：
+The `&` symbol here is a difficult point. We might as well let go of this symbol and simply regard it as the turtle buttock of `Slice` - the rule. In addition, similarly, `Slice` can also access its elements through subscripts, and subscripts also start from 0.
+You can declare and use a `Slice` like this:
 
 ```rust
 let arr = [1, 2, 3, 4, 5, 6];
-let slice_complete = &arr[..]; // 获取全部元素
-let slice_middle = &arr[1..4]; // 获取中间元素，最后取得的Slice为 [2, 3, 4] 。切片遵循左闭右开原则。
-let slice_right = &arr[1..]; // 最后获得的元素为[2, 3, 4, 5, 6]，长度为5。
-let slice_left = &arr[..3]; // 最后获得的元素为[1, 2, 3]，长度为3。
+let slice_complete = &arr[..]; // Get all elements
+let slice_middle = &arr[1..4]; // Get the middle element, and the finally obtained Slice is [2, 3, 4] . Slicing follows the left-closed-right-open principle.
+let slice_right = &arr[1..]; // The final element obtained is [2, 3, 4, 5, 6] with a length of 5.
+let slice_left = &arr[..3]; // The final obtained element is [1, 2, 3], and the length is 3.
 ```
 
-怎么样，了解了吧。
-那么接下来我们用`Slice`来改造一下上面的函数
+How about it, I understand.
+Then we use `Slice` to transform the above function
 
 ```rust
 fn show(arr: &[u8]) {
@@ -121,41 +121,41 @@ fn main() {
     show(&b[..]);
 }
 ```
-输出
+output
 ```
 1 2 3
 1 2 3 4
 ```
 
-## 动态数组 Vec
+## dynamic array Vec
 
-熟悉C++ STL的同学可能对C++的vector很熟悉，同样的，Rust也提供了一个类似的东西。他叫`Vec`。
+Students who are familiar with C++ STL may be familiar with C++ vector. Similarly, Rust also provides a similar thing. His name is `Vec`.
 
-在基础类型里讲`Vec`貌似是不太合适的，但在实际应用中的应用比较广泛，所以说先粗略的介绍一下，在集合类型的章节会有详细讲述。
+It seems inappropriate to talk about `Vec` in basic types, but it is widely used in practical applications, so let’s give a rough introduction first, and it will be described in detail in the chapter of collection types.
 
-在Rust里，`Vec`被表示为 `Vec<T>`， 其中T是一个泛型。
+In Rust, `Vec` is represented as `Vec<T>`, where T is a generic type.
 
-下面介绍几种典型的`Vec`的用法:
+Here are some typical usages of `Vec`:
 
 ```rust
-let mut v1: Vec<i32> = vec![1, 2, 3]; // 通过vec!宏来声明
-let v2 = vec![0; 10]; // 声明一个初始长度为10的值全为0的动态数组
-println!("{}", v1[0]); // 通过下标来访问数组元素
+let mut v1: Vec<i32> = vec![1, 2, 3]; // declared by vec! macro
+let v2 = vec![0; 10]; // Declare a dynamic array with an initial length of 10 and all values are 0
+println!("{}", v1[0]); // Access array elements by subscript
 
 for i in &v1 {
-    print!("{}", i); // &Vec<i32> 可以通过 Deref 转换成 &[i32]
+     print!("{}", i); // &Vec<i32> can be converted to &[i32] by Deref
 }
 
 println!("");
 
 for i in &mut v1 {
-    *i = *i+1;
-    print!("{}", i); // 可变访问
+     *i = *i+1;
+     print!("{}", i); // variable access
 }
 
 ```
 
-输出结果：
+Output result:
 
 ```
 1
@@ -163,15 +163,15 @@ for i in &mut v1 {
 234
 ```
 
-## 最原生字符串 str
+## The most native string str
 
-你可以用`str`来声明一个字符串，事实上，Rust中，所有用`""`包裹起来的都可以称为`&str`(注意这个`&`,这是难点，不用管他，不是么？)，但是这个类型被单独用的情况很少，因此，我们将在下一节着重介绍字符串类型。
+You can use `str` to declare a string. In fact, in Rust, everything wrapped with `""` can be called `&str` (note the `&`, this is difficult, don’t worry about it, it’s not ?), but this type is rarely used alone, so we'll focus on the string type in the next section.
 
-## 函数类型 Functions
+## Function Type Functions
 
-函数同样的是一个类型，这里只给大家普及一些基本的概念，函数类型涉及到比较高阶的应用，希望大家能在后面的`闭包`章节仔细参读
+A function is also a type. Here I will only popularize some basic concepts for you. The function type involves relatively high-level applications. I hope you can read it carefully in the following `Closure` chapter
 
-下面是一个小例子
+Here is a small example
 
 ```rust
 fn foo(x: i32) -> i32 { x+1 }

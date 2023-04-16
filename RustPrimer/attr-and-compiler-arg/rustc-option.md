@@ -1,18 +1,18 @@
-# 编译器参数
+# Compiler parameters
 
-本章将介绍Rust编译器的参数。
+This chapter describes the parameters of the Rust compiler.
 
-Rust编译器程序的名字是`rustc`，使用它的方法很简单：
+The name of the Rust compiler program is `rustc`, and using it is simple:
 
 ```bash
 $ rustc [OPTIONS] INPUT
 ```
 
-其中，`[OPTIONS]`表示编译参数，而`INPUT`则表示输入文件。而编译参数有以下可选：
+Among them, `[OPTIONS]` represents the compilation parameters, and `INPUT` represents the input file. The compilation parameters have the following options:
 
-* `-h, --help` - 输出帮助信息到标准输出；
+* `-h, --help` - output help information to standard output;
 
-* `--cfg SPEC` - 传入自定义的条件编译参数，使用方法如
+* `--cfg SPEC` - Pass in custom conditional compilation parameters, use methods such as
 
   ```rust
   fn main() {
@@ -22,122 +22,122 @@ $ rustc [OPTIONS] INPUT
   }
   ```
 
-  如上例所示，若`cfg!(hello)`成立，则运行程序就会输出`"world"`到标准输出。我们把这个文件保存为`hello.rs`然后编译它
+   As shown in the above example, if `cfg!(hello)` is established, the running program will output `"world"` to the standard output. We save this file as `hello.rs` and compile it
 
   ```bash
   $ rustc --cfg hello hello.rs
   ```
 
-  运行它就会看到屏幕中输出了`world!`。
+   Run it and you'll see `world!` printed to the screen.
 
-* `-L [KIND=]PATH` - 往链接路径中加入一个文件夹，并且可以指定这个路径的类型（Kind），这些类型包括
-  - `dependency` - 在这个路径下找依赖的文件，比如说`mod`；
-  - `crate` - 只在这个路径下找`extern crate`中定义的库；
-  - `native` - 只在这个路径下找Native库；
-  - `framework` - 只在OS X下有用，只在这个路径下找Framework；
-  - `all` - 默认选项。
+* `-L [KIND=]PATH` - Add a folder to the link path, and you can specify the type of this path (Kind), these types include
+  - `dependency` - Find dependent files in this path, such as `mod`;
+  - `crate` - only find libraries defined in `extern crate` in this path;
+  - `native` - only find Native libraries in this path;
+  - `framework` - only useful under OS X, only find Framework under this path;
+  - `all` - the default option.
 
-* `-l [KIND=]NAME` - 链接一个库，这个库可以指定类型（Kind）
-  - `static` - 静态库；
-  - `dylib` - 动态库；
-  - `framework` - OS X的Framework。
+* `-l [KIND=]NAME` - link a library that can specify the type (Kind)
+  - `static` - static library;
+  - `dylib` - dynamic library;
+  - `framework` - Framework for OS X.
 
-  如果不传，默认为`dylib`。
+   If not passed, defaults to `dylib`.
 
-  此处举一个例子如何手动链接一个库，我们先创建一个文件叫`myhello.rs`，在里面写一个函数
+   Here is an example of how to manually link a library, we first create a file called `myhello.rs`, and write a function in it
 
   ```rust
   // myhello.rs
 
-  /// 这个函数仅仅向标签输出打印 Hello World!
-  /// 不要忘记要把它标记为 pub 哦。
+  /// This function simply prints Hello World! to the label output
+  /// Don't forget to mark it as pub.
   pub fn print_hello() {
       println!("Hello World!");
   }
   ```
 
-  然后把这个文件编译成一个静态库，`libmyhello.a`
+   Then compile this file into a static library, `libmyhello.a`
 
   ```bash
   $ rustc --crate-type staticlib myhello.rs
   ```
 
-  然后再创建一个`main.rs`，链接这个库并打印出"Hello World!"
+   Then create a `main.rs`, link this library and print "Hello World!"
 
   ```rust
   // main.rs
 
-  // 指定链接库 myhello
+  // Specify link library myhello
   extern crate myhello;
 
   fn main() {
-      // 调用库函数
+      // call library function
       myhello::print_hello();
   }
   ```
 
-  编译`main.rs`
+   compile `main.rs`
 
   ```bash
   $ rustc -L. -lmyhello main.rs
   ```
 
-  运行`main`，就会看到屏幕输出"Hello World!"啦。
+   Run `main`, you will see the screen output "Hello World!".
 
-* `--crate-type` - 指定编译输出类型，它的参数包括
-  - `bin` - 二进行可执行文件
-  - `lib` - 编译为库
-  - `rlib` - Rust库
-  - `dylib` - 动态链接库
-  - `staticlib` - 静态链接库
+* `--crate-type` - specifies the type of compiled output, its parameters include
+  - `bin` - binary executable
+  - `lib` - compiled as a library
+  - `rlib` - Rust library
+  - `dylib` - dynamic link library
+  - `staticlib` - Statically linked library
 
-* `--crate-name` - 指定这个Crate的名字，默认是文件名，如`main.rs`编译成可执行文件时默认是`main`，但你可以指定它为`foo`
+* `--crate-name` - Specify the name of this Crate, the default is the file name, such as `main.rs` when compiled into an executable file, the default is `main`, but you can specify it as `foo`
 
   ```bash
   $ rustc --crate-name foo main.rs
   ```
 
-  则会输出`foo`可执行文件。
+   will output the `foo` executable.
 
-* `--emit` - 指定编译器的输出。编译器默认是输出一个可执行文件或库文件，但你可以选择输出一些其它的东西用于Debug
+* `--emit` - Specify compiler output. The compiler outputs an executable or library by default, but you can choose to output something else for Debug
 
-  - `asm` - 输出汇编
-  - `llvm-bc` - [LLVM Bitcode](http://llvm.org/docs/BitCodeFormat.html)；
-  - `llvm-ir` - [LLVM IR](http://llvm.org/docs/LangRef.html)，即LLVM中间码（LLVM Intermediate Representation）；
-  - `obj` - Object File（就是`*.o`文件）；
-  - `link` - 这个是要结合其它`--emit`参数使用，会执行Linker再输出结果；
-  - `dep-info` - 文件依赖关系（Debug用，类似于Makefile一样的依赖）。
+  - `asm` - output assembly
+  - `llvm-bc` - [LLVM Bitcode](http://llvm.org/docs/BitCodeFormat.html);
+  - `llvm-ir` - [LLVM IR](http://llvm.org/docs/LangRef.html), namely LLVM intermediate code (LLVM Intermediate Representation);
+  - `obj` - Object File (that is, `*.o` files);
+  - `link` - this is to be used in combination with other `--emit` parameters, it will execute the Linker and output the result;
+  - `dep-info` - file dependencies (for Debug, similar to Makefile dependencies).
 
-  以上参数可以同时使用，使用逗号分割，如
+   The above parameters can be used at the same time, separated by commas, such as
 
   ```bash
   $ rustc --emit asm,llvm-ir,obj main.rs
   ```
 
-  同时，在最后可以加一个`=PATH`来指定输出到一个特定文件，如
+   At the same time, you can add a `=PATH` at the end to specify the output to a specific file, such as
 
   ```bash
   $ rustc --emit asm=output.S,llvm-ir=output.ir main.rs
   ```
 
-  这样会把汇编生成到`output.S`文件中，把LLVM中间码输出到`output.ir`中。
+   This will generate the assembly into the `output.S` file and the LLVM intermediate code into the `output.ir`.
 
-* `--print` - 打印一些信息，参数有
-  - `crate-name` - 编译目标名；
-  - `file-names` - 编译的文件名；
-  - `sysroot` - 打印Rust工具链的根目录地址。
+* `--print` - print some information, parameters have
+  - `crate-name` - compile target name;
+  - `file-names` - compiled file names;
+  - `sysroot` - Print the address of the root directory of the Rust toolchain.
 
-* `-g` - 在目标文件中保存符号，这个参数等同于`-C debuginfo=2`。
+* `-g` - Save symbols in object file, this parameter is equivalent to `-C debuginfo=2`.
 
-* `-O` - 开启优化，这个参数等同于`-C opt-level=2`。
+* `-O` - Enable optimization, this parameter is equivalent to `-C opt-level=2`.
 
-* `-o FILENAME` - 指定输出文件名，同样适用于`--emit`的输出。
+* `-o FILENAME` - Specifies the output filename, also applies to the output of `--emit`.
 
-* `--out-dir DIR` - 指定输出的文件夹，默认是当前文件夹，且会忽略`-o`配置。
+* `--out-dir DIR` - Specifies the output folder, the default is the current folder, and the `-o` configuration will be ignored.
 
-* `--explain OPT` - 解释某一个编译错误，比如
+* `--explain OPT` - explain a compile error, e.g.
 
-  若你写了一个`main.rs`，使用了一个未定义变量`f`
+   If you write a `main.rs`, use an undefined variable `f`
 
   ```rust
   fn main() {
@@ -145,7 +145,7 @@ $ rustc [OPTIONS] INPUT
   }
   ```
 
-  编译它时编译器会报错：
+   When compiling it, the compiler complains:
 
   ```
   main.rs:2:5: 2:6 error: unresolved name `f` [E0425]
@@ -155,48 +155,48 @@ $ rustc [OPTIONS] INPUT
   error: aborting due to previous error
   ```
 
-  虽然错误已经很明显，但是你也可以让编译器解释一下，什么是`E0425`错误：
+   Although the error is already obvious, you can also ask the compiler to explain what is the `E0425` error:
 
   ```bash
   $ rustc --explain E0425
-  // 编译器打印的说明
+  // Instructions printed by the compiler
   ```
 
-* `--test` - 编译成一个单元测试可执行文件
+* `--test` - compile to a unit test executable
 
-* `--target TRIPLE` - 指定目标平台，基本格式是`cpu-manufacturer-kernel[-os]`，例如
+* `--target TRIPLE` - specify the target platform, the basic format is `cpu-manufacturer-kernel[-os]`, for example
 
   ```bash
-  ## 64位OS X
+  ## 64-bit OS X
   $ rustc --target x86_64-apple-darwin
   ```
 
-* `-W help` - 打印Linter的所有可配置选项和默认值。
+* `-W help` - Print all configurable options and default values for the Linter.
 
-* `-W OPT, --warn OPT` - 设置某一个Linter选项为Warning。
-* `-A OPT, --allow OPT` - 设置某一个Linter选项为Allow。
-* `-D OPT, --deny OPT` - 设置某一个Linter选项为Deny。
-* `-F OPT, --forbit OPT` - 设置某一个Linter选项为Forbit。
+* `-W OPT, --warn OPT` - set a linter option to Warning.
+* `-A OPT, --allow OPT` - Set a linter option to Allow.
+* `-D OPT, --deny OPT` - Set a linter option to Deny.
+* `-F OPT, --forbit OPT` - Set a linter option to Forbit.
 
-* `-C FLAG[=VAL], --codegen FLAG[=VAL]` - 目标代码生成的的相关参数，可以用`-C help`来查看配置，值得关注的几个是
-  - `linker=val` - 指定链接器；
-  - `linker-args=val` - 指定链接器的参数；
-  - `prefer-dynamic` - 默认Rust编译是静态链接，选择这个配置将改为动态链接；
-  - `debug-info=level` - Debug信息级数，`0` = 不生成，`1` = 只生成文件行号表，`2` = 全部生成；
-  - `opt-level=val` - 优化级数，可选`0-3`；
-  - `debug_assertion` - 显式开启`cfg(debug_assertion)`条件。
+* `-C FLAG[=VAL], --codegen FLAG[=VAL]` - related parameters generated by the target code, you can use `-C help` to view the configuration, a few worth noting are
+  - `linker=val` - specify the linker;
+  - `linker-args=val` - specify linker arguments;
+  - `prefer-dynamic` - the default Rust compilation is static linking, selecting this configuration will change to dynamic linking;
+  - `debug-info=level` - Debug information level, `0` = no generation, `1` = only generate file line number table, `2` = generate all;
+  - `opt-level=val` - optimization level, optional `0-3`;
+  - `debug_assertion` - explicitly enable `cfg(debug_assertion)` conditional.
 
-* `-V, --version` - 打印编译器版本号。
+* `-V, --version` - print compiler version number.
 
-* `-v, --verbose` - 开启啰嗦模式（打印编译器执行的日志）。
+* `-v, --verbose` - enable verbose mode (print compiler execution log).
 
-* `--extern NAME=PATH` - 用来指定外部的Rust库（`*.rlib`）名字和路径，名字应该与`extern crate`中指定的一样。
+* `--extern NAME=PATH` - Used to specify the name and path of an external Rust library (`*.rlib`), the name should be the same as specified in `extern crate`.
 
-* `--sysroot PATH` - 指定工具链根目录。
+* `--sysroot PATH` - Specifies the toolchain root directory.
 
-* `-Z flag` - 编译器Debug用的参数，可以用`-Z help`来查看可用参数。
+* `-Z flag` - Parameters for compiler debugging, you can use `-Z help` to view the available parameters.
 
-* `--color auto|always|never` - 输出时对日志加颜色
-  - `auto` - 自动选择加还是不加，如果输出目标是虚拟终端（TTY）的话就加，否则就不加；
-  - `always` - 给我加！
-  - `never` - 你敢加？
+* `--color auto|always|never` - add color to the log on output
+  - `auto` - Automatically choose whether to add or not, if the output target is a virtual terminal (TTY), add it, otherwise don't add it;
+  - `always` - add me!
+  - `never` - Do you dare to add?

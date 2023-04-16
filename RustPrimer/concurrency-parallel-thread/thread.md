@@ -1,114 +1,114 @@
-# 并发编程
-并发是什么？引用Rob Pike的经典描述:
-> 并发是同一时间应对多件事情的能力
+# Concurrent programming
+What is concurrency? To quote Rob Pike's classic description:
+> Concurrency is the ability to deal with multiple things at the same time
 
-其实在我们身边就有很多并发的事情，比如一边上课，一边发短信；一边给小孩喂奶，一边看电视，只要你细心留意，就会发现许多类似的事。相应地，在软件的世界里，我们也会发现这样的事，比如一边写博客，一边听音乐；一边看网页，一边下载软件等等。显而易见这样会节约不少时间，干更多的事。然而一开始计算机系统并不能同时处理两件事，这明显满足不了我们的需要，后来慢慢提出了多进程，多线程的解决方案，再后来，硬件也发展到了多核多CPU的地步。在硬件和系统底层对并发的支持也来越多，相应地，各大编程语言也对并发处理提供了强力的支持，作为新兴语言的Rust，自然也支持并发编程。那么本章就将引领大家一览Rust并发编程的相关知识，从线程开始，逐步尝试进行数据交互，同步协作，最后进入到并行实现，一步一步揭开Rust并发编程的神秘面纱。由于本书主要介绍的是Rust语言的使用，所以本章不会对并发编程相关理论知识进行全面而深入地探讨——要真那样地话，一本书都不够介绍的，而是更侧重于介绍用Rust语言怎么实现基本的并发。
+In fact, there are many concurrent things around us, such as sending text messages while attending class; feeding a child while watching TV, as long as you pay attention, you will find many similar things. Correspondingly, in the world of software, we will also find such things, such as writing blogs while listening to music; reading web pages while downloading software, and so on. Obviously this will save a lot of time and do more things. However, at the beginning, the computer system could not handle two things at the same time, which obviously could not meet our needs. Later, a multi-process and multi-thread solution was gradually proposed. Later, the hardware also developed to the point of multi-core and multi-CPU. There is also more and more support for concurrency at the bottom of the hardware and system. Correspondingly, major programming languages also provide strong support for concurrent processing. As an emerging language, Rust naturally supports concurrent programming. Then this chapter will lead you to an overview of the relevant knowledge of Rust concurrent programming, starting from threads, gradually trying to perform data interaction, synchronous collaboration, and finally enter parallel implementation, and uncover the mystery of Rust concurrent programming step by step. Since this book mainly introduces the use of the Rust language, this chapter will not conduct a comprehensive and in-depth discussion on the theoretical knowledge related to concurrent programming - if that is the case, a book is not enough to introduce, but more focused on the introduction How to implement basic concurrency in Rust language.
 
-首先我们会介绍线程的使用，线程是基本的执行单元，其重要性不言而喻，Rust程序就是由一堆线程组成的。在当今多核多CPU已经普及的情况下，各种大数据分析和并行计算又让线程焕发出了更耀眼的光芒。如果对线程不甚了解，请先参阅操作系统相关的书籍，此处不过多介绍。然后介绍一些在解决并发问题时，需要处理的数据传递和协作的实现，比如消息传递，同步和共享内存。最后简要介绍Rust中并行的实现。
+First, we will introduce the use of threads. Threads are the basic execution unit, and their importance is self-evident. Rust programs are composed of a bunch of threads. In today's situation where multi-core and multi-CPU have become popular, various big data analysis and parallel computing make threads glow more dazzlingly. If you don't know much about threads, please refer to books related to the operating system first, and I won't introduce too much here. It then introduces some implementations of data transfer and collaboration that need to be dealt with when solving concurrency problems, such as message passing, synchronization, and shared memory. Finally, a brief introduction to the implementation of parallelism in Rust.
 
-## 24.1 线程创建与结束
-相信线程对大家而言，一点也不陌生，在当今多CPU多核已经普及的情况下，大数据分析与并行计算都离不开它，几乎所有的语言都支持它，所有的进程都是由一个或多个线程所组成的。既然如此重要，接下来我们就先来看一下在Rust中如何创建一个线程，然后线程又是如何结束的。
+## 24.1 Thread creation and termination
+I believe that threads are not unfamiliar to everyone. With the popularity of multi-CPU and multi-core today, big data analysis and parallel computing are inseparable from it. Almost all languages ​​support it, and all processes are run by a or multiple threads. Since it is so important, let's take a look at how to create a thread in Rust, and then how the thread ends.
 
-Rust对于线程的支持，和`C++11`一样，都是放在标准库中来实现的，详情请参见[`std::thread`](https://doc.rust-lang.org/std/thread/index.html)，好在Rust从一开始就这样做了，不用像C++那样等呀等。在语言层面支持后，开发者就不用那么苦兮兮地处理各平台的移植问题。通过Rust的源码可以看到，`std::thread`其实就是对不同平台的线程操作的封装，相关API的实现都是调用操作系统的API来实现的，从而提供了线程操作的统一接口。对于我而言，能够这样简单快捷地操作原生线程，身上的压力一下轻了不少。
+Rust's support for threads, like `C++11`, is implemented in the standard library. For details, please refer to [`std::thread`](https://doc.rust-lang.org/ std/thread/index.html), fortunately, Rust has done this from the beginning, so you don't have to wait like C++. With support at the language level, developers don't have to deal with the porting of each platform so hard. From the source code of Rust, we can see that `std::thread` is actually the encapsulation of thread operations on different platforms, and the implementation of related APIs is implemented by calling the API of the operating system, thus providing a unified interface for thread operations. For me, being able to operate native threads in such a simple and quick way, the pressure on me has been relieved a lot.
 
-### 创建线程
-首先，我们看一下在Rust中如何创建一个原生线程(native thread)。`std::thread`提供了两种创建方式，都非常简单，第一种方式是通过`spawn`函数来创建，参见下面的示例代码：
+### Create thread
+First, let's take a look at how to create a native thread in Rust. `std::thread` provides two creation methods, both of which are very simple. The first method is created by the `spawn` function, see the sample code below:
 
 ```rust
 use std::thread;
 
 fn main() {
-	// 创建一个线程
+	// Create a thread
     let new_thread = thread::spawn(move || {
         println!("I am a new thread.");
     });
-    // 等待新建线程执行完成
+    // Wait for the newly created thread to execute
     new_thread.join().unwrap();
 }
 ```
 
-执行上面这段代码，将会看到下面的输出结果：
+Execute the above code and you will see the following output:
 
 ```
 I am a new thread.
 ```
 
-就5行代码，少得不能再少，最关键的当然就是调用`spawn`函数的那行代码。使用这个函数，记得要先`use std::thread`。注意`spawn`函数需要一个函数作为参数，且是`FnOnce`类型，如果已经忘了这种类型的函数，请学习或回顾一下函数和闭包章节。`main`函数最后一行代码即使不要，也能创建线程（关于`join`函数的作用和使用在后续小节详解，此处你只要知道它可以用来等待线程执行完成即可），可以去掉或者注释该行代码试试。这样的话，运行结果可能没有任何输出，具体原因后面详解。
+Just 5 lines of code, can't be less, the most critical is of course the line of code that calls the `spawn` function. To use this function, remember to `use std::thread` first. Note that the `spawn` function requires a function as a parameter, and it is of type `FnOnce`. If you have forgotten this type of function, please learn or review the function and closure chapter. Even if the last line of code of the `main` function is unnecessary, it can still create a thread (the function and use of the `join` function will be explained in detail in the subsequent sections, here you only need to know that it can be used to wait for the thread to complete execution), you can remove or comment Try this line of code. In this case, the running result may not have any output, and the specific reasons will be explained in detail later.
 
-接下来我们使用第二种方式创建线程，它比第一种方式稍微复杂一点，因为功能强大一点，可以在创建之前设置线程的名称和堆栈大小，参见下面的代码：
+Next, we use the second method to create a thread, which is a little more complicated than the first method, because it is more powerful, and the thread name and stack size can be set before creation, see the following code:
 
-``` rust
+```rust
 use std::thread;
 
 fn main() {
-	// 创建一个线程，线程名称为 thread1, 堆栈大小为4k
+	// Create a thread, the thread name is thread1, and the stack size is 4k
     let new_thread_result = thread::Builder::new()
     						.name("thread1".to_string())
     						.stack_size(4*1024*1024).spawn(move || {
         println!("I am thread1.");
     });
-    // 等待新创建的线程执行完成
+    // Wait for the newly created thread to complete
     new_thread_result.unwrap().join().unwrap();
 }
 ```
-执行上面这段代码，将会看到下面的输出结果：
+Execute the above code and you will see the following output:
 
 ```
 I am thread1.
 ```
 
-通过和第一种方式的实现代码比较可以发现，这种方式借助了一个`Builder`类来设置线程名称和堆栈大小，除此之外，`Builder`的`spawn`函数的返回值是一个`Result`，在正式的代码编写中，可不能像上面这样直接`unwrap.join`，应该判定一下。后面也会有很多类似的演示代码，为了简单说明不会做的很严谨。
+By comparing the implementation code with the first method, we can find that this method uses a `Builder` class to set the thread name and stack size. In addition, the return value of the `spawn` function of `Builder` is a` Result`, in formal code writing, you can’t directly `unwrap.join` like the above, you should make a judgment. There will be a lot of similar demo codes later, for the sake of simplicity, it will not be very rigorous.
 
-以上就是Rust创建原生线程的两种不同方式，示例代码有点然并卵的意味，但是你可以稍加修改，就可以变得更加有用，试试吧。
+The above are two different ways of creating native threads in Rust. The sample code is a bit of a coincidence, but you can modify it a little to make it more useful. Try it.
 
-### 线程结束
-此时，我们已经知道如何创建一个新线程了，创建后，不管你见或者不见，它就在那里，那么它什么时候才会消亡呢？自生自灭，亦或者被干掉？如果接触过一些系统编程，应该知道有些操作系统提供了粗暴地干掉线程的接口，看它不爽，直接干掉，完全可以不理会新建线程的感受。是否感觉很爽，但是Rust不会再让这样爽了，因为`std::thread`并没有提供这样的接口，为什么呢？如果深入接触过并发编程或多线程编程，就会知道强制终止一个运行中的线程，会出现诸多问题。比如资源没有释放，引起状态混乱，结果不可预期。强制干掉那一刻，貌似很爽地解决问题了，然而可能后患无穷。Rust语言的一大特性就是安全，是绝对不允许这样不负责任的做法的。即使在其他语言提供了类似的接口，也不应该滥用。
+### end of thread
+At this point, we already know how to create a new thread. After creation, whether you see it or not, it is there, so when will it die? Fend for itself, or be killed? If you have been exposed to some system programming, you should know that some operating systems provide an interface to kill threads roughly. If you find it uncomfortable, just kill it directly, and you can completely ignore the feeling of creating a new thread. It feels cool, but Rust won't make it so cool anymore, because `std::thread` doesn't provide such an interface, why? If you have in-depth contact with concurrent programming or multi-threaded programming, you will know that forcibly terminating a running thread will cause many problems. For example, resources are not released, causing state confusion and unpredictable results. At the moment of forcible killing, it seems that the problem has been solved very happily, but there may be endless troubles. A major feature of the Rust language is safety, and such irresponsible practices are absolutely not allowed. Even if similar interfaces are provided in other languages, they should not be abused.
 
-那么在Rust中，新建的线程就只能让它自身自灭了吗？其实也有两种方式，首先介绍大家都知道的自生自灭的方式，线程执行体执行完成，线程就结束了。比如上面创建线程的第一种方式，代码执行完`println!("I am a new thread.");`就结束了。 如果像下面这样：
+So in Rust, can the newly created thread only let itself self-destruct? In fact, there are two ways. First, we will introduce the self-defeating method that everyone knows. After the execution of the thread execution body is completed, the thread ends. For example, in the first way of creating a thread above, the code is finished after executing `println!("I am a new thread.");`. If something like this:
 
 ```rust
 use std::thread;
 
 fn main() {
-	// 创建一个线程
+    // create a thread
     let new_thread = thread::spawn(move || {
         loop {
             println!("I am a new thread.");
         }
     });
-    // 等待新创建的线程执行完成
+    // Wait for the newly created thread to complete
     new_thread.join().unwrap();
 }
 ```
 
-线程就永远都不会结束，如果你用的还是古董电脑，运行上面的代码之前，请做好心理准备。在实际代码中，要时刻警惕该情况的出现（单核情况下，CPU占用率会飙升到100%），除非你是故意为之。
+The thread will never end. If you are using an antique computer, please be mentally prepared before running the above code. In actual code, always be alert to this situation (in the case of a single core, the CPU usage will soar to 100%), unless you do it on purpose.
 
-线程结束的另一种方式就是，线程所在进程结束了。我们把上面这个例子稍作修改：
+Another way for a thread to end is that the process in which the thread resides ends. Let's modify the above example slightly:
 
 ```rust
 use std::thread;
 
 fn main() {
-	// 创建一个线程
+    // create a thread
     thread::spawn(move || {
         loop {
             println!("I am a new thread.");
         }
     });
 
-    // 不等待新创建的线程执行完成
+    // Don't wait for the newly created thread to complete
     // new_thread.join().unwrap();
 }
 ```
-同上面的代码相比，唯一的差别在于`main`函数的最后一行代码被注释了，这样主线程就不用等待新建线程了，在创建线程之后就执行完了，其所在进程也就结束了，从而新建的线程也就结束了。此处，你可能有疑问：为什么一定是进程结束导致新建线程结束？也可能是创建新线程的主线程结束而导致的？事实到底如何，我们不妨验证一下：
+Compared with the above code, the only difference is that the last line of code of the `main` function is commented, so that the main thread does not have to wait for the new thread to be created. The newly created thread is over. Here, you may have questions: Why must the end of the process cause the end of the newly created thread? Could it also be caused by the end of the main thread that created the new thread? What is the fact, we might as well verify:
 
 ```rust
 use std::thread;
 
 fn main() {
-	// 创建一个线程
+	// create a thread
     let new_thread = thread::spawn(move || {
-    	// 再创建一个线程
+    	// create another thread
     	thread::spawn(move || {
     		loop {
 	            println!("I am a new thread.");
@@ -116,26 +116,26 @@ fn main() {
     	})
     });
 
-    // 等待新创建的线程执行完成
+    // Wait for the newly created thread to complete
     new_thread.join().unwrap();
     println!("Child thread is finish!");
 
-    // 睡眠一段时间，看子线程创建的子线程是否还在运行
+    // Sleep for a while to see if the child thread created by the child thread is still running
     thread::sleep_ms(100);
 }
 ```
 
-这次我们在新建线程中还创建了一个线程，从而第一个新建线程是父线程，主线程在等待该父线程结束后，主动睡眠一段时间。这样做有两个目的，一是确保整个程序不会马上结束；二是如果子线程还存在，应该会获得执行机会，以此来检验子线程是否还在运行，下面是输出结果：
+This time we also created a thread in the newly created thread, so that the first newly created thread is the parent thread, and the main thread actively sleeps for a period of time after waiting for the parent thread to end. This has two purposes, one is to ensure that the entire program will not end immediately; the other is that if the sub-thread still exists, it should get an execution opportunity to check whether the sub-thread is still running. The following is the output:
 
 ```
-Child thread is finish!
+Child thread is finished!
 I am a new thread.
 I am a new thread.
 ......
 ```
 
-结果表明，在父线程结束后，其创建的子线程还活着，这并不会因为父线程结束而结束。这个还是比较符合自然规律的，要不然真会断子绝孙，人类灭绝。所以导致线程结束的第二种方式，是结束其所在进程。到此为止，我们已经把线程的创建和结束都介绍完了，那么接下来我们会介绍一些更有趣的东西。但是在此之前，请先考虑一下下面的练习题。
+The results show that after the parent thread ends, the child thread created by it is still alive, which will not end because the parent thread ends. This is more in line with the laws of nature, otherwise, we will really lose our children and grandchildren, and human beings will become extinct. So the second way to cause a thread to end is to end its process. So far, we have introduced the creation and termination of threads, so we will introduce some more interesting things next. But before you do that, consider the practice questions below.
 
-**练习题：**
+**Practice questions:**
 
-有一组学生的成绩，我们需要对它们评分，90分及以上是A，80分及以上是B，70分及以上是C，60分及以上为D,60分以下为E。现在要求用Rust语言编写一个程序来评分，且评分由新建的线程来做，最终输出每个学生的学号，成绩，评分。学生成绩单随机产生，学生人数100位，成绩范围为[0,100]，学号依次从1开始，直到100。
+There is a group of students' grades, we need to grade them, 90 points and above is A, 80 points and above is B, 70 points and above is C, 60 points and above is D, and below 60 points is E. Now it is required to write a program in Rust language for scoring, and the scoring is done by a new thread, and finally output the student number, grade, and scoring of each student. Student transcripts are randomly generated, the number of students is 100, the grade range is [0,100], and the student numbers start from 1 to 100.

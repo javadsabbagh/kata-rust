@@ -1,9 +1,9 @@
-# trait 和 trait对象
+# traits and trait objects
 
-**trait**（特征）类似于其他语言中的**interface**或者**protocol**,指定一个实际类型必须满足的功能集合
-与interface不同的地方在于，interface会隐藏具体实现类型，而trait不会。在rust中，隐藏实现类型可以由generic配合trait作出。
+**trait** (feature) is similar to **interface** or **protocol** in other languages, specifying a set of functions that must be satisfied by an actual type
+The difference from interface is that interface will hide the concrete implementation type, but trait will not. In rust, the hidden implementation type can be made by generic and trait.
 
-**Rust**中的trait：
+Traits in **Rust**:
 
-* [trait关键字](trait.md)
-* [trait对象](trait-object.md)
+* [trait keyword](trait.md)
+* [trait object](trait-object.md)

@@ -1,10 +1,10 @@
-# 数组、动态数组和字符串
-## 数组和动态数组
-### 数组 array
-Rust 使用数组存储相同类型的数据集。
-`[T; N]`表示一个拥有 T 类型，N 个元素的数组。数组的大小是固定。
+# arrays, dynamic arrays and strings
+## Arrays and dynamic arrays
+### array array
+Rust uses arrays to store the same type of dataset.
+`[T; N]` means an array with type T and N elements. The size of the array is fixed.
 
-**例子：**
+**example:**
 
 ```rust
 fn main() {
@@ -22,66 +22,66 @@ fn main() {
 }
 ```
 
-### 动态数组 Vec
-动态数组是一种基于堆内存申请的连续动态数据类型，拥有 O(1) 时间复杂度的索引、压入（push）、弹出（pop)。
+### Dynamic Array Vec
+Dynamic array is a continuous dynamic data type based on heap memory application. It has index, push and pop with O(1) time complexity.
 
-**例子：**
+**example:**
 
 ```rust
-//创建空Vec
+//Create an empty Vec
 let v: Vec<i32> = Vec::new();
-//使用宏创建空Vec
+//Create an empty Vec using a macro
 let v: Vec<i32> = vec![];
-//创建包含5个元素的Vec
+//Create a Vec with 5 elements
 let v = vec![1, 2, 3, 4, 5];
-//创建十个零
+// create ten zeros
 let v = vec![0; 10];
-//创建可变的Vec，并压入元素3
+//Create a variable Vec and push into element 3
 let mut v = vec![1, 2];
-v.push(3);
-//创建拥有两个元素的Vec，并弹出一个元素
+v. push(3);
+//Create a Vec with two elements and pop an element
 let mut v = vec![1, 2];
-let two = v.pop();
-//创建包含三个元素的可变Vec，并索引一个值和修改一个值
+let two = v. pop();
+//Create a mutable Vec with three elements, and index a value and modify a value
 let mut v = vec![1, 2, 3];
 let three = v[2];
 v[1] = v[1] + 5;
 ```
 
-## 字符串
-Rust 里面有两种字符串类型。`String` 和 `str`。
+## string
+There are two string types in Rust. `String` and `str`.
 
 ### &str
-`str` 类型基本上不怎么使用，通常使用 `&str` 类型，它其实是 `[u8]` 类型的切片形式 `&[u8]`。这是一种固定大小的字符串类型。
-常见的的字符串字面值就是 `&'static str` 类型。这是一种带有 `'static` 生命周期的 &str 类型。
+The `str` type is basically not used very much, and the `&str` type is usually used, which is actually the slice form `&[u8]` of the `[u8]` type. This is a fixed size string type.
+A common string literal is the `&'static str` type. This is a &str type with `'static` lifetime.
 
-**例子：**
+**example:**
 
 ```rust
-// 字符串字面值
+// string literal
 let hello = "Hello, world!";
 
-// 附带显式类型标识
+// with explicit type flags
 let hello: &'static str = "Hello, world!";
 ```
 
-### String
-`String` 是一个带有的 `vec:Vec<u8>` 成员的结构体，你可以理解为 `str` 类型的动态形式。
-它们的关系相当于 `[T]` 和 `Vec<T>` 的关系。
-显然 `String` 类型也有压入和弹出。
+###String
+`String` is a structure with `vec:Vec<u8>` member, you can understand it as a dynamic form of `str` type.
+Their relationship is equivalent to that of `[T]` and `Vec<T>`.
+Apparently the `String` type also has pushes and pops.
 
-**例子：**
+**example:**
 
 ```rust
-// 创建一个空的字符串
+// create an empty string
 let mut s = String::new();
-// 从 `&str` 类型转化成 `String` 类型
+// Convert from `&str` type to `String` type
 let mut hello = String::from("Hello, ");
-// 压入字符和压入字符串切片
+// Push characters and push string slices
 hello.push('w');
 hello.push_str("orld!");
 
-// 弹出字符。
+// Pop the character.
 let mut s = String::from("foo");
 assert_eq!(s.pop(), Some('o'));
 assert_eq!(s.pop(), Some('o'));

@@ -1,9 +1,9 @@
-# 迭代器
+# iterator
 
-在Rust中，迭代器共分为三个部分：迭代器、适配器、消费者。
+In Rust, iterators are divided into three parts: iterators, adapters, and consumers.
 
-其中，迭代器本身提供了一个惰性的序列，适配器对这个序列进行诸如筛选、拼接、转换查找等操作，消费者则在前两者的基础上生成最后的数值集合。
+Among them, the iterator itself provides an inert sequence, and the adapter performs operations such as screening, splicing, conversion and search on this sequence, and the consumer generates the final value set based on the first two.
 
-但是，孤立的看这三者其实是没有意义的，因此，本章将在一个大节里联系写出三者。
+However, it is meaningless to look at these three in isolation, so this chapter will link and write the three in one big section.
 
-[迭代器](iterator.md)
+[iterator](iterator.md)

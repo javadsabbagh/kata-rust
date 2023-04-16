@@ -1,20 +1,20 @@
-# 条件分支
+# conditional branch
 
-- if
+-if
 - if let
 - match
 
-## if 表达式
+## if expression
 
-Rust 中的 if 表达式基本就是如下几种形式：
+The if expression in Rust basically has the following forms:
 
 ```rust
-// 形式 1
+// form 1
 if expr1 {
 
 }
 
-// 形式 2
+// form 2
 if expr1 {
 
 }
@@ -22,12 +22,12 @@ else {
 
 }
 
-// 形式 3
+// form 3
 if expr1 {
 
 }
 else if expr2 {
-    // else if 可多重
+    // else if can be multiple
 }
 else {
 
@@ -35,12 +35,12 @@ else {
 
 ```
 
-相对于 C 系语言，Rust 的 if 表达式的显著特点是：
+Compared with C-based languages, the salient features of Rust's if expression are:
 
-1. 判断条件不用小括号括起来；
-2. 它是表达式，而不是语句。
+1. Judgment conditions are not enclosed in parentheses;
+2. It is an expression, not a statement.
 
-鉴于上述第二点，因为是表达式，所以我们可以写出如下代码：
+In view of the second point above, because it is an expression, we can write the following code:
 
 ```rust
 let x = 5;
@@ -52,7 +52,7 @@ let y = if x == 5 {
 }; // y: i32
 ```
 
-或者压缩成一行：
+or compressed into one line:
 
 ```rust
 let x = 5;
@@ -62,26 +62,26 @@ let y = if x == 5 { 10 } else { 15 }; // y: i32
 
 ## if let
 
-我们在代码中常常会看到 `if let` 成对出现，这实际上是一个 match 的简化用法。直接举例来说明：
+We often see `if let` appearing in pairs in the code, which is actually a simplified usage of match. To illustrate directly with an example:
 
 ```rust
 let x = Some(5);
 
 if let Some(y) = x {
-    println!("{}", y);      // 这里输出为：5
+    println!("{}", y); // here the output is: 5
 }
 
 let z = if let Some(y) = x {
-    y
+     the y
 }
 else {
     0
 };
-// z 值为 5
+// z-value is 5
 
 ```
 
-上面代码等价于
+The above code is equivalent to
 
 ```rust
 let x = Some(5);
@@ -96,13 +96,13 @@ let z = match x {
 };
 ```
 
-设计这个特性的目的是，在条件判断的时候，直接做一次模式匹配，方便代码书写，使代码更紧凑。
+The purpose of designing this feature is to directly do a pattern match when the condition is judged, which is convenient for code writing and makes the code more compact.
 
 ## match
 
-Rust 中没有类似于 C 的 `switch` 关键字，但它有用于模式匹配的 `match`，能实现同样的功能，并且强大太多。
+There is no `switch` keyword like C in Rust, but it has `match` for pattern matching, which can achieve the same function and is much more powerful.
 
-match 的使用非常简单，举例如下：
+The use of match is very simple, for example:
 
 ```rust
 let x = 5;
@@ -118,4 +118,4 @@ match x {
     _ => println!("something else"),
 }
 ```
-注意，match 也是一个表达式。match 后面会专门论述，请参见 **模式匹配** 这一章。
+Note that match is also an expression. match will be discussed later, see **Pattern Matching** this chapter.

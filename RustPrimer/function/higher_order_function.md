@@ -1,18 +1,18 @@
-# 高阶函数
-  高阶函数与普通函数的不同在于，它可以使用一个或多个函数作为参数，可以将函数作为返回值。rust的函数是first class type，所以支持高阶函数。而，由于rust是一个强类型的语言，如果要将函数作为参数或返回值，首先需要搞明白函数的类型。下面先说函数的类型，再说函数作为参数和返回值。
+# Higher order functions
+   A higher-order function differs from a normal function in that it can take one or more functions as parameters and return functions as values. Rust's function is a first class type, so it supports higher-order functions. However, since rust is a strongly typed language, if you want to use functions as parameters or return values, you first need to understand the type of the function. Let's talk about the type of function first, and then talk about functions as parameters and return values.
 
-## 函数类型
-  前面说过，关键字`fn`可以用来定义函数。除此以外，它还用来构造函数类型。与函数定义主要的不同是，构造函数类型不需要函数名、参数名和函数体。在Rust Reference中的描述如下：
+## function type
+   As mentioned earlier, the keyword `fn` can be used to define functions. Among other things, it is used to construct function types. The main difference from a function definition is that a constructor type does not require a function name, parameter names, and function body. It is described in the Rust Reference as follows:
   > The function type constructor fn forms new function types. A function type consists of a possibly-empty set of function-type modifiers (such as unsafe or extern), a sequence of input types and an output type.
 
-  来看一个简单例子：
+   Let's look at a simple example:
   
   ```rust
-fn inc(n: i32) -> i32 {//函数定义
+fn inc(n: i32) -> i32 {//function definition
   n + 1
 }
 
-type IncType = fn(i32) -> i32;//函数类型
+type IncType = fn(i32) -> i32;//function type
 
 fn main() {
   let func: IncType = inc;
@@ -20,8 +20,8 @@ fn main() {
 }
   ```
   
-  上例首先使用`fn`定义了`inc`函数，它有一个`i32`类型参数，返回`i32`类型的值。然后再用`fn`定义了一个函数类型，这个函数类型有i32类型的参数和i32类型的返回值，并用`type`关键字定义了它的别名`IncType`。在`main`函数中定义了一个变量`func`，其类型就为`IncType`，并赋值为`inc`，然后在`pirntln`宏中调用：`func(3)`。可以看到，`inc`函数的类型其实就是`IncType`。
-  这里有一个问题，我们将`inc`赋值给了`func`，而不是`&inc`，这样是将`inc`函数的拥有权转给了`func`吗，赋值后还可以以`inc()`形式调用`inc`函数吗？先来看一个例子：
+   The above example first uses `fn` to define the `inc` function, which has an `i32` type parameter and returns a value of `i32` type. Then use `fn` to define a function type, this function type has i32 type parameters and i32 type return value, and use `type` keyword to define its alias `IncType`. A variable `func` is defined in the `main` function, its type is `IncType`, and the value is assigned to `inc`, and then called in the `pirntln` macro: `func(3)`. As you can see, the type of `inc` function is actually `IncType`.
+   There is a problem here. We assigned `inc` to `func` instead of `&inc`. Does this mean that the ownership of the `inc` function is transferred to `func`? After the assignment, you can use `inc() ` form calls the `inc` function? Let's look at an example first:
   
   ```rust
 fn main() {
@@ -37,17 +37,17 @@ fn inc(n: i32) -> i32 {
 }
   ```
   
-  我们将上例保存在rs源文件中，再用rustc编译，发现并没有报错，并且运行也得到我们想要的结果：
+   We saved the above example in the rs source file, and then compiled it with rustc, and found that no error was reported, and we also got the desired result after running:
   
   ```
 3 + 1 = 4
 3 + 1 = 4
   ```
   
-  这说明，赋值时，`inc`函数的所有权并没有被转移到`func`变量上，而是更像不可变引用。在rust中，函数的所有权是不能转移的，我们给函数类型的变量赋值时，赋给的一般是函数的指针，所以rust中的函数类型，就像是C/C++中的函数指针，当然，rust的函数类型更安全。可见，rust的函数类型，其实应该是属于指针类型（Pointer Type）。rust的Pointer Type有两种，一种为引用（Reference`&`），另一种为原始指针（Raw pointer `*`），详细内容请看[Rust Reference 8.18 Pointer Types](http://doc.rust-lang.org/reference.html#pointer-types)。而rust的函数类型应是引用类型，因为它是安全的，而原始指针则是不安全的，要使用原始指针，必须使用`unsafe`关键字声明。
+   This shows that when assigning, the ownership of the `inc` function is not transferred to the `func` variable, but more like an immutable reference. In rust, the ownership of a function cannot be transferred. When we assign a value to a variable of a function type, we usually assign a function pointer, so the function type in rust is like a function pointer in C/C++. Of course, Rust's function types are safer. It can be seen that the function type of rust should actually belong to the pointer type (Pointer Type). Rust's Pointer Type has two types, one is a reference (Reference`&`), and the other is a raw pointer (Raw pointer `*`). For details, please refer to [Rust Reference 8.18 Pointer Types](http://doc .rust-lang.org/reference.html#pointer-types). The function type of rust should be a reference type, because it is safe, but the raw pointer is not safe. To use the raw pointer, you must use the `unsafe` keyword declaration.
 
-## 函数作为参数
-  函数作为参数，其声明与普通参数一样。看下例：
+## function as parameter
+   Functions are used as parameters, and their declarations are the same as ordinary parameters. See the following example:
   
   ```rust
 fn main() {
@@ -68,14 +68,14 @@ fn process(n: i32, func: fn(i32) -> i32) -> i32 {
 }
   ```
   
-  例子中，`process`就是一个高阶函数，它有两个参数，一个类型为`i32`的`n`，另一个类型为`fn(i32)->i32`的函数`func`，返回一个`i32`类型的参数；它在函数体内以`n`作为参数调用`func`函数，返回`func`函数的返回值。运行可以得到以下结果：
+   In the example, `process` is a higher-order function, which has two parameters, `n` of type `i32`, and a function `func` of type `fn(i32)->i32`, which returns a A parameter of type `i32`; it calls the `func` function with `n` as a parameter in the function body, and returns the return value of the `func` function. Running can get the following results:
   
   ```
 3 + 1 = 4
 3 - 1 = 2
   ```
   
-  不过，这不是函数作为参数的唯一声明方法，使用泛型函数配合特质（`trait`）也是可以的，因为rust的函数都会实现一个`trait`:`FnOnce`、`Fn`或`FnMut`。将上例中的`process`函数定义换成以下形式是等价的：
+   However, this is not the only way to declare functions as parameters. It is also possible to use generic functions with traits (`trait`), because rust functions will implement a `trait`: `FnOnce`, `Fn` or `FnMut`. Replacing the `process` function definition in the above example with the following form is equivalent:
   
   ```rust
 fn process<F>(n: i32, func: F) -> i32
@@ -84,8 +84,8 @@ fn process<F>(n: i32, func: F) -> i32
 }
   ```
 
-## 函数作为返回值
-  函数作为返回值，其声明与普通函数的返回值类型声明一样。看例子：
+## function as return value
+   The function is used as the return value, and its declaration is the same as the return value type declaration of a normal function. See example:
   
   ```rust
 fn main() {
@@ -110,10 +110,10 @@ fn get_func(n: i32) -> fn(i32) -> i32 {
         dec
     }
 }
-  ```
+   ```
   
-  例子中的高阶函数为`get_func`，它接收一个i32类型的参数，返回一个类型为`fn(i32) -> i32`的函数，若传入的参数为偶数，返回`inc`，否则返回`dec`。这里需要注意的是，`inc`函数和`dec`函数都定义在`get_func`内。在函数内定义函数在很多其他语言中是不支持的，不过rust支持，这也是rust灵活和强大的一个体现。不过，在函数中定义的函数，不能包含函数中（环境中）的变量，若要包含，应该闭包（详看13章 闭包）。
-  所以下例：
+   The high-order function in the example is `get_func`, which receives a parameter of type i32 and returns a function of type `fn(i32) -> i32`, if the parameter passed in is an even number, returns `inc`, otherwise returns `dec`. It should be noted here that both `inc` function and `dec` function are defined in `get_func`. Defining functions within functions is not supported in many other languages, but rust supports it, which is also a manifestation of rust's flexibility and power. However, the function defined in the function cannot contain variables in the function (in the environment). If it is to be included, it should be closed (see Chapter 13 Closures for details).
+   So the following example:
   
   ```rust
 fn main() {
@@ -130,5 +130,5 @@ fn get_func() -> fn(i32)->i32 {
 }
   ```
   
-  使用rustc编译，会出现如下错误：
+   When compiling with rustc, the following error occurs:
   ![error](../images/high-order-function.png)

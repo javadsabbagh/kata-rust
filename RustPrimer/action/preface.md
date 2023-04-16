@@ -1,7 +1,7 @@
-# 实战篇
+# Practical articles
 
-本章举 3 个实际中的例子，来小小展示一下 Rust 在实际中的应用。它们分别是：
+This chapter gives three practical examples to show the application of Rust in practice. they are, respectively:
 
-- Json处理
-- Web 应用开发入门
-- 使用Postgresql数据库
+- Json processing
+- Getting Started with Web Application Development
+- Use Postgresql database

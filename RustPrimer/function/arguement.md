@@ -1,7 +1,7 @@
-# 函数参数
-## 参数声明
-  rust的函数参数声明和一般的变量声明相仿，也是参数名后加冒号，冒号后跟参数类型，不过不需要`let`关键字。需要注意的是，普通变量声明(let语句)是可以省略变量类型的，而函数参数的声明则不能省略参数类型。
-  来看一个简单例子：
+# function parameters
+## parameter declaration
+   Rust's function parameter declaration is similar to a general variable declaration. It also adds a colon after the parameter name, and the colon is followed by the parameter type, but the `let` keyword is not required. It should be noted that ordinary variable declarations (let statements) can omit variable types, but function parameter declarations cannot omit parameter types.
+   Let's look at a simple example:
   
   ```rust
 fn main() {
@@ -13,10 +13,10 @@ fn say_hi(name: &str) {
 }
   ```
   
-  上例中，`say_hi`函数拥有一个参数，名为`name`，类型为`&str`。
+   In the above example, the `say_hi` function has one parameter named `name` of type `&str`.
 
-## 将函数作为参数
-  在rust中，函数是一等公民（可以储存在变量/数据结构中，可以作为参数传入函数，可以作为返回值），所以rust的函数参数不仅可以是一般的类型，也可以是函数。如：
+## Pass function as parameter
+   In rust, functions are first-class citizens (can be stored in variables/data structures, can be passed as parameters to functions, and can be used as return values), so function parameters of rust can not only be general types, but also functions. like:
   
   ```rust
 fn main() {
@@ -39,10 +39,10 @@ fn say_what(name: &str, func: fn(&str)) {
 }
   ```
   
-  上例中，`hi`函数和`hello`函数都是只有一个`&str`类型的参数且没有返回值。而`say_what`函数则有两个参数，一个是`&str`类型，另一个则是函数类型（function type），它是只有一个`&str`类型参数且没有返回值的函数类型。
+   In the above example, both `hi` function and `hello` function have only one `&str` type parameter and no return value. The `say_what` function has two parameters, one is `&str` type, and the other is a function type (function type), which is a function type with only one `&str` type parameter and no return value.
 
-## 模式匹配
-  支持模式匹配，让rust平添了许多的灵活性，用起来也是十分的舒爽。模式匹配不仅可以用在变量声明（let语句）中，也可以用在函数参数声明中，如：
+## pattern matching
+   Supporting pattern matching adds a lot of flexibility to rust, and it is very comfortable to use. Pattern matching can be used not only in variable declarations (let statements), but also in function parameter declarations, such as:
   
   ```rust
 fn main() {
@@ -69,4 +69,4 @@ fn print_name((name,_): (&str, i32)) {
 }
   ```
   
-  上例是一个元组(Tuple)匹配的例子，当然也可以是其他可在let语句中使用的类型。参数的模式匹配跟let语句的匹配一样，也可以使用下划线来表示丢弃一个值。
+   The above example is an example of a tuple (Tuple) matching, of course, it can also be other types that can be used in the let statement. The pattern matching of parameters is the same as that of let statements, and an underscore can also be used to indicate that a value is discarded.

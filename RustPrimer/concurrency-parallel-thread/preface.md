@@ -1,4 +1,3 @@
-# 并发，并行，多线程编程
+# Concurrent, parallel, multithreaded programming
 
-本章讲解 Rust 中，并发，并行，多线程编程的相关知识。
-
+This chapter explains the knowledge of concurrency, parallelism, and multi-threaded programming in Rust.

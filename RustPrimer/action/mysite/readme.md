@@ -1,26 +1,26 @@
-# rust web 开发
+# rust web development
 
-rust既然是系统级的编程语言，所以当然也能用来开发 web,不过想我这样凡夫俗子，肯定不能从头自己写一个 web
-服务器，肯定要依赖已经存在的 rust web开发框架来完成 web 开发。
+Since rust is a system-level programming language, it can of course also be used to develop the web, but for an ordinary person like me, I certainly cannot write a web from scratch.
+The server must rely on the existing rust web development framework to complete web development.
 
-rust目前比较有名的框架是iron和nickel，我们两个都写一下简单的使用教程。
+The currently well-known rust frameworks are iron and nickel, and we will write simple tutorials for both of them.
 
 ##iron
 
-接上一篇，使用cargo获取第三方库。`cargo new mysite --bin`
+Continuing from the previous article, use cargo to obtain third-party libraries. `cargo new mysite --bin`
 
-在cargo.toml中添加iron的依赖，
+Add iron dependency in cargo.toml,
 
 ```toml
 [dependencies]
 iron = "*"
 ```
 
-然后build将依赖下载到本地 `cargo build`
+Then build will download the dependencies to the local `cargo build`
 
-如果报ssl错误，那可能你需要安装linux的ssl开发库。
+If an ssl error is reported, you may need to install the ssl development library for linux.
 
-首先还是从 hello world 开始吧,继续抄袭官方的例子：
+Let's start with hello world first, and continue to copy the official example:
 
 ``` rust
 extern crate iron;
@@ -35,21 +35,21 @@ fn main() {
 }
 ```
 
-然后运行
+then run
 
 `cargo run`
 
-使用curl直接就可以访问你的网站了。
+Use curl to directly access your website.
 
 `curl localhost:3000`
 
 `Hello World!`
 
-仔细一看，发现这个例子很无厘头啊，对于习惯了写python的我来说，确实不习惯。
-简单点看：
+After a closer look, I found that this example is very nonsensical. For me who is used to writing python, I am really not used to it.
+Simply look at:
 
 `iron::new().http("localhost:3000").unwrap()`
-这句是服务器的基本的定义，new内部是一个[rust lambda 表达式](https://doc.rust-lang.org/book/closures.html)
+This sentence is the basic definition of the server, new inside is a [rust lambda expression](https://doc.rust-lang.org/book/closures.html)
 
 ```rust
 let plus_one = |x: i32| x + 1;
@@ -57,10 +57,10 @@ let plus_one = |x: i32| x + 1;
 assert_eq!(2, plus_one(1));
 ```
 
-具体的怎么使用 ，可以暂时不用理会，因为你只要知道如何完成web，因为我也不会。。
-结合之前一章节的json处理，我们来看看web接口怎么返回json,当然也要 rustc_serialize 放到 cargo.toml 中
+How to use it specifically, you can ignore it for the time being, because you only need to know how to complete the web, because I don't know how to do it either. .
+Combined with the json processing in the previous chapter, let’s take a look at how the web interface returns json, of course rustc_serialize must be put in cargo.toml
 
-*下面的代码直接参考开源代码[地址](https://github.com/brson/httptest#lets-make-a-web-service-and-client-in-rust)*
+*The following code directly refers to the open source code [address](https://github.com/brson/httptest#lets-make-a-web-service-and-client-in-rust)*
 
 ```rust
 extern crate iron;
@@ -87,18 +87,18 @@ fn main() {
 }
 ```
 
-执行 cargo run 使用 curl 测试结果:
+Execute cargo run and use curl to test the results:
 
 ```
 curl localhost:3000
 {"msg":"Hello, World"}
 ```
 
-当然可以可以实现更多的业务需求，通过控制自己的json。
+Of course, more business needs can be achieved by controlling your own json.
 
-既然有了json了，如果要多个路由什么的，岂不是完蛋了，所以不可能这样的，我们需要考虑一下怎么实现路由的定制
+Now that we have json, if we want multiple routes or something, it’s over, so it’s impossible, we need to think about how to realize the customization of routes
 
-不说话直接上代码，同一样要在你的cargo.toml文件中添加对router的依赖
+Go directly to the code without talking, and also add a dependency on router in your cargo.toml file.
 
 ``` rust
 extern crate iron;
@@ -140,8 +140,8 @@ fn main() {
 }
 ```
 
-这次添加了路由的实现和获取客户端发送过来的数据，有了get，post,所以现在一个基本的api网站已经完成了。不过
-并不是所有的网站都是api来访问，同样需要html模版引擎和直接返回静态页面。等等
+This time, the implementation of routing and the acquisition of data sent by the client are added, with get and post, so now a basic api website has been completed. but
+Not all websites are accessed through APIs, which also require HTML template engines and direct return to static pages. etc.
 
 ```
 vagrant@ubuntu-14:~/tmp/test/rustprimer/mysite$ cargo build
@@ -155,15 +155,15 @@ error: aborting due to previous error
 Could not compile `mysite`.
 ```
 
-编译出错了，太糟糕了，提示说没有read_to_string这个方法，然后我去文档查了一下，发现有[read_to_string方法](http://ironframework.io/doc/iron/request/struct.Body.html)
-再看提示信息
+There was a compilation error, too bad, it was prompted that there is no read_to_string method, then I went to the documentation to check and found [read_to_string method](http://ironframework.io/doc/iron/request/struct.Body.html)
+Look at the prompt information again
 
 ```
 src/main.rs:29:36: 29:52 help: items from traits can only be used if the trait is in scope; the following trait is implemented but not in scope, perhaps add a `use` for it:
 src/main.rs:29:36: 29:52 help: candidate #1: use `std::io::Read`
 ```
 
-让我们添加一个`std::io::Read`,这个如果操作过文件，你一定知道怎么写，添加一下，应该能过去了，还是继续出错了，看看报错
+Let's add a `std::io::Read`, if you have manipulated the file, you must know how to write it, add it, it should be able to pass, or continue to make mistakes, look at the error
 
 ```
    Compiling mysite v0.1.0 (file:///home/vagrant/tmp/test/rustprimer/mysite)
@@ -195,8 +195,8 @@ Could not compile `mysite`.
 
 ```
 
-第一句提示我们，这个read_to_string(),至少要有一个参数，但是我们一个都没有提供。
-我们看看[read_to_string的用法](https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string)
+The first sentence reminds us that this read_to_string() must have at least one parameter, but we have not provided any of them.
+Let's take a look at the usage of [read_to_string](https://doc.rust-lang.org/nightly/std/io/trait.Read.html#method.read_to_string)
 
 ``` rust
 
@@ -211,7 +211,7 @@ try!(f.read_to_string(&mut buffer));
 
 ```
 
-用法比较简单，我们修改一下刚刚的函数：
+The usage is relatively simple, let's modify the function just now:
 
 ```
 fn set_greeting(request: &mut Request) -> IronResult<Response> {
@@ -224,22 +224,22 @@ fn set_greeting(request: &mut Request) -> IronResult<Response> {
     }
 ```
 
-从request中读取字符串，读取的结果存放到payload中，然后就可以进行操作了，编译之后运行，使用curl提交一个post数据
+Read the string from the request, store the read result in the payload, and then operate it, compile it and run it, and use curl to submit a post data
 
 ```
 $curl -X POST -d '{"msg":"Just trust the Rust"}' http://localhost:3000/set
 {"msg":"Just trust the Rust"}
 ```
 
-iron 基本告一段落
-当然还有如何使用html模版引擎，那就是直接看文档就行了。
+iron is basically over
+Of course, there is also how to use the html template engine, that is, just look at the document directly.
 
 ##[nickel](http://nickel.rs/)
 
-当然既然是web框架肯定是iron能干的nicke也能干，所以那我们就看看如何做一个hello 和返回一个html
-的页面
+Of course, since it is a web framework, it must be capable of iron and nickel, so let's see how to make a hello and return an html
+page of
 
-同样我们创建`cargo new site --bin`，然后添加nickel到cargo.toml中,`cargo build`
+Similarly we create `cargo new site --bin`, then add nickel to cargo.toml, `cargo build`
 
 ``` rust
 
@@ -260,17 +260,17 @@ fn main() {
 }
 ```
 
-简单来看，也就是这样回事。
+Simply put, that's what happened.
 
-1. 引入了nickel的宏
-2. 初始化Nickel
-3. 调用utilize来定义路由模块。
-4. `router!` 宏，传入的参数是 get 方法和对应的路径，"\*\*"是全路径匹配。
-5. listen启动服务器
+1. Introduced the nickel macro
+2. Initialize Nickel
+3. Call utilize to define the routing module.
+4. `router!` macro, the incoming parameter is the get method and the corresponding path, "\*\*" is the full path match.
+5. listen start server
 
-[当然我们要引入关于html模版相关的信息](http://nickel.rs/#easy-templating)
+[Of course we need to introduce information about html templates] (http://nickel.rs/#easy-templating)
 
-``` rust
+```rust
 #[macro_use] extern crate nickel;
 
 use std::collections::HashMap;
@@ -290,21 +290,21 @@ fn main() {
 
 ```
 
-上面的信息你可以编译，使用curl看看发现出现
+You can compile the above information, use curl to see if it appears
 
 ```
 $ curl http://127.0.0.1:6767
 Internal Server Error
 ```
 
-看看文档，没发现什么问题，我紧紧更换了一个文件夹的名字，这个文件夹我也创建了。
-然后我在想难道是服务器将目录写死了吗？于是将上面的路径改正这个，问题解决。
+Looking at the documentation, I found no problems. I quickly changed the name of a folder, and I also created this folder.
+Then I wondered if the server had written the directory to death? So correct the above path to this, and the problem is solved.
 
 ```rust
 return response.render("examples/assets/template.tpl", &data);
 ```
 
-我们看一下目录结构
+Let's look at the directory structure
 
 ```
 .

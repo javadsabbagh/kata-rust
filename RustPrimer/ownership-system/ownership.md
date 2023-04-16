@@ -1,304 +1,304 @@
-**所有权（Ownership）**
+**Ownership**
 -------------
-在进入正题之前，大家先回忆下一般的编程语言知识。
-对于一般的编程语言，通常会先声明一个变量，然后初始化它。
-例如在C语言中：
+Before entering the topic, let's recall the general programming language knowledge.
+For general programming languages, it is common to declare a variable first and then initialize it.
+For example in C language:
 ```c
 int* foo() {
-    int a;          // 变量a的作用域开始
-    a = 100;
-    char *c = "xyz";   // 变量c的作用域开始
-    return &a;
-}                   // 变量a和c的作用域结束
+     int a; // scope of variable a begins
+     a = 100;
+     char *c = "xyz"; // scope of variable c begins
+     return &a;
+} // The scope of variables a and c ends
 ```
 
-尽管可以编译通过，但这是一段非常糟糕的代码，现实中我相信大家都不会这么去写。变量a和c都是局部变量，函数结束后将局部变量a的地址返回，但局部变量`a`存在栈中，在离开作用域后，局部变量所申请的栈上内存都会被系统回收，从而造成了`Dangling Pointer`的问题。**这是一个非常典型的内存安全问题。很多编程语言都存在类似这样的内存安全问题**。再来看变量`c`，`c`的值是常量字符串，存储于常量区，可能这个函数我们只调用了一次，我们可能不再想使用这个字符串，但`xyz`只有当整个程序结束后系统才能回收这片内存，这点让程序员是不是也很无奈？
-> 备注：对于`xyz`，可根据实际情况，通过堆的方式，手动管理（申请和释放）内存。
+Although it can be compiled, this is a very bad piece of code. In reality, I believe that everyone will not write it like this. The variables a and c are both local variables. After the function ends, the address of the local variable a will be returned, but the local variable `a` exists on the stack. After leaving the scope, the memory on the stack requested by the local variable will be reclaimed by the system, thus Caused problems with `Dangling Pointer`. ** This is a very typical memory safety problem. Memory safety issues like this exist in many programming languages**. Let’s look at the variable `c` again. The value of `c` is a constant string, which is stored in the constant area. Maybe we only call this function once, and we may no longer want to use this string, but `xyz` is only available when the entire program ends. Only after the system can reclaim this piece of memory, does this make programmers feel helpless?
+> Remarks: For `xyz`, you can manually manage (apply and release) memory through the heap according to the actual situation.
 
-所以，内存安全和内存管理通常是程序员眼中的两大头疼问题。令人兴奋的是，Rust却不再让你担心内存安全问题，也不用再操心内存管理的麻烦，那Rust是如何做到这一点的？请往下看。
+Therefore, memory safety and memory management are usually two major headaches in the eyes of programmers. What's exciting is that Rust no longer makes you worry about memory safety or the trouble of memory management. How does Rust do this? Please read below.
 
-### **绑定（Binding）**
-**重要**：首先必须强调下，准确地说Rust中并没有变量这一概念，而应该称为`标识符`，目标`资源`(内存，存放value)`绑定`到这个`标识符`：
+### **Binding**
+**Important**: First of all, it must be emphasized that there is no concept of variable in Rust, but it should be called `identifier`, and the target `resource` (memory, storing value) `bind` to this `identifier symbol `:
 ```rust
 {
-    let x: i32;       // 标识符x, 没有绑定任何资源
-    let y: i32 = 100; // 标识符y，绑定资源100
+     let x: i32; // identifier x, not bound to any resource
+     let y: i32 = 100; // identifier y, bound resource 100
 }
 ```
 
-好了，我们继续看下以下一段Rust代码：
+Ok, let's continue to look at the following piece of Rust code:
 ```rust
 {
-    let a: i32;
-    println!("{}", a);
+     let a: i32;
+     println!("{}", a);
 }
 ```
-上面定义了一个i32类型的标识符`a`，如果你直接`println!`，你会收到一个error报错：
+The above defines an i32 type identifier `a`, if you directly `println!`, you will receive an error report:
 > error: use of possibly uninitialized variable: `a`
 
-这是**因为Rust并不会像其他语言一样可以为变量默认初始化值，Rust明确规定变量的初始值必须由程序员自己决定**。
+This is **Because Rust does not initialize variables by default like other languages, Rust clearly stipulates that the initial value of a variable must be determined by the programmer**.
 
-正确的做法：
+Correct way:
 ```rust
 {
-    let a: i32;
-    a = 100; //必须初始化a
-    println!("{}", a);
+     let a: i32;
+     a = 100; //must initialize a
+     println!("{}", a);
 }
 ```
-其实，**`let`**关键字并不只是声明变量的意思，它还有一层特殊且重要的概念-**绑定**。通俗的讲，`let`关键字可以把一个标识符和一段内存区域做“绑定”，绑定后，这段内存就被这个标识符所拥有，这个标识符也成为这段内存的唯一**所有者**。
-所以，`a = 100`发生了这么几个动作，首先在栈内存上分配一个`i32`的资源，并填充值`100`，随后，把这个资源与`a`做绑定，让`a`成为资源的所有者(Owner)。
+In fact, the **`let`** keyword does not just mean declaring variables, it also has a special and important concept-**binding**. In layman's terms, the `let` keyword can "bind" an identifier to a section of memory area. After binding, this section of memory is owned by this identifier, and this identifier also becomes the only one of this section of memory* *owner**.
+Therefore, `a = 100` has several actions. First, allocate an `i32` resource on the stack memory and fill it with the value `100`. Then, bind this resource to `a`, so that `a `Become the owner of the resource.
 
-### **作用域**
-像C语言一样，Rust通过`{}`大括号定义作用域：
+### **Scope**
+Like C, Rust defines scope through `{}` braces:
 ```rust
 {
-    {
-        let a: i32 = 100;
-    }
-    println!("{}", a);
+     {
+         let a: i32 = 100;
+     }
+     println!("{}", a);
 }
 ```
-编译后会得到如下`error`错误：
+After compiling, you will get the following `error` error:
 >b.rs:3:20: 3:21 error: unresolved name `a` [E0425]
-b.rs:3     println!("{}", a);
+b.rs:3 println!("{}", a);
 
-像C语言一样，在局部变量离开作用域后，变量随即会被销毁；**但不同是，Rust会连同变量绑定的内存，不管是否为常量字符串，连同所有者变量一起被销毁释放**。所以上面的例子，a销毁后再次访问a就会提示无法找到变量`a`的错误。这些所有的一切都是在编译过程中完成的。
+Like the C language, after the local variable leaves the scope, the variable will be destroyed immediately; **But the difference is that Rust will be destroyed and released together with the owner variable along with the memory bound to the variable, whether it is a constant string or not* *. So in the above example, if a is destroyed and accessed again, it will prompt an error that the variable `a` cannot be found. All of this is done during compilation.
 
-### **移动语义（move）**
-先看如下代码：
+### **Move Semantics (move)**
+First look at the following code:
 ```rust
 {
-    let a: String = String::from("xyz");
-    let b = a;
-    println!("{}", a);
+     let a: String = String::from("xyz");
+     let b = a;
+     println!("{}", a);
 }
 ```
-编译后会得到如下的报错：
+After compiling, you will get the following error:
 > c.rs:4:20: 4:21 error: use of moved value: `a` [E0382]
-c.rs:4     println!("{}", a);
+c.rs:4 println!("{}", a);
 
-错误的意思是在`println`中访问了被`moved`的变量`a`。那为什么会有这种报错呢？具体含义是什么？
-在Rust中，和“绑定”概念相辅相成的另一个机制就是“转移move所有权”，意思是，**可以把资源的所有权(ownership)从一个绑定转移（move）成另一个绑定**，这个操作同样通过`let`关键字完成，和绑定不同的是，`=`两边的左值和右值均为两个标识符：
+The error means that the variable `a` that was `moved` was accessed in `println`. Then why is there such an error? What is the specific meaning?
+In Rust, another mechanism that complements the concept of "binding" is "move ownership", which means, **you can transfer the ownership of resources (ownership) from one binding to another binding** , this operation is also done through the `let` keyword. Unlike binding, the lvalue and rvalue on both sides of `=` are two identifiers:
 ```rust
-语法：
-    let 标识符A = 标识符B;  // 把“B”绑定资源的所有权转移给“A”
+grammar:
+     let identifier A = identifier B; // transfer ownership of resource bound by "B" to "A"
 ```
-move前后的内存示意如下：
-> **Before move:**  
-a  <=> 内存(地址：**A**，内容："xyz")  
-**After move:**  
-a  
-b  <=> 内存(地址：**A**，内容："xyz")  
+The memory before and after move is shown as follows:
+> **Before move:**
+a <=> memory (address: **A**, content: "xyz")
+**After move:**
+a
+b <=> memory (address: **A**, content: "xyz")
 
-被move的变量不可以继续被使用。否则提示错误`error: use of moved value`。
+The moved variable cannot continue to be used. Otherwise, an error `error: use of moved value` will be displayed.
 
-这里有些人可能会疑问，move后，如果变量A和变量B离开作用域，所对应的内存会不会造成“Double Free”的问题？答案是否定的，**Rust规定，只有资源的所有者销毁后才释放内存，而无论这个资源是否被多次`move`，同一时刻只有一个`owner`，所以该资源的内存也只会被`free`一次**。
-通过这个机制，就保证了内存安全。是不是觉得很强大？
+Some people here may wonder, after the move, if variable A and variable B leave the scope, will the corresponding memory cause a "Double Free" problem? The answer is no, **Rust stipulates that only after the owner of the resource is destroyed can the memory be released, and no matter whether the resource has been `move` multiple times, there is only one `owner` at the same time, so the memory of the resource will only be moved `free` once**.
+Through this mechanism, memory safety is guaranteed. Do you feel powerful?
 
 
-### **Copy特性**
-有读者仿照“move”小节中的例子写了下面一个例子，然后说“a被move后是可以访问的”：
+### **Copy Features**
+Some readers wrote the following example following the example in the "move" section, and then said "a is accessible after being moved":
 ```rust
-    let a: i32 = 100;
-    let b = a;
-    println!("{}", a);
+     let a: i32 = 100;
+     let b = a;
+     println!("{}", a);
 ```
-编译确实可以通过，输出为`100`。这是为什么呢，是不是跟move小节里的结论相悖了？
-其实不然，这其实是根据变量类型是否实现`Copy`特性决定的。对于实现`Copy`特性的变量，在move时会拷贝资源到新内存区域，并把新内存区域的资源`binding`为`b`。
-> **Before move:**  
-a  <=> 内存(地址：**A**，内容：100)  
-**After move:**  
-a  <=> 内存(地址：**A**，内容：100)  
-b  <=> 内存(地址：**B**，内容：100)  
+Compilation does pass, outputting `100`. Why is this, is it contrary to the conclusion in the move section?
+In fact, this is not the case, it actually depends on whether the variable type implements the `Copy` feature. For variables that implement the `Copy` feature, the resource will be copied to the new memory area during move, and the resource `binding` of the new memory area will be `b`.
+> **Before move:**
+a <=> memory (address: **A**, content: 100)
+**After move:**
+a <=> memory (address: **A**, content: 100)
+b <=> memory (address: **B**, content: 100)
 
-move前后的`a`和`b`对应资源内存的地址不同。
+`a` and `b` before and after the move correspond to different resource memory addresses.
 
-在Rust中，基本数据类型(Primitive Types)均实现了Copy特性，包括i8, i16, i32, i64, usize, u8, u16, u32, u64, f32, f64, (), bool, char等等。其他支持Copy的数据类型可以参考官方文档的[Copy章节](https://doc.rust-lang.org/std/marker/trait.Copy.html "Copy Trait")。
+In Rust, the basic data types (Primitive Types) all implement the Copy feature, including i8, i16, i32, i64, usize, u8, u16, u32, u64, f32, f64, (), bool, char and so on. For other data types that support Copy, please refer to the [Copy Chapter](https://doc.rust-lang.org/std/marker/trait.Copy.html "Copy Trait") of the official document.
 
-### **浅拷贝与深拷贝**
-前面例子中move String和i32用法的差异，其实和很多面向对象编程语言中“浅拷贝”和“深拷贝”的区别类似。对于基本数据类型来说，“深拷贝”和“浅拷贝“产生的效果相同。对于引用对象类型来说，”浅拷贝“更像仅仅拷贝了对象的内存地址。
-如果我们想实现对`String`的”深拷贝“怎么办？  可以直接调用`String`的Clone特性实现对内存的值拷贝而不是简单的地址拷贝。
+### **Shallow copy and deep copy**
+The difference between the usage of move String and i32 in the previous example is actually similar to the difference between "shallow copy" and "deep copy" in many object-oriented programming languages. For basic data types, "deep copy" and "shallow copy" have the same effect. For reference object types, "shallow copy" is more like just copying the memory address of the object.
+What if we want to implement a "deep copy" of `String`? You can directly call the Clone feature of `String` to copy the value of the memory instead of simply copying the address.
 ```rust
 {
-    let a: String = String::from("xyz");
-    let b = a.clone();  // <-注意此处的clone
-    println!("{}", a);
+     let a: String = String::from("xyz");
+     let b = a.clone(); // <- note the clone here
+     println!("{}", a);
 }
 ```
-这个时候可以编译通过，并且成功打印"xyz"。
+At this time, it can be compiled and successfully printed "xyz".
 
-clone后的效果等同如下：
-> **Before move:**  
-a  <=> 内存(地址：**A**，内容："xyz")  
-**After move:**  
-a  <=> 内存(地址：**A**，内容："xyz")  
-b  <=> 内存(地址：**B**，内容："xyz")  
-注意，然后a和b对应的资源值相同，但是内存地址并不一样。
+The effect after clone is equivalent to the following:
+> **Before move:**
+a <=> memory (address: **A**, content: "xyz")
+**After move:**
+a <=> memory (address: **A**, content: "xyz")
+b <=> memory (address: **B**, content: "xyz")
+Note that the resource values corresponding to a and b are the same, but the memory addresses are different.
 
 
-### **可变性**
-通过上面，我们已经已经了解了变量声明、值绑定、以及移动move语义等等相关知识，但是还没有进行过修改变量值这么简单的操作，在其他语言中看似简单到不值得一提的事却在Rust中暗藏玄机。
-按照其他编程语言思维，修改一个变量的值：
+### **Variability**
+Through the above, we have already learned about variable declaration, value binding, and move semantics, etc., but we have not performed such a simple operation as modifying variable values, which seems so simple that it is not worth mentioning in other languages. But things are hidden in Rust.
+Thinking like other programming languages, modify the value of a variable:
 ```rust
 let a: i32 = 100;
 a = 200;
 ```
-很抱歉，这么简单的操作依然还会报错：
+Sorry, such a simple operation still reports an error:
 > error: re-assignment of immutable variable `a` [E0384]
-<anon>:3     a = 200;
+<anon>:3 a = 200;
 
-不能对**不可变绑定**赋值。如果要修改值，必须用关键字mut声明绑定为可变的：
+Cannot assign to **immutable binding**. If you want to modify the value, you must declare the binding as mutable with the keyword mut:
 ```rust
-let mut a: i32 = 100;  // 通过关键字mut声明a是可变的
+let mut a: i32 = 100; // declare that a is mutable through the keyword mut
 a = 200;
 ```
 
-**想到“不可变”我们第一时间想到了`const`常量，但不可变绑定与`const`常量是完全不同的两种概念；首先，“不可变”准确地应该称为“不可变绑定”，是用来约束绑定行为的，“不可变绑定”后不能通过原“所有者”更改资源内容。**
+**Thinking of "immutable", we immediately thought of `const` constants, but immutable bindings and `const` constants are two completely different concepts; first of all, "immutable" should be called "immutable" accurately Binding" is used to constrain the binding behavior. After "immutable binding", the resource content cannot be changed by the original "owner". **
 
-**例如：**
+**For example:**
 ```rust
-let a = vec![1, 2, 3];  //不可变绑定, a <=> 内存区域A(1,2,3)
-let mut a = a;  //可变绑定， a <=> 内存区域A(1,2,3), 注意此a已非上句a，只是名字一样而已
-a.push(4);
-println!("{:?}", a);  //打印：[1, 2, 3, 4]
+let a = vec![1, 2, 3]; //immutable binding, a <=> memory area A(1,2,3)
+let mut a = a; //variable binding, a <=> memory area A(1,2,3), note that a is not a in the previous sentence, but the name is the same
+a. push(4);
+println!("{:?}", a); // print: [1, 2, 3, 4]
 ```
-“可变绑定”后，目标内存还是同一块，只不过，可以通过新绑定的a去修改这片内存了。
+After "variable binding", the target memory is still the same block, but this memory can be modified through the newly bound a.
 
 ```rust
-let mut a: &str = "abc";  //可变绑定, a <=> 内存区域A("abc")
-a = "xyz";    //绑定到另一内存区域, a <=> 内存区域B("xyz")
-println!("{:?}", a);  //打印："xyz"
+let mut a: &str = "abc"; //variable binding, a <=> memory area A("abc")
+a = "xyz"; // bind to another memory area, a <=> memory area B("xyz")
+println!("{:?}", a); //print: "xyz"
 ```
-上面这种情况不要混淆了，`a = "xyz"`表示`a`绑定目标资源发生了变化。
+Don’t confuse the above situation, `a = "xyz"` means that the target resource bound by `a` has changed.
 
-其实，Rust中也有const常量，常量不存在“绑定”之说，和其他语言的常量含义相同：
+In fact, there are also const constants in Rust. There is no such thing as "binding" for constants, and they have the same meaning as constants in other languages:
 ```rust
 const PI:f32 = 3.14;
 ```
 
-可变性的目的就是严格区分绑定的可变性，以便编译器可以更好的优化，也提高了内存安全性。
+The purpose of mutability is to strictly distinguish the mutability of bindings so that the compiler can optimize better and improve memory safety.
 
-### **高级Copy特性**
-在前面的小节有简单了解Copy特性，接下来我们来深入了解下这个特性。
-Copy特性定义在标准库[std::marker::Copy](https://doc.rust-lang.org/std/marker/trait.Copy.html "")中：
+### **Advanced Copy Features**
+In the previous section, we have a brief understanding of the Copy feature. Next, let's take a deeper look at this feature.
+The Copy trait is defined in the standard library [std::marker::Copy](https://doc.rust-lang.org/std/marker/trait.Copy.html ""):
 ```rust
 pub trait Copy: Clone { }
 ```
-一旦一种类型实现了Copy特性，这就意味着这种类型可以通过的简单的位(bits)拷贝实现拷贝。从前面知识我们知道“绑定”存在move语义（所有权转移），但是，一旦这种类型实现了Copy特性，会先拷贝内容到新内存区域，然后把新内存区域和这个标识符做绑定。
+Once a type implements the Copy trait, it means that the type can be copied by simply copying bits. From the previous knowledge, we know that "binding" has move semantics (ownership transfer), but once this type implements the Copy feature, it will first copy the content to a new memory area, and then bind the new memory area to this identifier.
 
-**哪些情况下我们自定义的类型（如某个Struct等）可以实现Copy特性？**
-只要这种类型的属性类型都实现了Copy特性，那么这个类型就可以实现Copy特性。
-例如：
+** Under what circumstances can our custom type (such as a Struct, etc.) implement the Copy feature? **
+As long as all attribute types of this type implement the Copy attribute, then this type can implement the Copy attribute.
+For example:
 
 ```rust
-struct Foo {  //可实现Copy特性
-    a: i32,
-    b: bool,
+struct Foo { // can implement the Copy feature
+     a: i32,
+     b: bool,
 }
 
-struct Bar {  //不可实现Copy特性
-    l: Vec<i32>,
+struct Bar { //The Copy property cannot be realized
+     l: Vec<i32>,
 }
 ```
 
-因为`Foo`的属性`a`和`b`的类型`i32`和`bool`均实现了`Copy`特性，所以`Foo`也是可以实现Copy特性的。但对于`Bar`来说，它的属性`l`是`Vec<T>`类型，这种类型并没有实现`Copy`特性，所以`Bar`也是无法实现`Copy`特性的。
+Because the types `i32` and `bool` of `a` and `b` of `Foo` both implement the `Copy` feature, so `Foo` can also implement the Copy feature. But for `Bar`, its attribute `l` is of `Vec<T>` type, which does not implement the `Copy` feature, so `Bar` cannot implement the `Copy` feature.
 
-**那么我们如何来实现`Copy`特性呢？**
-有两种方式可以实现。
+**So how do we implement the `Copy` feature? **
+There are two ways to achieve this.
 
-1. **通过`derive`让Rust编译器自动实现**
+1. **Use `derive` to let the Rust compiler automatically implement**
 
-    ```rust
-    #[derive(Copy, Clone)]
-    struct Foo {
-        a: i32,
-        b: bool,
-    }
-    ```
+     ```rust
+     #[derive(Copy, Clone)]
+     struct Foo {
+         a: i32,
+         b: bool,
+     }
+     ```
 
-    编译器会自动检查`Foo`的所有属性是否实现了`Copy`特性，一旦检查通过，便会为`Foo`自动实现`Copy`特性。
+     The compiler will automatically check whether all properties of `Foo` implement the `Copy` feature, and once the check is passed, it will automatically implement the `Copy` feature for `Foo`.
 
-2. **手动实现`Clone`和`Copy` trait**
+2. **Manually implement the `Clone` and `Copy` traits**
 
-    ```rust
-    #[derive(Debug)]
-    struct Foo {
-        a: i32,
-        b: bool,
-    }
-    impl Copy for Foo {}
-    impl Clone for Foo {
-        fn clone(&self) -> Foo {
-            Foo{a: self.a, b: self.b}
-        }
-    }
-    fn main() {
-        let x = Foo{ a: 100, b: true};
-        let mut y = x;
-        y.b = false;
+     ```rust
+     #[derive(Debug)]
+     struct Foo {
+         a: i32,
+         b: bool,
+     }
+     impl Copy for Foo {}
+     impl Clone for Foo {
+         fn clone(&self) -> Foo {
+             Foo{a: self. a, b: self. b}
+         }
+     }
+     fn main() {
+         let x = Foo{ a: 100, b: true };
+         let mut y = x;
+         y.b = false;
 
-        println!("{:?}", x);  //打印：Foo { a: 100, b: true }
-        println!("{:?}", y);  //打印：Foo { a: 100, b: false }
-    }
+         println!("{:?}", x); // print: Foo { a: 100, b: true }
+         println!("{:?}", y); // print: Foo { a: 100, b: false }
+     }
 
-    ```
+     ```
 
-    从结果我们发现`let mut y = x`后，`x`并没有因为所有权`move`而出现不可访问错误。
-    因为`Foo`继承了`Copy`特性和`Clone`特性，所以例子中我们实现了这两个特性。
+     From the results, we found that after `let mut y = x`, `x` did not have an inaccessible error due to ownership `move`.
+     Since `Foo` inherits the `Copy` and `Clone` attributes, we implement these two attributes in the example.
 
 
-### **高级move**
-我们从前面的小节了解到，`let`绑定会发生所有权转移的情况，但`ownership`转移却因为资源类型是否实现`Copy`特性而行为不同：
+### **Advanced move**
+We learned from the previous sections that ownership transfers occur for `let` bindings, but `ownership` transfers behave differently depending on whether the resource type implements the `Copy` trait:
 ```rust
 let x: T = something;
 let y = x;
 ```
-* 类型`T`没有实现`Copy`特性：`x`所有权转移到`y`。
-* 类型`T`实现了`Copy`特性：拷贝`x`所绑定的`资源`为`新资源`，并把`新资源`的所有权绑定给`y`，`x`依然拥有原资源的所有权。
+* The type `T` does not implement the `Copy` trait: ownership of `x` is transferred to `y`.
+* The type `T` implements the `Copy` feature: copy the `resource` bound by `x` to a `new resource`, and bind the ownership of the `new resource` to `y`, `x` still owns the original Ownership of resources.
 
-##### **move关键字**
-move关键字常用在闭包中，强制闭包获取所有权。
+##### **move keyword**
+The move keyword is often used in closures to force the closure to take ownership.
 
-**例子1：**
+**Example 1:**
 ```rust
 fn main() {
-	let x: i32 = 100;
-	let some_closure = move |i: i32| i + x;
-	let y = some_closure(2);
-	println!("x={}, y={}", x, y);
+let x: i32 = 100;
+let some_closure = move |i: i32| i + x;
+let y = some_closure(2);
+println!("x={}, y={}", x, y);
 }
 ```
->结果： x=100, y=102
+>Result: x=100, y=102
 
-注意: 例子1是比较特别的，使不使用 move 对结果都没什么影响，因为`x`绑定的资源是`i32`类型，属于 `primitive type`，实现了 `Copy trait`，所以在闭包使用 `move` 的时候，是先 copy 了`x` ，在 move 的时候是 move 了这份 clone 的 `x`，所以后面的 `println!`引用 `x` 的时候没有报错。
+Note: Example 1 is quite special, so that the use of move will have no effect on the result, because the resource bound by `x` is of `i32` type, which belongs to `primitive type` and implements `Copy trait`, so in the closure When using `move`, `x` is copied first, and `x` of this clone is moved during move, so no error is reported when `println!` references `x` later.
 
-**例子2：**
+**Example 2:**
 ```rust
 fn main() {
-	let mut x: String = String::from("abc");
-	let mut some_closure = move |c: char| x.push(c);
-	let y = some_closure('d');
-	println!("x={:?}", x);
+let mut x: String = String::from("abc");
+let mut some_closure = move |c: char| x.push(c);
+let y = some_closure('d');
+println!("x={:?}", x);
 }
 ```
-> **报错：**
+> **error:**
 error: use of moved value: `x` [E0382]
-<anon>:5 	println!("x={:?}", x);
+<anon>:5 println!("x={:?}", x);
 
-这是因为move关键字，会把闭包中的外部变量的所有权move到包体内，发生了所有权转移的问题，所以`println`访问`x`会如上错误。如果我们去掉`println`就可以编译通过。
+This is because the move keyword will move the ownership of the external variable in the closure to the package body, and the ownership transfer problem occurs, so `println` accessing `x` will be as wrong as above. If we remove `println`, it will compile and pass.
 
-那么，如果我们想在包体外依然访问x，即x不失去所有权，怎么办？
+So, what if we want to still access x outside the package, that is, x does not lose ownership?
 ```rust
 fn main() {
-	let mut x: String = String::from("abc");
-	{
-    	let mut some_closure = |c: char| x.push(c);
-	    some_closure('d');
-	}
-	println!("x={:?}", x);  //成功打印：x="abcd"
+let mut x: String = String::from("abc");
+{
+     let mut some_closure = |c: char| x.push(c);
+some_closure('d');
+}
+println!("x={:?}", x); // print successfully: x="abcd"
 }
 ```
-我们只是去掉了move，去掉move后，包体内就会对`x`进行了**可变借用**，而不是“剥夺”`x`的所有权，细心的同学还注意到我们在前后还加了`{}`大括号作用域，是为了作用域结束后让**可变借用**失效，这样`println`才可以成功访问并打印我们期待的内容。
+We just removed move. After removing move, `x` will be **mutable borrowed** in the package instead of "depriving" the ownership of `x`. Careful students also noticed that we added The scope of `{}` curly braces is to make **variable borrow** invalid after the scope ends, so that `println` can successfully access and print the content we expect.
 
-关于“**Borrowing借用**”知识我们会在下一个大节中详细讲解。
+We will explain in detail the knowledge of "**Borrowing borrowing**" in the next section.

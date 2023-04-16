@@ -1,137 +1,137 @@
-# 运算符重载
+# operator overloading
 
-Rust可以让我们对某些运算符进行重载，这其中大部分的重载都是对`std::ops`下的trait进行重载而实现的。
+Rust allows us to overload certain operators, most of which are implemented by overloading traits under `std::ops`.
 
-## 重载加法
+## Overloaded addition
 
-我们现在来实现一个只支持加法的阉割版[复数](https://zh.wikipedia.org/wiki/%E5%A4%8D%E6%95%B0_%28%E6%95%B0%E5%AD%A6%29)：
+Let's now implement a castration version [plural] that only supports addition AD%A6%29):
 
 ```rust
 use std::ops::Add;
 
 #[derive(Debug)]
 struct Complex {
-    a: f64,
-    b: f64,
+     a: f64,
+     b: f64,
 }
 
 impl Add for Complex {
-    type Output = Complex;
-    fn add(self, other: Complex) -> Complex {
-        Complex {a: self.a+other.a, b: self.b+other.b}
-    }
+     type Output = Complex;
+     fn add(self, other: Complex) -> Complex {
+         Complex {a: self.a+other.a, b: self.b+other.b}
+     }
 }
 
 fn main() {
-    let cp1 = Complex{a: 1f64, b: 2.0};
-    let cp2 = Complex{a: 5.0, b:8.1};
-    let cp3 = cp1 + cp2;
-    print!("{:?}", cp3);
+     let cp1 = Complex{a: 1f64, b: 2.0};
+     let cp2 = Complex{a: 5.0, b: 8.1};
+     let cp3 = cp1 + cp2;
+     print!("{:?}", cp3);
 }
 ```
 
-输出:
+output:
 
 ```
 Complex { a: 6, b: 10.1}
 ```
 
-这里我们实现了`std::ops::Add`这个trait。这时候有同学一拍脑门，原来如此，没错……其实Rust的大部分运算符都是`std::ops`下的trait的语法糖！
+Here we implement the `std::ops::Add` trait. At this time, some students slapped their heads, so that’s the case, that’s right... In fact, most of the operators in Rust are syntactic sugar of traits under `std::ops`!
 
-我们来看看`std::ops::Add`的具体结构
+Let's take a look at the specific structure of `std::ops::Add`
 
 ```rust
 impl Add<i32> for Point {
-    type Output = f64;
+     type Output = f64;
 
-    fn add(self, rhs: i32) -> f64 {
-        // add an i32 to a Point and get an f64
-    }
+     fn add(self, rhs: i32) -> f64 {
+         // add an i32 to a Point and get an f64
+     }
 }
 ```
 
-## 神奇的Output以及动态分发
-有的同学会问了，这个`Output`是肿么回事？答，类型转换哟亲！
-举个不太恰当的栗子，我们在现实中会出现`0.5+0.5=1`这样的算式，用Rust的语言来描述就是： 两个`f32`相加得到了一个`i8`。显而易见，Output就是为这种情况设计的。
+## Magical Output and dynamic distribution
+Some students will ask, why is this `Output` swollen? Answer, type conversion yo dear!
+To give an inappropriate chestnut, we will have a formula like `0.5+0.5=1` in reality, which can be described in Rust language as follows: two `f32` are added to get an `i8`. Obviously, Output is designed for this situation.
 
-还是看代码：
+Still look at the code:
 
 ```rust
 use std::ops::Add;
 
 #[derive(Debug)]
 struct Complex {
-    a: f64,
-    b: f64,
+     a: f64,
+     b: f64,
 }
 
 impl Add for Complex {
-    type Output = Complex;
-    fn add(self, other: Complex) -> Complex {
-        Complex {a: self.a+other.a, b: self.b+other.b}
-    }
+     type Output = Complex;
+     fn add(self, other: Complex) -> Complex {
+         Complex {a: self.a+other.a, b: self.b+other.b}
+     }
 }
 
 impl Add<i32> for Complex {
-    type Output = f64;
-    fn add(self, other: i32) -> f64 {
-        self.a + self.b + (other as f64)
-    }
+     type Output = f64;
+     fn add(self, other: i32) -> f64 {
+         self.a + self.b + (other as f64)
+     }
 }
 
 fn main() {
-    let cp1 = Complex{a: 1f64, b: 2.0};
-    let cp2 = Complex{a: 5.0, b:8.1};
-    let cp3 = Complex{a: 9.0, b:20.0};
-    let complex_add_result = cp1 + cp2;
-    print!("{:?}\n", complex_add_result);
-    print!("{:?}", cp3 + 10i32);
+     let cp1 = Complex{a: 1f64, b: 2.0};
+     let cp2 = Complex{a: 5.0, b: 8.1};
+     let cp3 = Complex{a: 9.0, b: 20.0};
+     let complex_add_result = cp1 + cp2;
+     print!("{:?}\n", complex_add_result);
+     print!("{:?}", cp3 + 10i32);
 }
 ```
 
-输出结果：
+Output result:
 
 ```
 Complex { a: 6, b: 10.1 }
 39
 ```
 
-## 对范型的限制
+## Restrictions on generic types
 
-Rust的运算符是基于trait系统的，同样的，运算符可以被当成一种对范型的限制，我们可以这么要求`范型T必须实现了trait Mul<Output=T>`。
-于是，我们得到了如下的一份代码：
+Rust's operators are based on the trait system. Similarly, operators can be regarded as a restriction on generic types. We can require that `generic type T must implement trait Mul<Output=T>`.
+So, we got the following code:
 
 ```rust
 use std::ops::Mul;
 
 trait HasArea<T> {
-    fn area(&self) -> T;
+     fn area(&self) -> T;
 }
 
 struct Square<T> {
-    x: T,
-    y: T,
-    side: T,
+     x: T,
+     y: T,
+     side: T,
 }
 
 impl<T> HasArea<T> for Square<T>
-        where T: Mul<Output=T> + Copy {
-    fn area(&self) -> T {
-        self.side * self.side
-    }
+         where T: Mul<Output=T> + Copy {
+     fn area(&self) -> T {
+         self.side *self.side
+     }
 }
 
 fn main() {
-    let s = Square {
-        x: 0.0f64,
-        y: 0.0f64,
-        side: 12.0f64,
-    };
+     let s = Square {
+         x: 0.0f64,
+         y: 0.0f64,
+         side: 12.0f64,
+     };
 
-    println!("Area of s: {}", s.area());
+     println!("Area of s: {}", s.area());
 }
 ```
 
-对于trait `HasArea<T>`和 struct `Square<T>`，我们通过`where T: Mul<Output=T> + Copy` 限制了`T`必须实现乘法。同时Copy则限制了Rust不再将self.side给move到返回值里去。
+For trait `HasArea<T>` and struct `Square<T>`, we restrict `T` to implement multiplication through `where T: Mul<Output=T> + Copy`. At the same time, Copy restricts Rust from moving self.side into the return value.
 
-写法简单，轻松愉快。
+The writing method is simple, relaxed and pleasant.

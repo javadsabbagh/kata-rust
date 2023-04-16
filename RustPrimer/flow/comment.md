@@ -1,25 +1,25 @@
-# 注释
+# comment
 
-Rust 代码文件中，通常我们可以看到 3 种注释。
+In Rust code files, we can usually see 3 kinds of comments.
 
-- 行注释
-- 文档注释
-- 模块注释
+- line comment
+- Documentation comments
+- Module comments
 
-## 行注释
+## Line comments
 
- `//` 后的，直到行尾，都属于注释，不会影响程序的行为。
+  After `//`, until the end of the line, it is a comment and will not affect the behavior of the program.
 
 ```rust
-// 创建一个绑定
+// create a binding
 let x = 5;
 
-let y = 6; // 创建另一个绑定
+let y = 6; // create another binding
 ```
 
-## 文档注释
+## Documentation comments
 
-文档注释使用 ```///```，一般用于函数或结构体（字段）的说明，置于要说明的对象上方。文档注释内部可使用markdown格式的标记语法，可用于 rustdoc 工具的自动文档提取。
+Documentation comments use ```///```, which are generally used for descriptions of functions or structures (fields), placed above the object to be described. The markup syntax in markdown format can be used inside the documentation comments, which can be used for automatic documentation extraction of the rustdoc tool.
 
     /// Adds one to the number given.
     ///
@@ -38,9 +38,9 @@ let y = 6; // 创建另一个绑定
     }
 
 
-## 模块注释
+## Module comments
 
-模块注释使用 ```//!```，用于说明本模块的功能。一般置于模块文件的头部。
+Module comments use ```//!``` to describe the function of this module. Usually placed at the head of the module file.
 
 ```rust
 //! # The Rust Standard Library
@@ -49,12 +49,12 @@ let y = 6; // 创建另一个绑定
 //! functionality for building portable Rust software.
 ```
 
-PS: 相对于 `///`, `//!` 用来注释包含它的项（也就是说，crate，模块或者函数），而不是位于它之后的项。
+PS: Relative to `///`, `//!` is used to comment the item that contains it (that is, crate, module or function), not the item after it.
 
 
-## 其它：兼容C语言的注释
+## Others: Compatible with C language comments
 
-Rust 也支持兼容 C 的块注释写法：`/* */`。但是不推荐使用，请尽量不要使用这种注释风格（会被鄙视的）。
+Rust also supports C-compatible block comment writing: `/* */`. But it is not recommended, please try not to use this comment style (will be despised).
 
 ```rust
 /*

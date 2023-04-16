@@ -1,5 +1,5 @@
-# 函数返回值
-  在rust中，任何函数都有返回类型，当函数返回时，会返回一个该类型的值。我们先来看看main函数：
+# function return value
+   In rust, any function has a return type, and when the function returns, it returns a value of that type. Let's take a look at the main function first:
   
   ```rust
   fn main() {
@@ -7,7 +7,7 @@
   }
   ```
   
-  之前有说过，函数的返回值类型是在参数列表后，加上箭头和类型来指定的。不过，一般我们看到的main函数的定义并没有这么做。这是因为main函数的返回值是`()`，在rust中，当一个函数返回`()`时，可以省略。main函数的完整形式如下：
+   As I said before, the return value type of a function is specified by adding an arrow and a type after the parameter list. However, the definition of the main function we generally see does not do this. This is because the return value of the main function is `()`, in rust, when a function returns `()`, it can be omitted. The full form of the main function is as follows:
   
   ```rust
   fn main() -> () {
@@ -15,12 +15,12 @@
   }
   ```
   
-  main函数的返回值类型是`()`，它是一个特殊的元组——没有元素的元组，称为`unit`，它表示一个函数没有任何信息需要返回。在Rust Reference的[Types](https://doc.rust-lang.org/reference/types.html#tuple-types)中是的描述如下：
-  > For historical reasons and convenience, the tuple type with no elements (`()`) is often called ‘unit’ or ‘the unit type’.
+   The return value type of the main function is `()`, which is a special tuple - a tuple with no elements, called `unit`, which means that a function has no information to return. The description in [Types](https://doc.rust-lang.org/reference/types.html#tuple-types) of the Rust Reference is as follows:
+   > For historical reasons and convenience, the tuple type with no elements (`()`) is often called ‘unit’ or ‘the unit type’.
 
-  `()`类型，其实类似于C/C++、Java、C#中的`void`类型。
+   The `()` type is actually similar to the `void` type in C/C++, Java, and C#.
 
-  下面来看一个有返回值的例子：
+   Let's look at an example with a return value:
   
   ```rust
   fn main() {
@@ -33,10 +33,10 @@
   }
   ```
   
-  上面的例子中，函数`inc`有一个`i32`类型的参数和返回值，作用是将参数加1返回。需要注意的是`inc`函数中只有`n+1`一个表达式，并没有像C/C++或Java、C#等语言有显式地`return`语句类返回一个值。这是因为，与其他基于语句的语言（如C语言）不同，rust是基于表达式的语言，函数中最后一个表达式的值，默认作为返回值。当然，rust中也有语句，关于rust的语句和表达式，请看[下一节](statement_expression.md)。
+   In the above example, the function `inc` has a parameter of type `i32` and a return value, the function is to add 1 to the parameter and return it. It should be noted that there is only one expression of `n+1` in the `inc` function, and there is no explicit `return` statement like C/C++ or Java, C# and other languages to return a value. This is because, unlike other statement-based languages (such as C), rust is an expression-based language, and the value of the last expression in a function defaults to the return value. Of course, there are also statements in rust. For statements and expressions in rust, please see [next section](statement_expression.md).
 
-## return关键字
-  rust也有`return`关键字，不过一般用于提前返回。来看一个简单地例子：
+## return keyword
+   Rust also has the `return` keyword, but it is generally used to return early. Let's look at a simple example:
   
   ```rust
 fn main() {
@@ -55,10 +55,10 @@ fn find(n: i32, a: &[i32]) -> bool {
 }
   ```
   
-  上例中，`find`函数，接受一个`i32`类型`n`和一个`i32`类型的切片(`slice`)`a`，返回一个`bool`值，若n是a的元素，则返回`true`，否则返回`false`。可以看到，`return`关键字，用在`for`循环的`if`表达式中，若此时a的元素与n相等，则立刻返回true，剩下的循环不必再进行，否则一直循环检测完整个切片(slice)，最后返回false。当然，return语句也可以用在最后返回，像C/C++一样使用：把`find`函数最后一句`false`改为`return false;`（注意分号不可省略）也是可以的，不过这就不是rust的编程风格了。这里需要注意的是，`for`循环中的`i`，其类型为`&i32`，需要使用解引用操作符来变换为`i32`类型。另外，切片（slice）在这里可以看作是对数组的引用，关于切片与数组的详细解释可以看[Rust Reference](https://doc.rust-lang.org/reference.html#array-and-slice-types)和[rustbyexample](http://rustbyexample.com/primitives/array.html)中的相关内容。
+   In the above example, the `find` function accepts an `i32` type `n` and a `i32` type slice (`slice`) `a`, and returns a `bool` value. If n is an element of a, then Return `true`, otherwise return `false`. It can be seen that the `return` keyword is used in the `if` expression of the `for` loop. If the element of a is equal to n at this time, it will return true immediately, and the rest of the loop does not need to be performed, otherwise it will continue to loop Check the entire slice (slice), and finally return false. Of course, the return statement can also be used at the end to return, like C/C++: it is also possible to change the last sentence `false` of the `find` function to `return false;` (note that the semicolon cannot be omitted), but this is not the case. rust programming style. It should be noted here that the type of `i` in the `for` loop is `&i32`, and it needs to use the dereference operator to convert it to the `i32` type. In addition, slice (slice) can be regarded as a reference to an array here. For a detailed explanation of slices and arrays, see [Rust Reference](https://doc.rust-lang.org/reference.html#array-and -slice-types) and related stuff in [rustbyexample](http://rustbyexample.com/primitives/array.html).
 
-## 返回多个值
-  rust的函数不支持多返回值，但是我们可以利用元组来返回多个值，配合rust的模式匹配，使用起来十分灵活。先看例子：
+## return multiple values
+   Rust's function does not support multiple return values, but we can use tuples to return multiple values, which is very flexible to use with rust's pattern matching. Look at the example first:
   
   ```rust
 fn main() {
@@ -72,10 +72,10 @@ fn pow_2_3(n: i32) -> (i32, i32) {
 }
   ```
   
-  可以看到，上例中，`pow_2_3`函数接收一个`i32`类型的值，返回其二次方和三次方的值，这两个值包装在一个元组中返回。在`main`函数中，`let`语句就可以使用模式匹配将函数返回的元组进行解构，将这两个返回值分别赋给`p2`和`p3`，从而可以得到`789`二次方的值和三次方的值。
+   It can be seen that in the above example, the `pow_2_3` function receives a value of type `i32` and returns its quadratic and cubic values, which are wrapped in a tuple and returned. In the `main` function, the `let` statement can use pattern matching to deconstruct the tuple returned by the function, and assign these two return values to `p2` and `p3` respectively, so that `789` can be obtained twice square and cubic values.
 
-## 发散函数
-  发散函数（diverging function）是rust中的一个特性。发散函数不返回，它使用感叹号`!`作为返回类型表示：
+## divergence function
+   Diverging functions are a feature in rust. The divergent function does not return, it uses the exclamation point `!` as the return type to indicate:
   
   ```rust
 fn main() {
@@ -89,8 +89,9 @@ fn diverging() -> ! {
 }
   ```
   
-  由于发散函数不会返回，所以就算其后再有其他语句也是不会执行的。倘若其后还有其他语句，会出现如下编译警告：![error](../images/function-return-value.png)。当然了，我们要知道的是不发散的函数也是可以不返回的，比如无限循环之类的。
-  发散函数一般都以`panic!`宏调用或其他调用其他发散函数结束，所以，调用发散函数会导致当前线程崩溃。[Rust Reference 6.1.3.2 Diverging functions][ref]中的描述如下：
-  > We call such functions "diverging" because they never return a value to the caller. Every control path in a diverging function must end with a panic!() or a call to another diverging function on every control path. The ! annotation does not denote a type.
+   Since the diverging function will not return, even if there are other statements afterwards, it will not be executed. If there are other statements after it, the following compilation warning will appear: ![error](../images/function-return-value.png). Of course, what we need to know is that non-divergent functions can also not return, such as infinite loops and the like.
+   Divergent functions generally end with `panic!` macro calls or other calls to other divergent functions, so calling a divergent function will cause the current thread to crash. The description in [Rust Reference 6.1.3.2 Diverging functions][ref] reads:
+  > We call such functions "diverging" because they never return a value to the caller. Every control path in a diverging function must end with a panic!() or a call to another diverging function on every control path. The ! denote a type.
 
   [ref]:http://doc.rust-lang.org/reference.html#diverging-functions
+ 

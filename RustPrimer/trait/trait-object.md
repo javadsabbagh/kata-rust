@@ -1,6 +1,6 @@
-# trait对象 （trait object）
+# trait object (trait object)
 
-trait对象在**Rust**中是指使用指针封装了的 trait，比如 `&SomeTrait` 和 `Box<SomeTrait>`。
+A trait object in **Rust** refers to a trait encapsulated by a pointer, such as `&SomeTrait` and `Box<SomeTrait>`.
 
 ```rust
 trait Foo { fn method(&self) -> String; }
@@ -20,11 +20,11 @@ fn main() {
 }
 ```
 
-`x: &Foo`其中`x`是一个trait对象，这里用指针是因为`x`可以是任意实现`Foo`的类型实例，内存大小并不确定，但指针的大小是固定的。
+`x: &Foo` where `x` is a trait object, the pointer is used here because `x` can be any type instance that implements `Foo`, the memory size is not determined, but the size of the pointer is fixed.
 
-## trait对象的实现
+## Implementation of trait object
 
-`&SomeTrait` 类型和普通的指针类型`&i32`不同。它不仅包括指向真实对象的指针，还包括一个指向虚函数表的指针。它的内部实现定义在在`std::raw`模块中：
+The `&SomeTrait` type is different from the normal pointer type `&i32`. It includes not only pointers to real objects, but also a pointer to a virtual function table. Its internal implementation is defined in the `std::raw` module:
 
 ```rust
 pub struct TraitObject {
@@ -33,9 +33,9 @@ pub struct TraitObject {
 }
 ```
 
-其中`data`是一个指向实际类型实例的指针， `vtable`是一个指向实际类型对于该trait的实现的虚函数表：
+Where `data` is a pointer to an instance of the actual type, and `vtable` is a virtual function table pointing to the actual type's implementation of the trait:
 
-`Foo`的虚函数表类型：
+The vtable type of `Foo`:
 
 ```rust
 struct FooVtable {
@@ -46,11 +46,11 @@ struct FooVtable {
 }
 ```
 
-之前的代码可以解读为：
+The previous code can be read as:
 
 ```rust
-// u8:
-// 这个函数只会被指向u8的指针调用
+//u8:
+// This function will only be called with a pointer to u8
 fn call_method_on_u8(x: *const ()) -> String {
     let byte: &u8 = unsafe { &*(x as *const u8) };
 
@@ -67,7 +67,7 @@ static Foo_for_u8_vtable: FooVtable = FooVtable {
 
 
 // String:
-// 这个函数只会被指向String的指针调用
+// This function will only be called with a pointer to String
 fn call_method_on_String(x: *const ()) -> String {
     let string: &String = unsafe { &*(x as *const String) };
 
@@ -88,10 +88,10 @@ let x: u8 = 1;
 
 // let b: &Foo = &a;
 let b = TraitObject {
-    // data存储实际值的引用
-    data: &a,
-    // vtable存储实际类型实现Foo的方法
-    vtable: &Foo_for_String_vtable
+     // data stores a reference to the actual value
+     data: &a,
+     // vtable stores the actual type to implement the method of Foo
+     vtable: &Foo_for_String_vtable
 };
 
 // let y: &Foo = x;
@@ -107,16 +107,16 @@ let y = TraitObject {
 (y.vtable.method)(y.data);
 ```
 
-## 对象安全
+## Object Security
 
-并不是所有的trait都能作为trait对象使用的，比如：
+Not all traits can be used as trait objects, such as:
 
 ```rust
 let v = vec![1, 2, 3];
 let o = &v as &Clone;
 ```
 
-会有一个错误：
+There will be an error:
 
 ```
 error: cannot convert to a trait object because trait `core::clone::Clone` is not object-safe [E0038]
@@ -126,7 +126,7 @@ note: the trait cannot require that `Self : Sized`
 let o = &v as &Clone;
         ^~
 ```
-让我来分析一下错误的原因：
+Let me analyze the cause of the error:
 
 ```rust
 pub trait Clone: Sized {
@@ -136,22 +136,22 @@ pub trait Clone: Sized {
 }
 ```
 
-虽然`Clone`本身继承了`Sized`这个trait，但是它的方法`fn clone(&self) -> Self`和`fn clone_from(&mut self, source: &Self) { ... }`含有`Self`类型，而在使用trait对象方法的时候**Rust**是动态派发的，我们根本不知道这个trait对象的实际类型，它可以是任何一个实现了该trait的类型的值，所以`Self`在这里的大小不是`Self: Sized`的，这样的情况在**Rust**中被称为`object-unsafe`或者`not object-safe`，这样的trait是不能成为trait对象的。
+Although `Clone` itself inherits the `Sized` trait, its methods `fn clone(&self) -> Self` and `fn clone_from(&mut self, source: &Self) { ... }` contain `Self` type , and **Rust** is dynamically dispatched when using the trait object method, we don’t know the actual type of the trait object at all, it can be any value of any type that implements the trait, so `Self` is here The size of is not `Self: Sized`, this situation is called `object-unsafe` or `not object-safe` in **Rust**, such a trait cannot be a trait object.
 
-总结：
+Summarize:
 
-如果一个`trait`方法是`object safe`的，它需要满足：
+If a `trait` method is `object safe`, it needs to satisfy:
 
-* 方法有`Self: Sized`约束， 或者
-* 同时满足以下所有条件：
-  * 没有泛型参数
-  * 不是静态函数
-  * 除了`self`之外的其它参数和返回值不能使用`Self`类型
+* method has a `Self: Sized` constraint, or
+* All of the following conditions are met at the same time:
+  * no generic parameters
+  * is not a static function
+  * Other parameters and return values except `self` cannot use `Self` type
 
-如果一个`trait`是`object-safe`的，它需要满足：
+If a `trait` is `object-safe`, it needs to satisfy:
 
-* 所有的方法都是`object-safe`的，并且
-* trait 不要求 `Self: Sized` 约束
+* All methods are `object-safe`, and
+* trait does not require the `Self: Sized` constraint
 
-参考[stackoverflow](http://stackoverflow.com/questions/29985153/trait-object-is-not-object-safe-error)
+Refer to [stackoverflow](http://stackoverflow.com/questions/29985153/trait-object-is-not-object-safe-error)
 [object safe rfc](https://github.com/rust-lang/rfcs/blob/master/text/0255-object-safety.md)

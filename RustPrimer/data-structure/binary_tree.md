@@ -1,24 +1,24 @@
-# 二叉树
+# Binary tree
 
-## 二叉树简介
-在计算机科学中，二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。二叉树常被用于实现二叉查找树和二叉堆。
+## Introduction to Binary Trees
+In computer science, a binary tree is a tree structure with at most two subtrees per node. Usually subtrees are called "left subtree" and "right subtree". Binary trees are often used to implement binary search trees and binary heaps.
 
->二叉查找树的子节点与父节点的键一般满足一定的顺序关系，习惯上，左节点的键少于父亲节点的键，右节点的键大于父亲节点的键。
+>The keys of the child nodes and the parent nodes of the binary search tree generally satisfy a certain order relationship. It is customary that the keys of the left node are less than the keys of the parent node, and the keys of the right node are greater than the keys of the parent node.
 
->二叉堆是一种特殊的堆，二叉堆是完全二元树（二叉树）或者是近似完全二元树（二叉树）。二叉堆有两种：最大堆和最小堆。最大堆：父结点的键总是大于或等于任何一个子节点的键；最小堆：父结点的键总是小于或等于任何一个子节点的键。
+>Binary heap is a special heap. Binary heap is a complete binary tree (binary tree) or an approximate complete binary tree (binary tree). There are two types of binary heaps: max heap and min heap. Max heap: The key of the parent node is always greater than or equal to the key of any child node; Min heap: The key of the parent node is always less than or equal to the key of any child node.
 
->二叉树的每个结点至多只有二棵子树(不存在度大于2的结点)，二叉树的子树有左右之分，次序不能颠倒。二叉树的第i层至多有2^{i-1}个结点；深度为k的二叉树至多有2^k-1个结点；对任何一棵二叉树T，如果其终端结点数为n_0，度为2的结点数为n_2，则n_0=n_2+1。
+>Each node of the binary tree has at most two subtrees (there is no node with a degree greater than 2). The subtrees of the binary tree are divided into left and right, and the order cannot be reversed. The i-th layer of the binary tree has at most 2^{i-1} nodes; the binary tree with a depth of k has at most 2^k-1 nodes; for any binary tree T, if the number of terminal nodes is n_0, the degree The number of nodes that is 2 is n_2, then n_0=n_2+1.
 
->一棵深度为k，且有2^k-1个节点称之为满二叉树；深度为k，有n个节点的二叉树，当且仅当其每一个节点都与深度为k的满二叉树中，序号为1至n的节点对应时，称之为完全二叉树。
+>A full binary tree with a depth of k and 2^k-1 nodes is called a full binary tree; a binary tree with a depth of k and n nodes, if and only if each of its nodes is in the full binary tree with a depth of k , when the nodes with sequence numbers from 1 to n correspond to each other, it is called a complete binary tree.
 
-## 二叉树与树的区别
-二叉树*不是*树的一种特殊情形，尽管其与树有许多相似之处，但树和二叉树有两个主要差别：
+## The difference between a binary tree and a tree
+A binary tree is *not* a special case of a tree, and while it has many similarities to a tree, there are two main differences between a tree and a binary tree:
 
-1. 树中结点的最大度数没有限制，而二叉树结点的最大度数为2。
-2. 树的结点无左、右之分，而二叉树的结点有左、右之分。
+1. There is no limit to the maximum degree of a node in a tree, but the maximum degree of a node in a binary tree is 2.
+2. The nodes of the tree are not divided into left and right, but the nodes of the binary tree are divided into left and right.
 
-## 定义二叉树的结构
-二叉树的每个节点由键key、值value与左右子树left/right组成，这里我们把节点声明为一个泛型结构。
+## Define the structure of the binary tree
+Each node of the binary tree is composed of key key, value value and left/right subtree left/right. Here we declare the node as a generic structure.
 
 ```rust
 type TreeNode<K,V> = Option<Box<Node<K,V>>>;
@@ -31,8 +31,8 @@ struct Node<K,V: std::fmt::Display> {
 }
 ```
 
-## 实现二叉树的初始化与二叉查找树的插入
-由于二叉查找树要求键可排序，我们要求K实现PartialOrd
+## Realize the initialization of the binary tree and the insertion of the binary search tree
+Since binary search trees require keys to be sortable, we require K to implement PartialOrd
 
 ```rust
 trait BinaryTree<K,V> {
@@ -72,13 +72,13 @@ impl<K:PartialOrd,V:std::fmt::Display> BinarySearchTree<K,V> for Node<K,V>{
 }
 ```
 
-## 二叉树的遍历
+## Binary tree traversal
 
-- 先序遍历：首先访问根，再先序遍历左（右）子树，最后先序遍历右（左）子树。
-- 中序遍历：首先中序遍历左（右）子树，再访问根，最后中序遍历右（左）子树。
-- 后序遍历：首先后序遍历左（右）子树，再后序遍历右（左）子树，最后访问根。
+- Preorder traversal: first visit the root, then traverse the left (right) subtree in preorder, and finally traverse the right (left) subtree in preorder.
+- Inorder traversal: first inorder traverse the left (right) subtree, then visit the root, and finally inorder traverse the right (left) subtree.
+- Post-order traversal: first post-order traverse the left (right) subtree, then post-order traverse the right (left) subtree, and finally visit the root.
 
-下面是代码实现：
+The following is the code implementation:
 
 ```rust
 impl<K,V:std::fmt::Display> BinaryTree<K,V> for Node<K,V> {
@@ -114,7 +114,7 @@ impl<K,V:std::fmt::Display> BinaryTree<K,V> for Node<K,V> {
 }
 ```
 
-## 测试代码
+## test code
 
 ```rust
 type BST<K,V> = Node<K,V>;
@@ -149,5 +149,5 @@ fn main() {
 }
 ```
 
-## 练习
-基于以上代码，修改成二叉堆的形式。
+## practise
+Based on the above code, it is modified into the form of a binary heap.

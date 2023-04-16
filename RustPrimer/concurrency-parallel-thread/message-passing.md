@@ -1,51 +1,51 @@
-## 消息传递
-稍加考虑，上一节的练习题其实是不完整的，它只是评分系统中的一环，一个评分系统是需要先把信息从数据库或文件中读取出来，然后才是评分，最后还需要把评分结果再保存到数据库或文件中去。如果一步一步串行地做这三个步骤，是完全没有问题的。那么我们是否可以用三个线程来分别做这三个步骤呢？上一节练习题我们已经用了一个线程来实现评分，那么我们是否也可以再用一个线程来读取成绩，再用另个线程来实现保存呢？ 如果能这样的话，那么我们就可以利用上多核多cpu的优势，加快整个评分的效率。既然在此提出这个问题，答案就很明显了。问题在于我们要怎么在Rust中来实现，关键在于三个线程怎么交换信息，以达到串行的逻辑处理顺序？
+## Message Passing
+After a little consideration, the exercises in the previous section are actually incomplete. They are just a part of the scoring system. A scoring system needs to read information from the database or files first, then score, and finally need to Save the scoring results to the database or file. If you do these three steps serially step by step, there is no problem at all. So can we use three threads to do these three steps separately? In the last practice question, we have used one thread to achieve scoring, so can we also use another thread to read the scores, and then use another thread to achieve saving? If this is the case, then we can take advantage of multi-core and multi-cpu to speed up the efficiency of the entire scoring. Now that the question is asked here, the answer is obvious. The question is how do we implement it in Rust, the key is how do the three threads exchange information to achieve a serial logical processing sequence?
 
-为了解决这个问题，下面将介绍一种Rust在标准库中支持的消息传递技术。**消息传递**是并发模型里面大家比较推崇的模式，不仅仅是因为使用起来比较简单，关键还在于它可以减少数据竞争，提高并发效率，为此值得深入学习。Rust是通过一个叫做通道(`channel`)的东西来实现这种模式的，下面直接进入主题。
+To address this, the following describes a messaging technique that Rust supports in the standard library. **Message passing** is a model that everyone respects in the concurrency model, not only because it is relatively simple to use, but the key is that it can reduce data competition and improve concurrency efficiency, so it is worth studying in depth. Rust implements this pattern through something called a channel (`channel`), let's go directly to the topic.
 
-### 初试通道(channel)
-Rust的通道(`channel`)可以把一个线程的消息(数据)传递到另一个线程，从而让信息在不同的线程中流动，从而实现协作。详情请参见[`std::sync::mpsc`](https://doc.rust-lang.org/std/sync/mpsc/index.html)。通道的两端分别是发送者(`Sender`)和接收者(`Receiver`)，发送者负责从一个线程发送消息，接收者则在另一个线程中接收该消息。下面我们来看一个简单的例子：
+### Initial test channel (channel)
+Rust's channel (`channel`) can pass messages (data) from one thread to another thread, allowing information to flow in different threads to achieve collaboration. See [`std::sync::mpsc`](https://doc.rust-lang.org/std/sync/mpsc/index.html) for details. The two ends of the channel are the sender (`Sender`) and the receiver (`Receiver`). The sender is responsible for sending a message from one thread, and the receiver receives the message in another thread. Let's look at a simple example:
 
 ```rust
 use std::sync::mpsc;
 use std::thread;
 
 fn main() {
-    // 创建一个通道
+    // create a channel
     let (tx, rx): (mpsc::Sender<i32>, mpsc::Receiver<i32>) = 
         mpsc::channel();
 
-    // 创建线程用于发送消息
+    // Create a thread for sending messages
     thread::spawn(move || {
-        // 发送一个消息，此处是数字id
+        // Send a message, here is the numeric id
         tx.send(1).unwrap();
     });
 
-    // 在主线程中接收子线程发送的消息并输出
+    // Receive the message sent by the child thread in the main thread and output it
     println!("receive {}", rx.recv().unwrap());
 }
 ```
 
-程序说明参见代码中的注释，程序执行结果为：
+For the program description, see the comments in the code. The result of the program execution is:
 
 ```
 receive 1
 ```
 
-结果表明`main`所在的主线程接收到了新建线程发送的消息，用Rust在线程间传递消息就是这么简单！
+The result shows that the main thread where `main` is located has received the message sent by the newly created thread. It is so simple to pass messages between threads with Rust!
 
-虽然简单，但使用过其他语言就会知道，通道有多种使用方式，且比较灵活，为此我们需要进一步考虑关于`Rust`的`Channel`的几个问题：
+Although it is simple, if you have used other languages, you will know that there are many ways to use the channel, and it is relatively flexible. For this reason, we need to further consider several issues about the `Channel` of `Rust`:
 
-1. 通道能保证消息的顺序吗？是否先发送的消息，先接收？
-2. 通道能缓存消息吗？如果能的话能缓存多少？
-3. 通道的发送者和接收者支持N:1，1:N，N:M模式吗？
-4. 通道能发送任何数据吗？
-5. 发送后的数据，在线程中继续使用没有问题吗？
+1. Can the channel guarantee the order of messages? Is the message sent first, received first?
+2. Can the channel cache messages? If so how much can be cached?
+3. Do the sender and receiver of the channel support N:1, 1:N, N:M modes?
+4. Can the channel send any data?
+5. Is there any problem in continuing to use the sent data in the thread?
 
-让我们带着这些问题和思考进入下一个小节，那里有相关的答案。
+Let's take these questions and reflections into the next section, where there are relevant answers.
 
-### 消息类型
-上面的例子中，我们传递的消息类型为`i32`，除了这种类型之外，是否还可以传递更多的原始类型，或者更复杂的类型，和自定义类型？下面我们尝试发送一个更复杂的`Rc`类型的消息：
+### Message Type
+In the above example, the message type we pass is `i32`, besides this type, is it possible to pass more primitive types, or more complex types, and custom types? Below we try to send a more complex `Rc` type message:
 
 ```rust
 use std::fmt;
@@ -64,70 +64,70 @@ impl fmt::Display for Student {
 }
 
 fn main() {
-    // 创建一个通道
-    let (tx, rx): (mpsc::Sender<Rc<Student>>, mpsc::Receiver<Rc<Student>>) = 
+    // create a channel
+    let (tx, rx): (mpsc::Sender<Rc<Student>>, mpsc::Receiver<Rc<Student>>) =
         mpsc::channel();
 
-    // 创建线程用于发送消息
+    // Create a thread for sending messages
     thread::spawn(move || {
-        // 发送一个消息，此处是数字id
+        // Send a message, here is the numeric id
         tx.send(Rc::new(Student{
             id: 1,
         })).unwrap();
     });
 
-    // 在主线程中接收子线程发送的消息并输出
+    // Receive the message sent by the child thread in the main thread and output it
     println!("receive {}", rx.recv().unwrap());
 }
 ```
 
-编译代码，奇迹没有出现，编译时错误，错误提示：
+Compile the code, the miracle does not appear, there is a compile-time error, and the error message:
 
 ```
-error: the trait `core::marker::Send` is not 
+error: the trait `core::marker::Send` is not
 implemented for the type `alloc::rc::Rc<Student>` [E0277]
 note: `alloc::rc::Rc<Student>` cannot be sent between threads safely
 ```
 
-看来并不是所有类型的消息都可以通过通道发送，消息类型必须实现`marker trait Send`。Rust之所以这样强制要求，主要是为了解决并发安全的问题，再一次强调，**安全**是Rust考虑的重中之重。如果一个类型是`Send`，则表明它可以在线程间安全的转移所有权(`ownership`)，当所有权从一个线程转移到另一个线程后，同一时间就只会存在一个线程能访问它，这样就避免了数据竞争，从而做到线程安全。`ownership`的强大又一次显示出来了。通过这种做法，在编译时即可要求所有的代码必须满足这一约定，这种方式方法值得借鉴，`trait`也是非常强大。
+It seems that not all types of messages can be sent through channels, the message type must implement `marker trait Send`. The reason why Rust makes such a mandatory requirement is mainly to solve the problem of concurrency safety. Once again, **safety** is the top priority of Rust. If a type is `Send`, it indicates that it can safely transfer ownership (`ownership`) between threads. When ownership is transferred from one thread to another, only one thread can access it at a time, so It avoids data races and thus achieves thread safety. The power of `ownership` is shown once again. Through this approach, all codes must meet this contract at compile time. This method is worth learning, and `trait` is also very powerful.
 
-看起来问题得到了完美的解决，然而由于`Send`本身是一个不安全的`marker trait`，并没有实际的`API`，所以实现它很简单，但没有强制保障，就只能靠开发者自己约束，否则还是可能引发并发安全问题。对于这一点，也不必太过担心，因为Rust中已经存在的类，都已经实现了`Send`或`!Send`，我们只要使用就行。`Send`是一个默认应用到所有Rust已存在类的trait，所以我们用`!Send`显式标明该类没有实现`Send`。目前几乎所有的原始类型都是`Send`，例如前面例子中发送的`i32`。对于开发者而言，我们可能会更关心哪些是非`Send`，也就是实现了`!Send`，因为这会导致线程不安全。更全面的信息参见[`Send`官网API](https://doc.rust-lang.org/std/marker/trait.Send.html)。
+It seems that the problem has been perfectly solved. However, since `Send` itself is an unsafe `marker trait`, and there is no actual `API`, it is very simple to implement, but there is no mandatory guarantee, and it can only be done by developers. Restrain yourself, otherwise it may still cause concurrent security issues. Don't worry too much about this, because the classes that already exist in Rust have already implemented `Send` or `!Send`, we just need to use it. `Send` is a trait that applies to all existing Rust classes by default, so we use `!Send` to explicitly indicate that the class does not implement `Send`. Currently almost all primitive types are `Send`, such as `i32` sent in the previous example. For developers, we may be more concerned about whether `Send` is implemented, that is, `!Send` is implemented, because this will lead to thread insecurity. For more comprehensive information, see [`Send` official website API](https://doc.rust-lang.org/std/marker/trait.Send.html).
 
-对于不是`Send`的情况（`!Send`），大致分为两类：
+For the case of not `Send` (`!Send`), it can be roughly divided into two categories:
 
-1. 原始指针，包括`*mut T`和`*const T`，因为不同线程通过指针都可以访问数据，从而可能引发线程安全问题。
-2. `Rc`和`Weak`也不是，因为引用计数会被共享，但是并没有做并发控制。
+1. Raw pointers, including `*mut T` and `*const T`, because different threads can access data through pointers, which may cause thread safety issues.
+2. `Rc` and `Weak` are not, because the reference count will be shared, but there is no concurrency control.
 
-虽然有这些`!Send`的情况，但是逃不过编译器的火眼金睛，只要你错误地使用了消息类型，编译器都会给出类似于上面的错误提示。我们要担心的不是这些，因为错误更容易出现在新创建的自定义类，有下面两点需要注意：
+Although there are these cases of `!Send`, they cannot escape the eyes of the compiler. As long as you use the message type incorrectly, the compiler will give an error message similar to the above. This is not what we have to worry about, because errors are more likely to appear in newly created custom classes. There are two points to note:
 
-1. 如果自定义类的所有字段都是`Send`，那么这个自定义类也是`Send`。
-    反之，如果有一个字段是`!Send`，那么这个自定义类也是`!Send`。
-    如果类的字段存在递归包含的情况，按照该原则以此类推来推论类是`Send`还是`!Send`。
+1. If all fields of a custom class are `Send`, then this custom class is also `Send`.
+     Conversely, if there is a field that is `!Send`, then this custom class is also `!Send`.
+     If the field of the class has recursive inclusion, follow this principle to deduce whether the class is `Send` or `!Send`.
 
-2. 在为一个自定义类实现`Send`或者`!Send`时，必须确保符合它的约定。
+2. When implementing `Send` or `!Send` for a custom class, you must ensure that it conforms to its contract.
 
-到此，消息类型的相关知识已经介绍完了，说了这么久，也该让大家自己练习一下了：请实现一个自定义类，该类包含一个Rc字段，让这个类变成可以在通道中发送的消息类型。
+At this point, the relevant knowledge of message types has been introduced. After talking for so long, it is time for everyone to practice: please implement a custom class, which contains an Rc field, so that this class can be sent in the channel message type.
 
-### 异步通道(Channel)
-在粗略地尝试通道之后，是时候更深入一下了。Rust的标准库其实提供了两种类型的通道：异步通道和同步通道。上面的例子都是使用的异步通道，为此这一小节我们优先进一步介绍异步通道，后续再介绍同步通道。异步通道指的是：不管接收者是否正在接收消息，消息发送者在发送消息时都不会阻塞。为了验证这一点，我们尝试多增加一个线程来发送消息：
+### Asynchronous Channel (Channel)
+After tentatively experimenting with channels, it's time to dig a little deeper. Rust's standard library actually provides two types of channels: asynchronous channels and synchronous channels. The above examples all use asynchronous channels. For this reason, we give priority to further introducing asynchronous channels in this section, and then introduce synchronous channels later. Asynchronous channel refers to: regardless of whether the receiver is receiving the message, the message sender will not block when sending the message. To verify this, we try to add one more thread to send messages:
 
 ```rust
 use std::sync::mpsc;
 use std::thread;
 
-// 线程数量
+// number of threads
 const THREAD_COUNT :i32 = 2;
 
 fn main() {
-    // 创建一个通道
+    // create a channel
     let (tx, rx): (mpsc::Sender<i32>, mpsc::Receiver<i32>) = mpsc::channel();
 
-    // 创建线程用于发送消息
+    // Create a thread for sending messages
     for id in 0..THREAD_COUNT {
-        // 注意Sender是可以clone的，这样就可以支持多个发送者
+        // Note that Sender can be cloned, so that multiple senders can be supported
         let thread_tx = tx.clone();
         thread::spawn(move || {
-            // 发送一个消息，此处是数字id
+            // Send a message, here is the numeric id
             thread_tx.send(id + 1).unwrap();
             println!("send {}", id + 1);
         });
@@ -135,14 +135,14 @@ fn main() {
 
     thread::sleep_ms(2000);
     println!("wake up");
-    // 在主线程中接收子线程发送的消息并输出
+    // Receive the message sent by the child thread in the main thread and output it
     for _ in 0..THREAD_COUNT {
         println!("receive {}", rx.recv().unwrap());
     }
 }
 ```
 
-运行结果:
+operation result:
 
 ```
 send 1
@@ -152,29 +152,29 @@ receive 1
 receive 2
 ```
 
-在代码中，我们故意让`main`所在的主线程睡眠2秒，从而让发送者所在线程优先执行，通过结果可以发现，发送者发送消息时确实没有阻塞。还记得在前面提到过很多关于通道的问题吗？从这个例子里面还发现什么没？除了不阻塞之外，我们还能发现另外的三个特征：
+In the code, we deliberately let the main thread where `main` is located sleep for 2 seconds, so that the thread where the sender is located is executed first. From the results, we can find that the sender does not block when sending messages. Remember how I mentioned a lot about channels earlier? Did you find anything else from this example? In addition to non-blocking, we can also find three other characteristics:
 
-1.通道是可以同时支持多个发送者的，通过`clone`的方式来实现。
-    这类似于`Rc`的共享机制。
-    其实从`Channel`所在的库名`std::sync::mpsc`也可以知道这点。
-    因为`mpsc`就是多生产者单消费者(Multiple Producers Single Consumer)的简写。
-    可以有多个发送者,但只能有一个接收者，即支持的N:1模式。
+1. The channel can support multiple senders at the same time, which is realized by `clone`.
+     This is similar to the sharing mechanism of `Rc`.
+     In fact, you can also know this from the library name `std::sync::mpsc` where `Channel` is located.
+     Because `mpsc` is short for Multiple Producers Single Consumer.
+     There can be multiple senders, but only one receiver, which is the supported N:1 mode.
 
-2.异步通道具备消息缓存的功能，因为1和2是在没有接收之前就发了的，在此之后还能接收到这两个消息。
+2. The asynchronous channel has the function of message caching, because 1 and 2 are sent before they are received, and these two messages can still be received after that.
 
-那么通道到底能缓存多少消息？在理论上是无穷的，尝试一下便知：
+So how many messages can the channel cache? In theory it is infinite, just try it out:
 
 ```rust
 use std::sync::mpsc;
 use std::thread;
 
 fn main() {
-    // 创建一个通道
+    // create a channel
     let (tx, rx): (mpsc::Sender<i32>, mpsc::Receiver<i32>) = mpsc::channel();
 
-    // 创建线程用于发送消息
+    // Create a thread for sending messages
     let new_thread = thread::spawn(move || {
-        // 发送无穷多个消息
+        // Send infinitely many messages
         let mut i = 0;
         loop {
             i = i + 1;
@@ -190,34 +190,34 @@ fn main() {
         }
     });
 
-    // 在主线程中接收子线程发送的消息并输出
+    // Receive the message sent by the child thread in the main thread and output it
     new_thread.join().unwrap();
     println!("receive {}", rx.recv().unwrap());
 }
 ```
 
-最后的结果就是耗费内存为止。
+The end result is memory consumption.
 
-3.消息发送和接收的顺序是一致的，满足先进先出原则。
+3. The order of message sending and receiving is consistent, satisfying the first-in-first-out principle.
 
-上面介绍的内容大多是关于发送者和通道的，下面开始考察一下接收端。通过上面的几个例子，细心一点的可能已经发现接收者的`recv`方法应该会阻塞当前线程，如果不阻塞，在多线程的情况下，发送的消息就不可能接收完全。所以没有发送者发送消息，那么接收者将会一直等待，这一点要谨记。在某些场景下，一直等待是符合实际需求的。但某些情况下并不需一直等待，那么就可以考虑释放通道，只要通道释放了，`recv`方法就会立即返回。
+Most of the content introduced above is about the sender and the channel. Let's start to examine the receiving end. Through the above examples, you may have noticed that the receiver's `recv` method should block the current thread. If it is not blocked, in the case of multi-threading, it is impossible to receive all the sent messages. So there is no sender to send a message, so the receiver will wait forever, which is something to keep in mind. In some scenarios, waiting all the time is in line with actual needs. But in some cases, you don’t need to wait all the time, then you can consider releasing the channel. As long as the channel is released, the `recv` method will return immediately.
 
-异步通道的具有良好的灵活性和扩展性，针对业务需要，可以灵活地应用于实际项目中，实在是必备良药！
+The asynchronous channel has good flexibility and scalability. It can be flexibly applied to actual projects according to business needs. It is a must-have medicine!
 
-### 同步通道
-同步通道在使用上同异步通道一样，接收端也是一样的，唯一的区别在于发送端，我们先来看下面的例子：
+### Synchronization channel
+The use of synchronous channels is the same as that of asynchronous channels, and the receiving end is the same. The only difference is the sending end. Let's look at the following example first:
 
 ```rust
 use std::sync::mpsc;
 use std::thread;
 
 fn main() {
-    // 创建一个同步通道
+    // Create a synchronous channel
     let (tx, rx): (mpsc::SyncSender<i32>, mpsc::Receiver<i32>) = mpsc::sync_channel(0);
 
-    // 创建线程用于发送消息
+    // Create a thread for sending messages
     let new_thread = thread::spawn(move || {
-        // 发送一个消息，此处是数字id
+        // Send a message, here is the numeric id
         println!("before send");
         tx.send(1).unwrap();
         println!("after send");
@@ -226,13 +226,13 @@ fn main() {
     println!("before sleep");
     thread::sleep_ms(5000);
     println!("after sleep");
-    // 在主线程中接收子线程发送的消息并输出
+    // Receive the message sent by the child thread in the main thread and output it
     println!("receive {}", rx.recv().unwrap());
     new_thread.join().unwrap();
 }
 ```
 
-运行结果：
+operation result:
 
 ```
 before sleep
@@ -242,11 +242,11 @@ receive 1
 after send
 ```
 
-除了多了一些输出代码之外，上面这段代码几乎和前面的异步通道的没有什么区别，唯一不同的在于创建同步通道的那行代码。同步通道是`sync_channel`，对应的发送者也变成了`SyncSender`。为了显示出同步通道的区别，故意添加了一些打印。和异步通道相比，存在两点不同：
+Except for some more output code, the above code is almost the same as the previous asynchronous channel. The only difference is the line of code that creates the synchronous channel. The sync channel is `sync_channel`, and the corresponding sender becomes `SyncSender`. In order to show the difference of the synchronous channel, some printing was added on purpose. Compared with asynchronous channels, there are two differences:
 
-1. 同步通道是需要指定缓存的消息个数的，但需要注意的是，最小可以是0，表示没有缓存。
-2. 发送者是会被阻塞的。当通道的缓存队列不能再缓存消息时，发送者发送消息时，就会被阻塞。
+1. The synchronization channel needs to specify the number of cached messages, but it should be noted that the minimum can be 0, which means there is no cache.
+2. The sender will be blocked. When the channel's buffer queue can no longer buffer the message, the sender will be blocked when sending the message.
 
-对照上面两点和运行结果来分析，由于主线程在接收消息前先睡眠了，从而子线程这个时候会被调度执行发送消息，由于通道能缓存的消息为0，而这个时候接收者还没有接收，所以`tx.send(1).unwrap()`就会阻塞子线程，直到主线程接收消息，即执行`println!("receive {}", rx.recv().unwrap());`。运行结果印证了这点，要是没阻塞，那么在`before send`之后就应该是`after send`了。
+Analyze the above two points and the running results. Since the main thread sleeps before receiving the message, the sub-thread will be scheduled to send the message at this time. Since the message that the channel can cache is 0, the receiver has not received it at this time. , so `tx.send(1).unwrap()` will block the child thread until the main thread receives the message, that is, execute `println!("receive {}", rx.recv().unwrap());` . The running results confirm this point. If there is no blockage, then `after send` should be after `before send`.
 
-相比较而言，异步通道更没有责任感一些，因为消息发送者一股脑的只管发送，不管接收者是否能快速处理。这样就可能出现通道里面缓存大量的消息得不到处理，从而占用大量的内存，最终导致内存耗尽。而同步通道则能避免这种问题，把接受者的压力能传递到发送者，从而一直传递下去。
+In comparison, the asynchronous channel has no sense of responsibility, because the sender of the message just sends it, regardless of whether the receiver can process it quickly. In this way, a large number of messages cached in the channel may not be processed, thus occupying a large amount of memory, and eventually leading to memory exhaustion. The synchronous channel can avoid this problem, and transmit the receiver's pressure energy to the sender, so as to pass it on all the time.

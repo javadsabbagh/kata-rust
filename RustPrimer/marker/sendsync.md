@@ -1,46 +1,43 @@
-# Send 和 Sync
+# Send and Sync
 
-`std::marker` 模块中，有两个 trait：`Send` 和 `Sync`，它们与多线程安全相关。
+In the `std::marker` module, there are two traits: `Send` and `Sync`, which are related to multi-thread safety.
 
-标记为 `marker trait` 的 trait，它实际就是一种约定，没有方法的定义，也没有关联元素（associated items）。仅仅是一种约定，实现了它的类型必须满足这种约定。一种类型是否加上这种约定，要么是编译器的行为，要么是人工手动的行为。
+A trait marked `marker trait` is actually a convention, with no method definitions or associated items. It's just a convention that types that implement it must satisfy. Whether a type adds this kind of convention is either a compiler behavior or a manual behavior.
 
-`Send` 和 `Sync` 在大部分情况下（针对 Rust 的基础类型和 std 中的大部分类型），会由编译器自动推导出来。对于不能由编译器自动推导出来的类型，要使它们具有 `Send` 或 `Sync` 的约定，可以由人手动实现。实现的时候，必须使用 `unsafe` 前缀，因为 Rust 默认不信任程序员，由程序员自己控制的东西，统统标记为 `unsafe`，出了问题（比如，把不是线程安全的对象加上 `Sync` 约定）由程序员自行负责。
+`Send` and `Sync` are automatically deduced by the compiler in most cases (for Rust's primitive types and most types in std). For types that cannot be automatically deduced by the compiler, to make them have the contract of `Send` or `Sync`, it can be implemented manually by humans. When implementing, you must use the `unsafe` prefix, because Rust does not trust programmers by default, and all things controlled by programmers are marked as `unsafe`, and something goes wrong (for example, adding `Sync ` convention) is the responsibility of the programmer.
 
-它们的定义如下：
+They are defined as follows:
 
-如果 `T: Send`，那么将 `T` 传到另一个线程中时（按值传送），不会导致数据竞争或其它不安全情况。
+If `T: Send`, passing `T` to another thread (by value) will not cause data races or other unsafe conditions.
 
-1. `Send` 是对象可以安全发送到另一个执行体中；
-2. `Send` 使被发送对象可以和产生它的线程解耦，防止原线程将此资源释放后，在目标线程中使用出错（use after free）。
+1. `Send` means that the object can be safely sent to another executable;
+2. `Send` enables the object to be sent to be decoupled from the thread that generated it, preventing the resource from being used in the target thread after the original thread releases it (use after free).
 
-如果 `T: Sync`，那么将 `&T` 传到另一个线程中时，不会导致数据竞争或其它不安全情况。
+If `T: Sync`, passing `&T` to another thread will not cause data races or other unsafe conditions.
 
-1. `Sync` 是可以被同时多个执行体访问而不出错；
-2. `Sync` 防止的是竞争；
+1. `Sync` can be accessed by multiple execution bodies at the same time without error;
+2. `Sync` prevents competition;
 
-推论：
+inference:
 
-1. `T: Sync` 意味着 `&T: Send`；
-3. `Sync + Copy = Send`；
-4. 当 `T: Send` 时，可推导出 `&mut T: Send`；
-4. 当 `T: Sync` 时，可推导出 `&mut T: Sync`；
-5. 当 `&mut T: Send` 时，不能推导出 `T: Send`；
+1. `T: Sync` means `&T: Send`;
+3. `Sync + Copy = Send`;
+4. When `T: Send`, `&mut T: Send` can be deduced;
+4. When `T: Sync`, `&mut T: Sync` can be deduced;
+5. When `&mut T: Send`, `T: Send` cannot be deduced;
 
-（注：`T`, `&T`, `&mut T`，`Box<T>` 等都是不同的类型）
-
-
-具体的类型：
-
-1. 原始类型（比如： u8, f64），都是 `Sync`，都是 `Copy`，因此都是 `Send`；
-2. 只包含原始类型的复合类型，都是 `Sync`，都是 `Copy`，因此都是 `Send`；
-3. 当 `T: Sync`，`Box<T>`, `Vec<T>` 等集合类型是 `Sync`；
-4. 具有内部可变性的的指针，不是 `Sync` 的，比如 `Cell`, `RefCell`, `UnsafeCell`；
-5. `Rc` 不是 `Sync`。因为只要一做 `&Rc<T>` 操作，就会克隆一个新引用，它会以非原子性的方式修改引用计数，所以是不安全的；
-6. 被 `Mutex` 和 `RWLock` 锁住的类型 `T: Send`，是 `Sync` 的；
-7. 原始指针（`*mut`, `*const`）既不是 `Send` 也不是 `Sync`；
+(Note: `T`, `&T`, `&mut T`, `Box<T>`, etc. are all different types)
 
 
-Rust 正是通过这两大武器：`所有权和生命周期` + `Send 和 Sync`（本质上为类型系统）来为并发编程提供了安全可靠的基础设施。使得程序员可以放心在其上构建稳健的并发模型。这也正是 Rust 的核心设计观的体现：内核只提供最基础的原语，真正的实现能分离出去就分离出去。并发也是如此。
+Specific types:
+
+1. Primitive types (for example: u8, f64), are both `Sync` and `Copy`, so they are all `Send`;
+2. Composite types that only contain primitive types are `Sync` and `Copy`, so they are `Send`;
+3. When `T: Sync`, `Box<T>`, `Vec<T>` and other collection types are `Sync`;
+4. Pointers with internal mutability, not `Sync`, such as `Cell`, `RefCell`, `UnsafeCell`;
+5. `Rc` is not `Sync`. Because as long as the `&Rc<T>` operation is performed, a new reference will be cloned, which will modify the reference count in a non-atomic way, so it is not safe;
+6. The type `T: Send` locked by `Mutex` and `RWLock` is `Sync`;
+7. Raw pointers (`*mut`, `*const`) are neither `Send` nor `Sync`;
 
 
-
+Rust provides a safe and reliable infrastructure for concurrent programming through these two weapons: `ownership and life cycle` + `Send and Sync` (essentially a type system). So that programmers can rest assured to build a robust concurrency model on it. This is also the embodiment of Rust's core design concept: the kernel only provides the most basic primitives, and the real implementation can be separated if it can be separated. The same goes for concurrency.

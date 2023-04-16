@@ -1,18 +1,18 @@
-# Rc 和 Arc
+# Rc and Arc
 
-Rust 建立在所有权之上的这一套机制，它要求一个资源同一时刻有且只能有一个拥有所有权的绑定或 `&mut` 引用，这在大部分的情况下保证了内存的安全。但是这样的设计是相当严格的，在另外一些情况下，它限制了程序的书写，无法实现某些功能。因此，Rust 在 std 库中提供了额外的措施来补充所有权机制，以应对更广泛的场景。
+Rust's set of mechanisms based on ownership requires that a resource has and can only have one binding or `&mut` reference with ownership at the same time, which ensures memory safety in most cases. But this design is quite strict. In other cases, it restricts the writing of programs and cannot realize certain functions. Therefore, Rust provides additional measures in the std library to supplement the ownership mechanism to deal with a wider range of scenarios.
 
-默认 Rust 中，对一个资源，同一时刻，有且只有一个所有权拥有者。`Rc` 和 `Arc` 使用引用计数的方法，让程序在同一时刻，实现同一资源的多个所有权拥有者，多个拥有者共享资源。
+By default, in Rust, there is one and only one owner of a resource at the same time. `Rc` and `Arc` use the method of reference counting to allow the program to realize multiple owners of the same resource at the same time, and multiple owners share the resource.
 
 ## Rc
-`Rc` 用于同一线程内部，通过 `use std::rc::Rc` 来引入。它有以下几个特点：
+`Rc` is used inside the same thread, introduced by `use std::rc::Rc`. It has the following characteristics:
 
-1. 用 `Rc` 包装起来的类型对象，是 `immutable` 的，即 不可变的。即你无法修改 `Rc<T>` 中的 `T` 对象，只能读；
-2. 一旦最后一个拥有者消失，则资源会被自动回收，这个生命周期是在编译期就确定下来的；
-3. `Rc` 只能用于同一线程内部，不能用于线程之间的对象共享（不能跨线程传递）；
-4. `Rc` 实际上是一个指针，它不影响包裹对象的方法调用形式（即不存在先解开包裹再调用值这一说）。
+1. The type object wrapped with `Rc` is `immutable`, that is, unchangeable. That is, you cannot modify the `T` object in `Rc<T>`, you can only read it;
+2. Once the last owner disappears, the resource will be automatically reclaimed, and this life cycle is determined at compile time;
+3. `Rc` can only be used within the same thread, and cannot be used for object sharing between threads (cannot be passed across threads);
+4. `Rc` is actually a pointer, which does not affect the method call form of the wrapped object (that is, there is no such thing as unpacking and then calling the value).
 
-例子：
+example:
 
 ```rust
 use std::rc::Rc;
@@ -25,16 +25,16 @@ let five3 = five.clone();
 
 ## Rc Weak
 
-`Weak` 通过 `use std::rc::Weak` 来引入。
+`Weak` is introduced by `use std::rc::Weak`.
 
-`Rc` 是一个引用计数指针，而 `Weak` 是一个指针，但不增加引用计数，是 `Rc` 的 weak 版。它有以下几个特点：
+`Rc` is a reference count pointer, and `Weak` is a pointer, but does not increase the reference count, which is the weak version of `Rc`. It has the following characteristics:
 
-1. 可访问，但不拥有。不增加引用计数，因此，不会对资源回收管理造成影响；
-2. 可由 `Rc<T>` 调用 `downgrade` 方法而转换成 `Weak<T>`；
-3. `Weak<T>` 可以使用 `upgrade` 方法转换成 `Option<Rc<T>>`，如果资源已经被释放，则 Option 值为 `None`；
-4. 常用于解决循环引用的问题。
+1. Accessible, but not owned. Does not increase the reference count, therefore, will not affect resource recovery management;
+2. It can be converted to `Weak<T>` by calling the `downgrade` method from `Rc<T>`;
+3. `Weak<T>` can be converted to `Option<Rc<T>>` using the `upgrade` method. If the resource has been released, the Option value is `None`;
+4. It is often used to solve the problem of circular references.
 
-例子：
+example:
 
 ```rust
 use std::rc::Rc;
@@ -48,17 +48,17 @@ let strong_five: Option<Rc<_>> = weak_five.upgrade();
 
 ## Arc
 
-`Arc` 是原子引用计数，是 `Rc` 的多线程版本。`Arc` 通过 `std::sync::Arc` 引入。
+`Arc` is atomic reference counting and is a multi-threaded version of `Rc`. `Arc` is introduced via `std::sync::Arc`.
 
-它的特点：
+Its features:
 
-1. `Arc` 可跨线程传递，用于跨线程共享一个对象；
-2. 用 `Arc` 包裹起来的类型对象，对可变性没有要求；
-3. 一旦最后一个拥有者消失，则资源会被自动回收，这个生命周期是在编译期就确定下来的；
-4. `Arc` 实际上是一个指针，它不影响包裹对象的方法调用形式（即不存在先解开包裹再调用值这一说）；
-5. `Arc` 对于多线程的共享状态**几乎是必须的**（减少复制，提高性能）。
+1. `Arc` can be passed across threads, used to share an object across threads;
+2. A type object wrapped with `Arc` has no requirement for mutability;
+3. Once the last owner disappears, the resource will be automatically reclaimed, and this life cycle is determined at compile time;
+4. `Arc` is actually a pointer, which does not affect the method call form of the wrapped object (that is, there is no such thing as unpacking and then calling the value);
+5. `Arc` is **almost necessary** for multi-threaded shared state (reduce copying, improve performance).
 
-示例：
+Example:
 
 ```rust
 use std::sync::Arc;
@@ -82,15 +82,15 @@ fn main() {
 
 ### Arc Weak
 
-与 `Rc` 类似，`Arc` 也有一个对应的 `Weak` 类型，从 `std::sync::Weak` 引入。
+Similar to `Rc`, `Arc` also has a corresponding `Weak` type, imported from `std::sync::Weak`.
 
-意义与用法与 `Rc Weak` 基本一致，不同的点是这是多线程的版本。故不再赘述。
+The meaning and usage are basically the same as `Rc Weak`, the difference is that this is a multi-threaded version. So no more details.
 
 
 
-## 一个例子
+## one example
 
-下面这个例子，表述的是如何实现多个对象同时引用另外一个对象。
+The following example shows how to implement multiple objects to refer to another object at the same time.
 
 ```rust
 use std::rc::Rc;

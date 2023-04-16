@@ -1,16 +1,16 @@
-# 性能测试
+# Performance Testing
 
-单元测试是用来校验程序的正确性的，然而，程序能正常运行后，往往还需要测试程序（一部分）的执行速度，这时，f就需要用到性能测试。
-通常来讲，所谓性能测试，指的是测量程序运行的速度，即运行一次要多少时间（通常是执行多次求平均值）。Rust 竟然连这个特性都集成在语言基础特性中，真的是一门很重视工程性的语言。
+Unit testing is used to verify the correctness of the program. However, after the program can run normally, it is often necessary to test the execution speed of the program (part). At this time, f needs to use performance testing.
+Generally speaking, the so-called performance test refers to measuring the running speed of the program, that is, how long it takes to run once (usually performing multiple averages). Rust even integrates this feature into the basic language features. It is really a language that attaches great importance to engineering.
 
-下面直接说明如何使用。
+The following directly explains how to use it.
 
 ```
-cargo new benchit
-cd benchit
+cargo new bench
+cd bench
 ```
 
-编辑 `src/lib.rs` 文件，在里面添加如下代码：
+Edit the `src/lib.rs` file and add the following code in it:
 
 ```rust
 #![feature(test)]
@@ -38,18 +38,18 @@ mod tests {
 }
 ```
 
-注意：
+Notice:
 
-1. 这里虽然使用了 `extern crate test;`，但是项目的 `Cargo.toml` 文件中依赖区并不需要添加对 `test` 的依赖；
-2. 评测函数 `fn bench_add_two(b: &mut Bencher) {}` 上面使用 `#[bench]` 做标注，同时函数接受一个参数，`b` 就是 Rust 提供的评测器。这个写法是固定的。
+1. Although `extern crate test;` is used here, there is no need to add a dependency on `test` in the dependency area of the `Cargo.toml` file of the project;
+2. The evaluation function `fn bench_add_two(b: &mut Bencher) {}` is marked with `#[bench]`, and the function accepts a parameter, `b` is the benchmark provided by Rust. This wording is fixed.
 
-然后，在工程根目录下，执行
+Then, in the project root directory, execute
 
 ```
 cargo bench
 ```
 
-输出结果类似如下：
+The output is similar to the following:
 
 ```
 $ cargo bench
@@ -63,11 +63,10 @@ test tests::bench_add_two ... bench:         1 ns/iter (+/- 0)
 test result: ok. 0 passed; 0 failed; 1 ignored; 1 measured
 ```
 
-可以看到，Rust 的性能测试是以纳秒 ns 为单位。
+As you can see, Rust's performance tests are in nanoseconds ns.
 
-写测评代码的时候，需要注意以下一些点：
+When writing evaluation code, you need to pay attention to the following points:
 
-1. 只把你需要做性能测试的代码（函数）放在评测函数中；
-2. 对于参与做性能测试的代码（函数），要求每次测试做同样的事情，不要做累积和改变外部状态的操作；
-3. 参数性能测试的代码（函数），执行时间不要太长。太长的话，最好分成几个部分测试。这也方便找出性能瓶颈所在地方。
-
+1. Only put the code (function) you need to do performance testing in the evaluation function;
+2. For codes (functions) involved in performance testing, each test is required to do the same thing, and do not perform operations that accumulate and change external states;
+3. The code (function) of the parameter performance test should not take too long to execute. If it is too long, it is best to test it in several parts. This also makes it easy to find out where performance bottlenecks are.
