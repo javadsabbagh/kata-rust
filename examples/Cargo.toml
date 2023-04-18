@@ -24,5 +24,6 @@ members = [
     "regex-example",
     "process-example",
     "log-example",
-    "thiserror-sample"
+    "thiserror-sample",
+    "uuid-example"
 ]
