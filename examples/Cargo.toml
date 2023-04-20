@@ -26,5 +26,6 @@ members = [
     "log-example",
     "thiserror-sample",
     "uuid-example",
-    "digest-example"
+    "digest-example",
+    "itertools-parse-log"
 ]
