@@ -1,14 +1,12 @@
 ## Extract all unique links from a MediaWiki markup
 
-[![reqwest-badge]][reqwest] [![regex-badge]][regex] [![cat-net-badge]][cat-net]
-
 Pull the source of a MediaWiki page using [`reqwest::get`] and then
 look for all entries of internal and external links with
 [`Regex::captures_iter`]. Using [`Cow`] avoids excessive [`String`] allocations.
 
 MediaWiki link syntax is described [here][MediaWiki link syntax].
 
-```rust,edition2018,no_run
+```rust
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::borrow::Cow;

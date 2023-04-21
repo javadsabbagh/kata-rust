@@ -10,7 +10,7 @@ last modification. [`Duration::as_secs`] converts the time to seconds and
 compared with 24 hours (24 * 60 * 60 seconds). [`Metadata::is_file`] filters
 out directories.
 
-```rust,edition2018
+```rust
 # use error_chain::error_chain;
 #
 use std::{env, fs};

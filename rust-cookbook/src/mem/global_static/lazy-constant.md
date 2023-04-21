@@ -1,11 +1,10 @@
 ## Declare lazily evaluated constant
 
-[![lazy_static-badge]][lazy_static] [![cat-caching-badge]][cat-caching] [![cat-rust-patterns-badge]][cat-rust-patterns]
 
 Declares a lazily evaluated constant [`HashMap`]. The [`HashMap`] will
 be evaluated once and stored behind a global static reference.
 
-```rust,edition2018
+```rust
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 

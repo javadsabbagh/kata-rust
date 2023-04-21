@@ -1,7 +1,5 @@
 ## Make a partial download with HTTP range headers
 
-[![reqwest-badge]][reqwest] [![cat-net-badge]][cat-net]
-
 Uses [`reqwest::blocking::Client::head`] to get the [Content-Length] of the response.
 
 The code then uses [`reqwest::blocking::Client::get`] to download the content in
@@ -10,7 +8,7 @@ reqwest module.  The [Range] header specifies the chunk size and position.
 
 The Range header is defined in [RFC7233][HTTP Range RFC7233].
 
-```rust,edition2018,no_run
+```rust
 use error_chain::error_chain;
 use reqwest::header::{HeaderValue, CONTENT_LENGTH, RANGE};
 use reqwest::StatusCode;

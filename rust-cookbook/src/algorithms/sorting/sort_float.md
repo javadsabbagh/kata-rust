@@ -1,10 +1,8 @@
 ## Sort a Vector of Floats 
 
-[![std-badge]][std] [![cat-science-badge]][cat-science]
-
 A Vector of f32 or f64 can be sorted with [`vec::sort_by`] and [`PartialOrd::partial_cmp`].
 
-```rust,edition2018
+```rust
 fn main() {
     let mut vec = vec![1.1, 1.15, 5.5, 1.123, 2.0];
 

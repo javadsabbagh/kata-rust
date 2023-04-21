@@ -1,9 +1,8 @@
 ## Multiplying matrices
-[![ndarray-badge]][ndarray] [![cat-science-badge]][cat-science]
 
 Creates two matrices with [`ndarray::arr2`] and performs matrix multiplication on them with [`ndarray::ArrayBase::dot`].
 
-```rust,edition2018
+```rust
 use ndarray::arr2;
 
 fn main() {

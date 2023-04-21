@@ -1,14 +1,12 @@
 ## Make a HTTP GET request
 
-[![reqwest-badge]][reqwest] [![cat-net-badge]][cat-net]
-
 Parses the supplied URL and makes a synchronous HTTP GET request
 with [`reqwest::blocking::get`]. Prints obtained [`reqwest::blocking::Response`]
 status and headers. Reads HTTP response body into an allocated [`String`]
 using [`read_to_string`].
 
 
-```rust,edition2018,no_run
+```rust
 use error_chain::error_chain;
 use std::io::Read;
 
@@ -44,7 +42,7 @@ and allows sequential code implemented without blocking until `.await`.
 Uses the asynchronous versions of [reqwest], both [`reqwest::get`] and
 [`reqwest::Response`].
 
-```rust,no_run
+```rust
 use error_chain::error_chain;
 
 error_chain! {

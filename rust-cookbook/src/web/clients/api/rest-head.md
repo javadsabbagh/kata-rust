@@ -1,7 +1,5 @@
 ## Check if an API resource exists
 
-[![reqwest-badge]][reqwest] [![cat-net-badge]][cat-net]
-
 Query the GitHub Users Endpoint using a HEAD
 request ([`Client::head`]) and then inspect the response code to determine
 success. This is a quick way to query a rest resource without needing to receive
@@ -11,7 +9,7 @@ a request will not last longer than a timeout.
 Due to both [`ClientBuilder::build`] and [`ReqwestBuilder::send`] returning [`reqwest::Error`]
 types, the shortcut [`reqwest::Result`] is used for the main function return type. 
 
-```rust,edition2018,no_run
+```rust
 use reqwest::Result;
 use std::time::Duration;
 use reqwest::ClientBuilder;

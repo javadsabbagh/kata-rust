@@ -1,7 +1,5 @@
 ## Distance between two points on the Earth
 
-[![std-badge]][std]
-
 By default, Rust provides mathematical [float methods] such as
 trigonometric functions, square root, conversion functions between
 radians and degrees, and so forth.
@@ -13,7 +11,7 @@ converts them in radian. [`sin`], [`cos`], [`powi`] and [`sqrt`]
 compute the central angle. Finally, it's possible to calculate the
 distance.
 
-```rust,edition2018
+```rust
 fn main() {
     let earth_radius_kilometer = 6371.0_f64;
     let (paris_latitude_degrees, paris_longitude_degrees) = (48.85341_f64, -2.34880_f64);

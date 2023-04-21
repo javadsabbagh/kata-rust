@@ -1,7 +1,5 @@
 ## Generate random numbers with given distribution
 
-[![rand_distr-badge]][rand_distr] [![cat-science-badge]][cat-science]
-
 By default, random numbers in the `rand` crate have
 [uniform distribution]. The [`rand_distr`] crate provides
 other kinds of distributions. To use them, you instantiate
@@ -12,7 +10,7 @@ generator [`rand::Rng`].
 The [distributions available are documented here][rand-distributions].
 An example using the [`Normal`] distribution is shown below.
 
-```rust,edition2018,ignore
+```rust,ignore
 use rand_distr::{Distribution, Normal, NormalError};
 use rand::thread_rng;
 

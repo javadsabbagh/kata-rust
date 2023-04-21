@@ -1,7 +1,5 @@
 ### Standard deviation
 
-[![std-badge]][std] [![cat-science-badge]][cat-science]
-
 This example calculates the standard deviation and z-score of a set of measurements.
 
 The standard deviation is defined as the square root of the variance (here calculated with f32's [`sqrt`], where the variance is the [`sum`] of the squared difference between each measurement and the [`mean`], divided by the number of measurements.
@@ -9,7 +7,7 @@ The standard deviation is defined as the square root of the variance (here calcu
 The z-score is the number of standard deviations a single measurement spans away from the [`mean`] of the data set.
 
 
-```rust,edition2018
+```rust
 fn mean(data: &[i32]) -> Option<f32> {
     let sum = data.iter().sum::<i32>() as f32;
     let count = data.len();

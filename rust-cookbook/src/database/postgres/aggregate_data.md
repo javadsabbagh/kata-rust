@@ -4,7 +4,7 @@
 
 This recipe lists the nationalities of the first 7999 artists in the database of the [`Museum of Modern Art`] in descending order.
 
-```rust,edition2018,no_run
+```rust
 use postgres::{Client, Error, NoTls};
 
 struct Nation {

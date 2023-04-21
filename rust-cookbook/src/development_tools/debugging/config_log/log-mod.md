@@ -5,7 +5,7 @@
 Creates two modules `foo` and nested `foo::bar` with logging directives
 controlled separately with [`RUST_LOG`] environmental variable.
 
-```rust,edition2018
+```rust
 
 mod foo {
     mod bar {

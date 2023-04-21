@@ -1,9 +1,8 @@
 ## Invert matrix
-[![nalgebra-badge]][nalgebra] [![cat-science-badge]][cat-science]
 
 Creates a 3x3 matrix with [`nalgebra::Matrix3`] and inverts it, if possible.
 
-```rust,edition2018
+```rust
 use nalgebra::Matrix3;
 
 fn main() {

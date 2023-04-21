@@ -1,7 +1,5 @@
 ## Download a file to a temporary directory
 
-[![reqwest-badge]][reqwest] [![tempdir-badge]][tempdir] [![cat-net-badge]][cat-net] [![cat-filesystem-badge]][cat-filesystem]
-
 Creates a temporary directory with [`tempfile::Builder`] and downloads
 a file over HTTP using [`reqwest::get`] asynchronously.
 
@@ -9,7 +7,7 @@ Creates a target [`File`] with name obtained from [`Response::url`] within
 [`tempdir()`] and copies downloaded data into it with [`io::copy`].
 The temporary directory is automatically removed on program exit.
 
-```rust,edition2018,no_run
+```rust
 use error_chain::error_chain;
 use std::io::copy;
 use std::fs::File;

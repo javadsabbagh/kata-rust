@@ -1,10 +1,8 @@
 ## Basic Authentication
 
-[![reqwest-badge]][reqwest] [![cat-net-badge]][cat-net]
-
 Uses [`reqwest::RequestBuilder::basic_auth`] to perform a basic HTTP authentication.
 
-```rust,edition2018,no_run
+```rust
 use reqwest::blocking::Client;
 use reqwest::Error;
 

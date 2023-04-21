@@ -1,10 +1,8 @@
 ## Remove fragment identifiers and query pairs from a URL
 
-[![url-badge]][url] [![cat-net-badge]][cat-net]
-
 Parses [`Url`] and slices it with [`url::Position`] to strip unneeded URL parts.
 
-```rust,edition2018
+```rust
 
 
 use url::{Url, Position, ParseError};

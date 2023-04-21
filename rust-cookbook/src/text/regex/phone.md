@@ -1,11 +1,9 @@
 ## Extract phone numbers from text
 
-[![regex-badge]][regex] [![cat-text-processing-badge]][cat-text-processing]
-
 Processes a string of text using [`Regex::captures_iter`] to capture multiple
 phone numbers.  The example here is for US convention phone numbers.
 
-```rust,edition2018
+```rust
 # use error_chain::error_chain;
 
 use regex::Regex;

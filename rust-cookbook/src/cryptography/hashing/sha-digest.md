@@ -1,11 +1,9 @@
 ## Calculate the SHA-256 digest of a file
 
-[![ring-badge]][ring] [![data-encoding-badge]][data-encoding] [![cat-cryptography-badge]][cat-cryptography]
-
 Writes some data to a file, then calculates the SHA-256 [`digest::Digest`] of
 the file's contents using [`digest::Context`].
 
-```rust,edition2018
+```rust
 # use error_chain::error_chain;
 use data_encoding::HEXUPPER;
 use ring::digest::{Context, Digest, SHA256};

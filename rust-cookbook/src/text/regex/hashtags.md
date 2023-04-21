@@ -1,13 +1,11 @@
 ## Extract a list of unique #Hashtags from a text
 
-[![regex-badge]][regex] [![lazy_static-badge]][lazy_static] [![cat-text-processing-badge]][cat-text-processing]
-
 Extracts, sorts, and deduplicates list of hashtags from text.
 
 The hashtag regex given here only catches Latin hashtags that start with a
 letter. The complete [twitter hashtag regex] is much more complicated.
 
-```rust,edition2018
+```rust
 use lazy_static::lazy_static;
 
 use regex::Regex;

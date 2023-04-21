@@ -1,14 +1,12 @@
 ## Generate random numbers
 
-[![rand-badge]][rand] [![cat-science-badge]][cat-science]
-
 Generates random numbers with help of random-number
 generator [`rand::Rng`] obtained via [`rand::thread_rng`]. Each thread has an
 initialized generator. Integers are uniformly distributed over the range of the
 type, and floating point numbers are uniformly distributed from 0 up to but not
 including 1.
 
-```rust,edition2018
+```rust
 use rand::Rng;
 
 fn main() {

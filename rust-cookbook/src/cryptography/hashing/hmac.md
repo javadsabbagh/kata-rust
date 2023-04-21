@@ -1,11 +1,9 @@
 ## Sign and verify a message with HMAC digest
 
-[![ring-badge]][ring] [![cat-cryptography-badge]][cat-cryptography]
-
 Uses [`ring::hmac`] to creates a [`hmac::Signature`] of a string then verifies the signature is correct.
 
 
-```rust,edition2018
+```rust
 use ring::{hmac, rand};
 use ring::rand::SecureRandom;
 use ring::error::Unspecified;

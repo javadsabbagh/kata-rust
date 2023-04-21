@@ -1,13 +1,11 @@
 ## Handle a rate-limited API
 
-[![reqwest-badge]][reqwest] [![hyper-badge]][hyper] [![cat-net-badge]][cat-net]
-
 This example uses the [GitHub API - Rate limiting], as an example of how to
 handle remote server errors.  This example uses the [`hyper::header!`] macro
 to parse the response header and checks for [`reqwest::StatusCode::Forbidden`].
 If the response exceeds the rate limit, the example waits and retries.
 
-```rust,edition2018,no_run
+```rust
 # use error_chain::error_chain;
 
 use std::time::{Duration, UNIX_EPOCH};

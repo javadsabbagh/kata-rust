@@ -1,5 +1,4 @@
 ## Multiply a scalar with a vector with a matrix
-[![ndarray-badge]][ndarray] [![cat-science-badge]][cat-science]
 
 Creates a 1-D array (vector) with [`ndarray::arr1`] and a 2-D array (matrix)
 with [`ndarray::arr2`].
@@ -15,7 +14,7 @@ a 2-D array with one row or one column must be used instead. In this example,
 the vector is a 1-D array on the right-hand side, so `dot` handles it as a column 
 vector.
 
-```rust,edition2018
+```rust
 use ndarray::{arr1, arr2, Array1};
 
 fn main() {

@@ -1,7 +1,5 @@
 ## Check a webpage for broken links
 
-[![reqwest-badge]][reqwest] [![select-badge]][select] [![url-badge]][url] [![cat-net-badge]][cat-net]
-
 Call `get_base_url` to retrieve the base URL. If the document has a base tag,
 get the href [`attr`] from base tag. [`Position::BeforePath`] of the original
 URL acts as a default.
@@ -11,7 +9,7 @@ parse an individual link with [`url::ParseOptions`] and [`Url::parse`]).
 The task makes a request to the links with [reqwest] and verifies
 [`StatusCode`].  Then the tasks `await` completion before ending the program.
 
-```rust,edition2018,no_run
+```rust
 use error_chain::error_chain;
 use reqwest::StatusCode;
 use select::document::Document;

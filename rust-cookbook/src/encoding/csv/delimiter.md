@@ -4,7 +4,7 @@
 
 Reads CSV records with a tab [`delimiter`].
 
-```rust,edition2018
+```rust
 use csv::Error;
 use serde::Deserialize;
 #[derive(Debug, Deserialize)]

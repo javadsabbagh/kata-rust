@@ -1,10 +1,8 @@
 ## Generate random numbers within a range
 
-[![rand-badge]][rand] [![cat-science-badge]][cat-science]
-
 Generates a random value within half-open `[0, 10)` range (not including `10`) with [`Rng::gen_range`].
 
-```rust,edition2018
+```rust
 use rand::Rng;
 
 fn main() {
@@ -18,7 +16,7 @@ fn main() {
 This has the same effect, but may be faster when repeatedly generating numbers
 in the same range.
 
-```rust,edition2018
+```rust
 
 use rand::distributions::{Distribution, Uniform};
 

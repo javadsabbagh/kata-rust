@@ -1,14 +1,12 @@
 ## Calculate SHA256 sum of iso files concurrently
 
-[![threadpool-badge]][threadpool] [![num_cpus-badge]][num_cpus] [![walkdir-badge]][walkdir] [![ring-badge]][ring] [![cat-concurrency-badge]][cat-concurrency][![cat-filesystem-badge]][cat-filesystem]
-
 This example calculates the SHA256 for every file with iso extension in the
 current directory. A threadpool generates threads equal to the number of cores
 present in the system found with [`num_cpus::get`].  [`Walkdir::new`] iterates
 the current directory and calls [`execute`] to perform the operations of reading
 and computing SHA256 hash.
 
-```rust,edition2018,no_run
+```rust
 
 use walkdir::WalkDir;
 use std::fs::File;

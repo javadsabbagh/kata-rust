@@ -1,7 +1,5 @@
 ## Compress a directory into tarball
 
-[![flate2-badge]][flate2] [![tar-badge]][tar] [![cat-compression-badge]][cat-compression]
-
 Compress `/var/log` directory into `archive.tar.gz`.
 
 Creates a [`File`] wrapped in [`GzEncoder`]
@@ -10,7 +8,7 @@ under `backup/logs`path with [`Builder::append_dir_all`].
 [`GzEncoder`] is responsible for transparently compressing the
 data prior to writing it into `archive.tar.gz`.
 
-```rust,edition2018,no_run
+```rust
 
 use std::fs::File;
 use flate2::Compression;

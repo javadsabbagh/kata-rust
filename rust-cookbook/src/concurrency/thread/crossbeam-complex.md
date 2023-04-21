@@ -1,7 +1,5 @@
 ## Create a parallel pipeline
 
-[![crossbeam-badge]][crossbeam] [![cat-concurrency-badge]][cat-concurrency]
-
 This example uses the [crossbeam] and [crossbeam-channel] crates to create
 a parallel pipeline, similar to that described in the ZeroMQ [guide]
 There is a data source and a data sink, with data being processed by two worker

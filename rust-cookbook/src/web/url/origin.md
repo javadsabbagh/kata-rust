@@ -1,11 +1,9 @@
 ## Extract the URL origin (scheme / host / port)
 
-[![url-badge]][url] [![cat-net-badge]][cat-net]
-
 The [`Url`] struct exposes various methods to extract information about the URL
 it represents.
 
-```rust,edition2018
+```rust
 
 use url::{Url, Host, ParseError};
 
@@ -25,7 +23,7 @@ fn main() -> Result<(), ParseError> {
 
 [`origin`] produces the same result.
 
-```rust,edition2018
+```rust
 # use error_chain::error_chain;
 
 use url::{Url, Origin, Host};

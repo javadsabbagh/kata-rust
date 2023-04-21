@@ -1,12 +1,10 @@
 ## Get MIME type from string
 
-[![mime-badge]][mime] [![cat-encoding-badge]][cat-encoding]
-
 The following example shows how to parse a [`MIME`] type from a string using the
 [mime] crate. [`FromStrError`] produces a default [`MIME`] type in an
 `unwrap_or` clause.
 
-```rust,edition2018
+```rust
 use mime::{Mime, APPLICATION_OCTET_STREAM};
 
 fn main() {

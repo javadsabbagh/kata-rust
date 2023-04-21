@@ -1,12 +1,10 @@
 ## Decompress a tarball while removing a prefix from the paths
 
-[![flate2-badge]][flate2] [![tar-badge]][tar] [![cat-compression-badge]][cat-compression]
-
 Iterate over the [`Archive::entries`].  Use [`Path::strip_prefix`] to remove
 the specified path prefix (`bundle/logs`).  Finally, extract the [`tar::Entry`]
 via [`Entry::unpack`].
 
-```rust,edition2018,no_run
+```rust
 # use error_chain::error_chain;
 use std::fs::File;
 use std::path::PathBuf;

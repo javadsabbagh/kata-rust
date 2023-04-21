@@ -1,11 +1,9 @@
 ## Create random passwords from a set of user-defined characters
 
-[![rand-badge]][rand] [![cat-os-badge]][cat-os]
-
 Randomly generates a string of given length ASCII characters with custom
 user-defined bytestring, with [`gen_range`].
 
-```rust,edition2018
+```rust
 fn main() {
     use rand::Rng;
     const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\

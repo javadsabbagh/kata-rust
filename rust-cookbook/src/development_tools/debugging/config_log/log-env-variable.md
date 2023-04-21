@@ -9,7 +9,7 @@ environment variable contents in the form of [`RUST_LOG`] syntax.
 Then, [`Builder::init`] initializes the logger.
 All these steps are normally done internally by [`env_logger::init`].
 
-```rust,edition2018
+```rust
 
 use std::env;
 use env_logger::Builder;

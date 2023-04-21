@@ -1,11 +1,9 @@
 ## Run an external command passing it stdin and check for an error code
 
-[![std-badge]][std] [![cat-os-badge]][cat-os]
-
 Opens the `python` interpreter using an external [`Command`] and passes it a
 python statement for execution. [`Output`] of statement is then parsed.
 
-```rust,edition2018,no_run
+```rust
 # use error_chain::error_chain;
 #
 use std::collections::HashSet;

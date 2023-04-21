@@ -1,7 +1,5 @@
 ## Parse command line arguments
 
-[![clap-badge]][clap] [![cat-command-line-badge]][cat-command-line]
-
 This application describes the structure of its command-line interface using
 `clap`'s builder style. The [documentation] gives two other possible ways to
 instantiate an application.
@@ -11,7 +9,7 @@ use to retrieve the value passed. The `short` and `long` options control the
 flag the user will be expected to type; short flags look like `-f` and long
 flags look like `--file`.
 
-```rust,edition2018
+```rust
 use clap::{Arg, App};
 
 fn main() {

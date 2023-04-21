@@ -1,13 +1,11 @@
 ## Create a base URL by removing path segments
 
-[![url-badge]][url] [![cat-net-badge]][cat-net]
-
 A base URL includes a protocol and a domain.  Base URLs have no folders,
 files or query strings.  Each of those items are stripped out of the given
 URL.  [`PathSegmentsMut::clear`] removes paths and [`Url::set_query`] removes
 query string.
 
-```rust,edition2018
+```rust
 # use error_chain::error_chain;
 
 use url::Url;

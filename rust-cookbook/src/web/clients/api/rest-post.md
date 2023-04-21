@@ -1,7 +1,5 @@
 ## Create and delete Gist with GitHub API
 
-[![reqwest-badge]][reqwest] [![serde-badge]][serde] [![cat-net-badge]][cat-net] [![cat-encoding-badge]][cat-encoding]
-
 Creates a gist with POST request to GitHub [gists API v3](https://developer.github.com/v3/gists/)
 using [`Client::post`] and removes it with DELETE request using [`Client::delete`].
 
@@ -11,7 +9,7 @@ provides arbitrary JSON body. Call to [`RequestBuilder::json`] sets the request
 body. [`RequestBuilder::basic_auth`] handles authentication. The call to
 [`RequestBuilder::send`] synchronously executes the requests.
 
-```rust,edition2018,no_run
+```rust
 use error_chain::error_chain;
 use serde::Deserialize;
 use serde_json::json;

@@ -1,7 +1,5 @@
 ## Sort a vector in parallel
 
-[![rayon-badge]][rayon] [![rand-badge]][rand] [![cat-concurrency-badge]][cat-concurrency]
-
 This example will sort in parallel a vector of Strings.
 
 Allocate a vector of empty Strings. `par_iter_mut().for_each` populates random
@@ -9,7 +7,7 @@ values in parallel.  Although [multiple options]
 exist to sort an enumerable data type, [`par_sort_unstable`]
 is usually faster than [stable sorting] algorithms.
 
-```rust,edition2018
+```rust
 
 use rand::{Rng, thread_rng};
 use rand::distributions::Alphanumeric;

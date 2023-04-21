@@ -4,7 +4,7 @@
 
 Creates a custom logger configuration using the [`Builder::target`] to set the target of the log output to [`Target::Stdout`].
 
-```rust,edition2018
+```rust
 
 use env_logger::{Builder, Target};
 

@@ -1,6 +1,5 @@
 ## Redirect both stdout and stderr of child process to the same file
 
-[![std-badge]][std] [![cat-os-badge]][cat-os]
 
 Spawns a child process and redirects `stdout` and `stderr` to the same
 file. It follows the same idea as [run piped external
@@ -12,7 +11,7 @@ cursor position.
 The below recipe is equivalent to run the Unix shell command `ls
 . oops >out.txt 2>&1`.
 
-```rust,edition2018,no_run
+```rust
 use std::fs::File;
 use std::io::Error;
 use std::process::{Command, Stdio};

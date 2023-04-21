@@ -1,10 +1,8 @@
 ## Read Environment Variable 
 
-[![std-badge]][std] [![cat-os-badge]][cat-os]
-
 Reads an environment variable via [std::env::var].
 
-```rust,edition2018,no_run
+```rust
 use std::env;
 use std::fs;
 use std::io::Error;

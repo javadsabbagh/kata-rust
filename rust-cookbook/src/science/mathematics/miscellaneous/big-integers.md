@@ -1,10 +1,8 @@
 ## Big integers
 
-[![num-badge]][num] [![cat-science-badge]][cat-science]
-
 Calculation for integers exceeding 128 bits are possible with [`BigInt`].
 
-```rust,edition2018
+```rust
 use num::bigint::{BigInt, ToBigInt};
 
 fn factorial(x: i32) -> BigInt {

@@ -1,7 +1,5 @@
 ## Set custom headers and URL parameters for a REST request
 
-[![reqwest-badge]][reqwest] [![hyper-badge]][hyper] [![url-badge]][url] [![cat-net-badge]][cat-net]
-
 Sets both standard and custom HTTP headers as well as URL parameters
 for a HTTP GET request. Creates a custom header of type `XPoweredBy`
 with [`hyper::header!`] macro.
@@ -14,7 +12,7 @@ with [`RequestBuilder::header`] then makes the request with
 The request targets <http://httpbin.org/headers> service which responds with
 a JSON dict containing all request headers for easy verification.
 
-```rust,edition2018,no_run
+```rust
 # use error_chain::error_chain;
 use serde::Deserialize;
 

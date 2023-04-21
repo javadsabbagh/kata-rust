@@ -17,7 +17,7 @@ first number. Returns uptime unless there is an error.
 Other recipes in this book will hide the [error-chain] boilerplate, and can be
 seen by expanding the code with the ⤢ button.
 
-```rust,edition2018
+```rust
 use error_chain::error_chain;
 
 use std::fs::File;

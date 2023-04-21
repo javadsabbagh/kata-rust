@@ -1,10 +1,8 @@
 ## Create new URLs from a base URL
 
-[![url-badge]][url] [![cat-net-badge]][cat-net]
-
 The [`join`] method creates a new URL from a base and relative path.
 
-```rust,edition2018
+```rust
 
 use url::{Url, ParseError};
 

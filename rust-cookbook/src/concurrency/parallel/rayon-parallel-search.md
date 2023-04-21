@@ -1,7 +1,5 @@
 ## Search items using given predicate in parallel
 
-[![rayon-badge]][rayon] [![cat-concurrency-badge]][cat-concurrency]
-
 This example uses [`rayon::find_any`] and [`par_iter`] to search a vector in
 parallel for an element satisfying the predicate in the given closure.
 
@@ -12,7 +10,7 @@ necessarily the first one.
 Also note that the argument to the closure is a reference to a reference
 (`&&x`). See the discussion on [`std::find`] for additional details.
 
-```rust,edition2018
+```rust
 use rayon::prelude::*;
 
 fn main() {

@@ -1,13 +1,11 @@
 ## Decompress a tarball
 
-[![flate2-badge]][flate2] [![tar-badge]][tar] [![cat-compression-badge]][cat-compression]
-
 Decompress ([`GzDecoder`]) and
 extract ([`Archive::unpack`]) all files from a compressed tarball
 named `archive.tar.gz` located in the current working directory
 to the same location.
 
-```rust,edition2018,no_run
+```rust
 
 use std::fs::File;
 use flate2::read::GzDecoder;

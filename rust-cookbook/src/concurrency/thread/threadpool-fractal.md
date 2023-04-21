@@ -1,7 +1,5 @@
 ## Draw fractal dispatching work to a thread pool
 
-[![threadpool-badge]][threadpool] [![num-badge]][num] [![num_cpus-badge]][num_cpus] [![image-badge]][image] [![cat-concurrency-badge]][cat-concurrency][![cat-science-badge]][cat-science][![cat-rendering-badge]][cat-rendering]
-
 This example generates an image by drawing a fractal from the [Julia set]
 with a thread pool for distributed computation.
 
@@ -16,7 +14,7 @@ Create [`ThreadPool`] with thread count equal to number of cores with [`num_cpus
 [`ImageBuffer::put_pixel`] uses the data to set the pixel color.
 [`ImageBuffer::save`] writes the image to `output.png`.
 
-```rust,edition2018,no_run
+```rust
 # use error_chain::error_chain;
 use std::sync::mpsc::{channel, RecvError};
 use threadpool::ThreadPool;

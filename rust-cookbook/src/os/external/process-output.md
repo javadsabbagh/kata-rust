@@ -1,11 +1,9 @@
 ## Run an external command and process stdout
 
-[![regex-badge]][regex] [![cat-os-badge]][cat-os] [![cat-text-processing-badge]][cat-text-processing]
-
 Runs `git log --oneline` as an external [`Command`] and inspects its [`Output`]
 using [`Regex`] to get the hash and message of the last 5 commits.
 
-```rust,edition2018,no_run
+```rust
 # use error_chain::error_chain;
 
 use std::process::Command;

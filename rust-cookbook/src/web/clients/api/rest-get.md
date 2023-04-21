@@ -1,7 +1,5 @@
 ## Query the GitHub API
 
-[![reqwest-badge]][reqwest] [![serde-badge]][serde] [![cat-net-badge]][cat-net] [![cat-encoding-badge]][cat-encoding]
-
 Queries GitHub [stargazers API v3](https://developer.github.com/v3/activity/starring/#list-stargazers)
 with [`reqwest::get`] to get list of all users who have marked a GitHub project with a star. 
 [`reqwest::Response`] is deserialized with [`Response::json`] into `User` objects implementing [`serde::Deserialize`].
@@ -9,7 +7,7 @@ with [`reqwest::get`] to get list of all users who have marked a GitHub project 
 [tokio::main] is used to set up the async executor and the process waits for [`reqwet::get`] to complete before
 processing the response into User instances.  
 
-```rust,edition2018,no_run
+```rust
 use serde::Deserialize;
 use reqwest::Error;
 

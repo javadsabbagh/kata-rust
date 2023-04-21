@@ -1,7 +1,5 @@
 ## Parse the MIME type of a HTTP response
 
-[![reqwest-badge]][reqwest] [![mime-badge]][mime] [![cat-net-badge]][cat-net] [![cat-encoding-badge]][cat-encoding]
-
 When receiving a HTTP reponse from `reqwest` the [MIME type] or media type may be
 found in the [Content-Type] header. [`reqwest::header::HeaderMap::get`] retrieves
 the header as a [`reqwest::header::HeaderValue`], which can be converted to a
@@ -11,7 +9,7 @@ The [`mime`] crate also defines some commonly used MIME types.
 
 Note that the [`reqwest::header`] module is exported from the [`http`] crate.
 
-```rust,edition2018,no_run
+```rust
 use error_chain::error_chain;
 use mime::Mime;
 use std::str::FromStr;

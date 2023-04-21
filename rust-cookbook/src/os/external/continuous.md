@@ -1,6 +1,5 @@
 ## Continuously process child process' outputs
 
-[![std-badge]][std] [![cat-os-badge]][cat-os]
 
 In [Run an external command and process stdout](#run-an-external-command-and-process-stdout),
 processing doesn't start until external [`Command`] is finished.
@@ -10,7 +9,7 @@ The recipe below calls [`Stdio::piped`] to create a pipe, and reads
 The below recipe is equivalent to the Unix shell command
 `journalctl | grep usb`.
 
-```rust,edition2018,no_run
+```rust
 use std::process::{Command, Stdio};
 use std::io::{BufRead, BufReader, Error, ErrorKind};
 

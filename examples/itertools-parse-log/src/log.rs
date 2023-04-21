@@ -1,14 +1,17 @@
+#[allow(unused)]
+
+
 use std::cmp::Ordering;
 
 use chrono::prelude::*;
 use regex::Regex;
 
 /* Define custom struct for log entries */
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Ord, Default)]
 pub struct ApacheLogEntry {
-    client_id: String,
+    client_ip: String,
     timestamp: DateTime<FixedOffset>,
-    request: Struing,
+    request: String,
     status_code: u8,
     size: u32,
 }
