@@ -1,6 +1,5 @@
 ## Compile and link statically to a bundled C++ library
 
-[![cc-badge]][cc] [![cat-development-tools-badge]][cat-development-tools]
 
 Linking a bundled C++ library is very similar to linking a bundled C library. The two core differences when compiling and statically linking a bundled C++ library are specifying a C++ compiler via the builder method [`cpp(true)`][cc-build-cpp] and preventing name mangling by the C++ compiler by adding the `extern "C"` section at the top of our C++ source file.
 

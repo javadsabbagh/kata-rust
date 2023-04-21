@@ -1,6 +1,5 @@
 ## Parse and increment a version string.
 
-[![semver-badge]][semver] [![cat-config-badge]][cat-config]
 
 Constructs a [`semver::Version`] from a string literal using [`Version::parse`],
 then increments it by patch, minor, and major version number one by one.

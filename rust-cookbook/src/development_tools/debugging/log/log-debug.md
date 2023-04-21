@@ -1,6 +1,5 @@
 ## Log a debug message to the console
 
-[![log-badge]][log] [![env_logger-badge]][env_logger] [![cat-debugging-badge]][cat-debugging]
 
 The `log` crate provides logging utilities. The `env_logger` crate configures
 logging via an environment variable.  The [`log::debug!`] macro works like other

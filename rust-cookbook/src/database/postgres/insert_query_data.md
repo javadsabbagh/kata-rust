@@ -1,6 +1,5 @@
 ## Insert and Query data
 
-[![postgres-badge]][postgres] [![cat-database-badge]][cat-database]
 
 The recipe inserts data into the `author` table using [`execute`] method of `Client`. Then, displays the data from the `author` table  using [`query`] method of `Client`.
 

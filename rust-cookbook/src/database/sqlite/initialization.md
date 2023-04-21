@@ -1,6 +1,5 @@
 ## Create a SQLite database
 
-[![rusqlite-badge]][rusqlite] [![cat-database-badge]][cat-database]
 
 Use the `rusqlite` crate to open SQLite databases. See
 [crate][documentation] for compiling on Windows.

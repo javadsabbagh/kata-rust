@@ -1,6 +1,5 @@
 ## Serialize records to CSV
 
-[![csv-badge]][csv] [![cat-encoding-badge]][cat-encoding]
 
 This example shows how to serialize a Rust tuple. [`csv::writer`] supports automatic
 serialization from Rust types into CSV records. [`write_record`] writes

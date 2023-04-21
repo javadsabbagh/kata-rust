@@ -1,6 +1,5 @@
 ## Find all png files recursively
 
-[![glob-badge]][glob] [![cat-filesystem-badge]][cat-filesystem]
 
 Recursively find all PNG files in the current directory.
 In this case, the `**` pattern matches the current directory and all subdirectories.

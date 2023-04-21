@@ -1,6 +1,5 @@
 ## Check external command version for compatibility
 
-[![semver-badge]][semver] [![cat-text-processing-badge]][cat-text-processing] [![cat-os-badge]][cat-os]
 
 Runs `git --version` using [`Command`], then parses the version number into a
 [`semver::Version`] using [`Version::parse`]. [`VersionReq::matches`] compares

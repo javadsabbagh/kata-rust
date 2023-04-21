@@ -1,6 +1,5 @@
 ## Use a custom environment variable to set up logging
 
-[![log-badge]][log] [![env_logger-badge]][env_logger] [![cat-debugging-badge]][cat-debugging]
 
 [`Builder`] configures logging.
 

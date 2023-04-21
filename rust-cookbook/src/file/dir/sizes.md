@@ -1,6 +1,5 @@
 ## Recursively calculate file sizes at given depth
 
-[![walkdir-badge]][walkdir] [![cat-filesystem-badge]][cat-filesystem]
 
 Recursion depth can be flexibly set by [`WalkDir::min_depth`] & [`WalkDir::max_depth`] methods.
 Calculates sum of all file sizes to 3 subfolders depth, ignoring files in the root folder.

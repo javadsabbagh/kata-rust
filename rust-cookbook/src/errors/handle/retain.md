@@ -1,6 +1,5 @@
 ## Avoid discarding errors during error conversions
 
-[![error-chain-badge]][error-chain] [![cat-rust-patterns-badge]][cat-rust-patterns]
 
 The  [error-chain] crate makes [matching] on different error types returned by
 a function possible and relatively compact. [`ErrorKind`] determines the error

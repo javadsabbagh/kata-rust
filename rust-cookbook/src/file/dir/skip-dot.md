@@ -1,6 +1,5 @@
 ##  Traverse directories while skipping dotfiles
 
-[![walkdir-badge]][walkdir] [![cat-filesystem-badge]][cat-filesystem]
 
 Uses [`filter_entry`] to descend recursively into entries passing the
 `is_not_hidden` predicate thus skipping hidden files and directories.

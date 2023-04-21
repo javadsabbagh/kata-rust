@@ -1,6 +1,5 @@
 ## Obtain backtrace of complex error scenarios
 
-[![error-chain-badge]][error-chain] [![cat-rust-patterns-badge]][cat-rust-patterns]
 
 This recipe shows how to handle a complex error scenario and then
 print a backtrace. It relies on [`chain_err`] to extend errors by

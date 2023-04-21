@@ -1,6 +1,5 @@
 ## Using transactions
 
-[![rusqlite-badge]][rusqlite] [![cat-database-badge]][cat-database]
 
 [`Connection::open`] will open the `cats.db` database from the top recipe.
 

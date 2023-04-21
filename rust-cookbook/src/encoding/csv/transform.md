@@ -1,6 +1,5 @@
 ## Transform CSV column
 
-[![csv-badge]][csv] [![serde-badge]][serde] [![cat-encoding-badge]][cat-encoding]
 
 Transform a CSV file containing a color name and a hex color into one with a
 color name and an rgb color.  Utilizes the [csv] crate to read and write the

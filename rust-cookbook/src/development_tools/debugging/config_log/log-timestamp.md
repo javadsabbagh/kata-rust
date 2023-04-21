@@ -1,6 +1,5 @@
 ## Include timestamp in log messages
 
-[![log-badge]][log] [![env_logger-badge]][env_logger] [![chrono-badge]][chrono] [![cat-debugging-badge]][cat-debugging]
 
 Creates a custom logger configuration with [`Builder`].
 Each log entry calls [`Local::now`] to get the current [`DateTime`] in local

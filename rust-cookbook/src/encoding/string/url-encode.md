@@ -1,6 +1,5 @@
 ## Encode a string as application/x-www-form-urlencoded
 
-[![url-badge]][url] [![cat-encoding-badge]][cat-encoding]
 
 Encodes a string into [application/x-www-form-urlencoded] syntax
 using the [`form_urlencoded::byte_serialize`] and subsequently

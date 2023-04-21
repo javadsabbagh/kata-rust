@@ -1,6 +1,5 @@
 ## Aggregate data
 
-[![postgres-badge]][postgres] [![cat-database-badge]][cat-database]
 
 This recipe lists the nationalities of the first 7999 artists in the database of the [`Museum of Modern Art`] in descending order.
 

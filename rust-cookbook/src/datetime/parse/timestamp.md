@@ -1,5 +1,5 @@
 ## Convert date to UNIX timestamp and vice versa
-[![chrono-badge]][chrono] [![cat-date-and-time-badge]][cat-date-and-time]
+
 
 Converts a date given by [`NaiveDate::from_ymd`] and [`NaiveTime::from_hms`]
 to [UNIX timestamp] using [`NaiveDateTime::timestamp`].

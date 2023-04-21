@@ -1,6 +1,5 @@
 ## Parse string into DateTime struct
 
-[![chrono-badge]][chrono] [![cat-date-and-time-badge]][cat-date-and-time]
 
 Parses a [`DateTime`] struct from strings representing the well-known formats
 [RFC 2822], [RFC 3339], and a custom format, using

@@ -1,6 +1,5 @@
 ## Log messages with a custom logger
 
-[![log-badge]][log] [![cat-debugging-badge]][cat-debugging]
 
 Implements a custom logger `ConsoleLogger` which prints to stdout.
 In order to use the logging macros, `ConsoleLogger` implements

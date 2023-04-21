@@ -1,6 +1,5 @@
 ## File names that have been modified in the last 24 hours
 
-[![std-badge]][std] [![cat-filesystem-badge]][cat-filesystem]
 
 Gets the current working directory by calling [`env::current_dir`],
 then for each entries in [`fs::read_dir`], extracts the

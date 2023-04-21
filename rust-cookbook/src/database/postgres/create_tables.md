@@ -1,6 +1,5 @@
 ## Create tables in a Postgres database
 
-[![postgres-badge]][postgres] [![cat-database-badge]][cat-database]
 
 Use the [`postgres`] crate to create tables in a Postgres database.
 

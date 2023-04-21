@@ -1,6 +1,5 @@
 ## Define and operate on a type represented as a bitfield
 
-[![bitflags-badge]][bitflags] [![cat-no-std-badge]][cat-no-std]
 
 Creates type safe bitfield type `MyFlags` with help of [`bitflags!`] macro
 and implements elementary `clear` operation as well as [`Display`] trait for it.

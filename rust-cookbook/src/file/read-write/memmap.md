@@ -1,6 +1,5 @@
 ## Access a file randomly using a memory map
 
-[![memmap-badge]][memmap] [![cat-filesystem-badge]][cat-filesystem]
 
 Creates a memory map of a file using [memmap] and simulates some non-sequential
 reads from the file. Using a memory map means you just index into a slice rather

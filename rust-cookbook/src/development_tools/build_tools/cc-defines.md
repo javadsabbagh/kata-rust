@@ -1,6 +1,5 @@
 ## Compile a C library while setting custom defines
 
-[![cc-badge]][cc] [![cat-development-tools-badge]][cat-development-tools]
 
 It is simple to build bundled C code with custom defines using [`cc::Build::define`].
 The method takes an [`Option`] value, so it is possible to create defines such as `#define APP_NAME "foo"`

@@ -1,6 +1,5 @@
 ## Serialize and deserialize unstructured JSON
 
-[![serde-json-badge]][serde-json] [![cat-encoding-badge]][cat-encoding]
 
 The [`serde_json`] crate provides a [`from_str`] function to parse a `&str` of
 JSON.

@@ -1,6 +1,5 @@
 ## Find all files with given pattern ignoring filename case.
 
-[![glob-badge]][glob] [![cat-filesystem-badge]][cat-filesystem]
 
 Find all image files in the `/media/` directory matching the `img_[0-9]*.png` pattern.
 

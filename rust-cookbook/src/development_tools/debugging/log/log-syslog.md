@@ -1,6 +1,5 @@
 ## Log to the Unix syslog
 
-[![log-badge]][log] [![syslog-badge]][syslog] [![cat-debugging-badge]][cat-debugging]
 
 Logs messages to [UNIX syslog]. Initializes logger backend
 with [`syslog::init`]. [`syslog::Facility`] records the program submitting

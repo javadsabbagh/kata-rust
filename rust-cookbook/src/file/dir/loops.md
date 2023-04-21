@@ -1,6 +1,5 @@
 ## Find loops for a given path
 
-[![same_file-badge]][same_file] [![cat-filesystem-badge]][cat-filesystem]
 
 Use [`same_file::is_same_file`] to detect loops for a given path.
 For example, a loop could be created on a Unix system via symlinks:

@@ -1,6 +1,5 @@
 ## Read CSV records with different delimiter
 
-[![csv-badge]][csv] [![cat-encoding-badge]][cat-encoding]
 
 Reads CSV records with a tab [`delimiter`].
 

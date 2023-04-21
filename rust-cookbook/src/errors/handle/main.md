@@ -1,6 +1,5 @@
 ## Handle errors correctly in main
 
-[![error-chain-badge]][error-chain] [![cat-rust-patterns-badge]][cat-rust-patterns]
 
 Handles error that occur when trying to open a file that does not
 exist. It is achieved by using [error-chain], a library that takes

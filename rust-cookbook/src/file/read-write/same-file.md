@@ -1,6 +1,5 @@
 ## Avoid writing and reading from a same file
 
-[![same_file-badge]][same_file] [![cat-filesystem-badge]][cat-filesystem]
 
 Use [`same_file::Handle`] to a file that can be tested for equality with
 other handles. In this example, the handles of file to be read from and

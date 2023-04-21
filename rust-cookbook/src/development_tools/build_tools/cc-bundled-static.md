@@ -1,6 +1,5 @@
 ## Compile and link statically to a bundled C library
 
-[![cc-badge]][cc] [![cat-development-tools-badge]][cat-development-tools]
 
 To accommodate scenarios where additional C, C++, or assembly is required in a project, the [**cc**][cc] crate
 offers a simple api for compiling bundled C/C++/asm code into static libraries (**.a**) that can be statically linked to by **rustc**.

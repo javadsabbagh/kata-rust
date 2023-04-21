@@ -1,6 +1,5 @@
 ## Display formatted date and time
 
-[![chrono-badge]][chrono] [![cat-date-and-time-badge]][cat-date-and-time]
 
 Gets and displays the current time in UTC using [`Utc::now`]. Formats the
 current time in the well-known formats [RFC 2822] using [`DateTime::to_rfc2822`]

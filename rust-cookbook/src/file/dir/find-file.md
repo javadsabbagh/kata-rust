@@ -1,6 +1,5 @@
 ##  Recursively find all files with given predicate
 
-[![walkdir-badge]][walkdir] [![cat-filesystem-badge]][cat-filesystem]
 
 Find JSON files modified within the last day in the current directory.
 Using [`follow_links`] ensures symbolic links are followed like they were

@@ -1,6 +1,5 @@
 ## Read lines of strings from a file
 
-[![std-badge]][std] [![cat-filesystem-badge]][cat-filesystem]
 
 Writes a three-line message to a file, then reads it back a line at a
 time with the [`Lines`] iterator created by

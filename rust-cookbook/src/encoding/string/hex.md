@@ -1,6 +1,5 @@
 ## Encode and decode hex
 
-[![data-encoding-badge]][data-encoding] [![cat-encoding-badge]][cat-encoding]
 
 The [`data_encoding`] crate provides a `HEXUPPER::encode` method which
 takes a `&[u8]` and returns a `String` containing the hexadecimal
